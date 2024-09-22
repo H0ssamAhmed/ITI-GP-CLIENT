@@ -8,6 +8,12 @@ export default {
         cairo: ["Cairo", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
       },
+      backgroundImage: {
+        "custom-pattern": "url('src/assets/backgroundcover.png')",
+      },
+      opacity: {
+        20: "0.2",
+      },
       colors: {
         // Indigo
         brand: {
@@ -21,8 +27,8 @@ export default {
           900: "#312e81",
         },
 
-        beige : {
-          300: "#F5F5DC"
+        beige: {
+          300: "#F5F5DC",
         },
         // Grey
         grey: {
@@ -66,7 +72,6 @@ export default {
           500: "#D32F2F",
           700: "#b91c1c",
           800: "#991b1b",
-          
         },
       },
       // Add box shadows
