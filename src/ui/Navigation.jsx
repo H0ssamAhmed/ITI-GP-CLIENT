@@ -21,7 +21,7 @@ function Navigation() {
   return (
     <motion.nav
       style={{ opacity: navOpacity, y: navY }}
-      className="fixed top-0 left-0 z-[300] flex items-center justify-between w-full p-4 mb-5 shadow-md py-7 bg-brand-700 menu lg:justify-around"
+      className="fixed top-0 left-0 z-[900] flex items-center justify-between w-full p-4 mb-5 shadow-md py-7 bg-brand-700 menu lg:justify-around"
       initial={false}
       animate={isOpen ? "open" : "close"}
     >

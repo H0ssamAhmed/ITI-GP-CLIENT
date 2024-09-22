@@ -76,7 +76,9 @@ function Home() {
         >
           <div className="relative bg-brand-700">
             <Navigation />
-            <ScrollToTopButton />
+            <div className="flex items-center justify-center">
+              <ScrollToTopButton />
+            </div>
             <motion.div
               className="flex z-[60] flex-col top-[10rem]  lg:grid lg:grid-cols-2 relative bg-gray-50 w-[35rem] lg:w-[128rem] h-[49.6rem] mx-auto rounded-[32px]"
               initial={{ x: -100, opacity: 0 }}
