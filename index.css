@@ -1,5 +1,4 @@
 /* Colors adapted from https://tailwindcss.com/docs/customizing-colors */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -65,6 +64,7 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  direction: rtl;
 
   /* Creating animations for dark mode */
   transition: background-color 0.3s, border 0.3s;
@@ -114,6 +114,16 @@ select:focus {
   outline-offset: -1px;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 /* Parent selector, finally 😃 */
 button:has(svg) {
   line-height: 0;
@@ -150,14 +160,16 @@ img {
   20% {
     background-position: 0% 0%, 50% 50%, 100% 50%;
   }
+
   40% {
     background-position: 0% 100%, 50% 0%, 100% 50%;
   }
+
   60% {
     background-position: 0% 50%, 50% 100%, 100% 0%;
   }
+
   80% {
     background-position: 0% 50%, 50% 50%, 100% 100%;
   }
 }
-
