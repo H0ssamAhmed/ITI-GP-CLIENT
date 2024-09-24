@@ -19,7 +19,9 @@ export default {
         brand: {
           50: "#eef2ff",
           100: "#e0e7ff",
+          300: "#a5b4fc",
           200: "#c7d2fe",
+          400: "#818cf8",
           500: "#6366f1",
           600: "#4f46e5",
           700: "#4338ca",
@@ -86,6 +88,10 @@ export default {
         sm: "5px",
         md: "7px",
         lg: "9px",
+        xl: "20px",
+        "2xl": "28px",
+        "3xl": "32px",
+        "4xl": "36px"
       },
     },
   },

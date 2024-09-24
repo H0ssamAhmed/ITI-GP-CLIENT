@@ -13,7 +13,7 @@ function Navigation() {
   const navOpacity = useTransform(scrollY, [0, 50], [1, 0.9]); // Shrinks opacity as user scrolls
   const navY = useTransform(scrollY, [0, 50], [0, -10]); // Animates Y position on scroll
 
-  console.log(isOpen);
+  // console.log(isOpen);
   function toggleIsOpen() {
     setIsOpen(!isOpen);
   }
