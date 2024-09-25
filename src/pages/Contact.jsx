@@ -19,46 +19,46 @@ function Contact() {
             أسفله، سنحاول الرد عليك في أقرب وقت ممكن.
           </p>
           <form onSubmit={handleSubmit(onSubmit)} className="py-6 px-2">
-            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
             <input
               type="text"
               placeholder="الاسم"
-              className="w-full p-2 my-6 rounded-sm broder border-2 outline-none  border-brand-200 focus:border-brand-700  focus:outline-none  focus:border-1 transition-all"
+              className="w-full p-2 mt-10 rounded-sm broder border-2 outline-none  border-brand-200 focus:border-brand-700  focus:outline-none  focus:border-1 transition-all"
               {...register("name", { required: "الاسم مطلوب", minLength: { value: 3, message: "يجب أن يحتوي الاسم على 3 أحرف على الأقل" } })}
             />
+            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
 
-            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
 
             <input
               type="email"
               placeholder="البريد الالكتروني"
-              className="w-full p-2 my-6 rounded-sm broder border-2 outline-none  border-brand-200 focus:border-brand-700  focus:outline-none  focus:border-1 transition-all"
+              className="w-full p-2 mt-10 rounded-sm broder border-2 outline-none  border-brand-200 focus:border-brand-700  focus:outline-none  focus:border-1 transition-all"
               {...register("email", { required: "البريد الالكتروني مطلوب", pattern: { value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/, message: "صيغة بريد غير صالحة" } })}
             />
-            {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
+            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
 
             <input
               type="text"
               placeholder="رقم الهاتف"
-              className="w-full p-2 my-6 rounded-sm broder border-2 outline-none  border-brand-200 focus:border-brand-700  focus:outline-none  focus:border-1 transition-all"
+              className="w-full p-2 mt-10 rounded-sm broder border-2 outline-none  border-brand-200 focus:border-brand-700  focus:outline-none  focus:border-1 transition-all"
               {...register("phone", {
                 required: "رقم الهاتف مطلوب",
                 validate: value => /^01[0,1,2,5][0-9]{8}$/.test(value) || "رقم الهاتف غير صالح يجب ان يكون 11 رقم"
               })}
             />
-            {errors.message && <p className="text-red-500">{errors.message.message}</p>}
+            {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
 
             <textarea
               placeholder="الرسالة"
               rows="6"
-              className="w-full p-2 my-6 rounded-sm broder border-2 outline-none  border-brand-200 focus:border-brand-700  focus:outline-none  focus:border-1 transition-all"
+              className="w-full p-2 mt-10 rounded-sm broder border-2 outline-none  border-brand-200 focus:border-brand-700  focus:outline-none  focus:border-1 transition-all"
               {...register("message", { required: "الرسالة مطلوبة" })}
             />
+            {errors.message && <p className="text-red-500">{errors.message.message}</p>}
 
             <input
               type="submit"
               value="ارسال"
-              className="w-full p-2 my-6 rounded-sm broder-none bg-brand-500 text-white cursor-pointer transition-colors duration-400 hover:bg-brand-700 hover:text-white font-semibold"
+              className="w-full p-2 mt-10 rounded-sm broder-none bg-brand-500 text-white cursor-pointer transition-colors duration-400 hover:bg-brand-700 hover:text-white font-semibold"
             />
           </form>
         </div>
