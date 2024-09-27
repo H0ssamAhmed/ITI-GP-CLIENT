@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 function LinkWithUnderline({
   children,
@@ -12,7 +12,7 @@ function LinkWithUnderline({
       whileTap={{ scale: 0.97 }}
       onClick={onMouseOver}
       type="button"
-      href="#"
+      href="/about-us"
       id={id}
       data-dropdown-toggle={dataDropdownToggle}
       className={`relative px-4   font-bold transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-opacity-80 hover:rounded-full ${fontSize}`}
@@ -22,10 +22,10 @@ function LinkWithUnderline({
       <motion.span
         className="absolute bottom-0 left-0 w-0 h-[2px] bg-yellow-500"
         variants={{
-          hover: { width: "100%" },
+          hover: { width: '100%' },
         }}
-        initial={{ width: "0%" }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
+        initial={{ width: '0%' }}
+        transition={{ duration: 0.5, ease: 'easeInOut' }}
       />
     </motion.a>
   );
