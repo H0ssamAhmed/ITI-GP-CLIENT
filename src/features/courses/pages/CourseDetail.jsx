@@ -1,7 +1,6 @@
-import React from 'react'
 import testImg from "../../../assets/HomePageImages/teacher.png";
 import { motion } from 'framer-motion'
-import { FaClock, FaPause, FaPlay } from 'react-icons/fa6';
+import { FaClock, FaPlay } from 'react-icons/fa6';
 
 const CourseDetail = () => {
   return (
@@ -38,14 +37,13 @@ const CourseDetail = () => {
         </motion.section>
         <motion.section>
           {Array.from({ length: 50 }).map((_, index) => {
-            const xOrY = `${index % 2 == 0 ? "x" : "y"} `
             return (<motion.div key={index + 1}
               // initial={{ x: index % 2 == 0 ? -2000 : 2000, opacity: 0 }} // come from left and right
               // initial={{ y: index % 2 == 0 ? -2000 : 2000, opacity: 0 }} // Come from top and bottom
               // initial={{ y: 2000, opacity: 0 }} // come from bottom
               initial={{ xOrY: -2000, opacity: 0 }} // 😂😂واحد بتجري ورا التانية
               animate={{ x: 0, y: 0, opacity: 1 }}
-              transition={{ transition: 0, delay: 0.1 * (index + 1) }}
+              transition={{ duration: 0.3, delay: 0.1 * (index + 1) }}
               className='container mx-auto'>
               <div className='grid grid-cols-12 gap-8 border-gray-300 border my-4 p-4 rounded-lg'>
                 <div className=' col-span-6 flex items-center justify-start gap-8 '>
