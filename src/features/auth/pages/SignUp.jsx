@@ -17,10 +17,9 @@ export default function SignUp() {
     console.log(data);
   };
   const levels = [
-    { label: "المرحلة الأولى", value: "level1" },
-    { label: "المرحلة الثانية", value: "level2" },
-    { label: "المرحلة الثالثة", value: "level3" },
-    { label: "المرحلة الرابعة", value: "level4" },
+    { label: "المرحلة الابتدائيه", value: "level1" },
+    { label: "المرحلة الاعداديه ", value: "level2" },
+    { label: "المرحلة الثانويه", value: "level3" },
   ];
 
   return (
