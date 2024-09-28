@@ -77,7 +77,10 @@ html {
 body {
   font-family: "Cairo", sans-serif;
   color: var(--color-grey-700);
-
+  background-image: url("src/assets/backgroundcover.png");
+  background-repeat: repeat;
+  background-size: cover;
+  background-position: center;
   transition: color 0.3s, background-color 0.3s;
   min-height: 100vh;
   line-height: 1.5;
@@ -160,4 +163,3 @@ img {
     background-position: 0% 50%, 50% 50%, 100% 100%;
   }
 }
-
