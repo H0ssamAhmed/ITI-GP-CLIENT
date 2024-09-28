@@ -4,7 +4,7 @@ import LoginValidation from "../validations/LoginValidation"; // Import validati
 import InputForm from "../components/InputForm"; // Import input component
 import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
-export default function Login() {
+export default function VerifyEmail() {
   const {
     register,
     handleSubmit,
@@ -31,7 +31,7 @@ export default function Login() {
           </h2>
           <img src={logo} alt="signup" className="w-[20%] object-contain" />
         </div>
-       
+
         <form
           onSubmit={handleSubmit(onSubmit)}
           noValidate
@@ -45,28 +45,13 @@ export default function Login() {
             register={register("email")}
           />
 
-          <InputForm
-            label="كلمة المرور"
-            type="password"
-            placeholder="كلمة المرور"
-            error={errors.password}
-            register={register("password")}
-          />
-          <a className="text-brand-700 text-right" href="/">نسيت كلمة المرور؟</a>
-
-            <button
-              type="submit"
-              className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-10 p-3 w-full rounded-lg"
-            >
-               تسجيل الدخول
-            </button>
+          <button
+            type="submit"
+            className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-10 p-3  w-full rounded-lg"
+          >
+            ارسل كود التفعيل{" "}
+          </button>
         </form>
-        <p className="text-center">
-          هل ليس لديك حساب؟{" "}
-          <a className="text-brand-700" href="/login">
-        انشئ حساب
-          </a>
-        </p>
       </div>
     </div>
   );
