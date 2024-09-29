@@ -75,7 +75,6 @@ function Home() {
           transition={{ duration: 1, ease: "easeOut" }}
         >
           <div className="relative bg-brand-700">
-            <Navigation />
             <div className="flex items-center justify-center">
               <ScrollToTopButton />
             </div>
@@ -195,7 +194,7 @@ function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
           >
-            <h1 className="text-[2.5rem] mt-[45rem]  lg:text-[3.5rem] mb-80 font-bold">
+            <h1 className="text-[2.5rem] mt-[40rem] lg:text-[3.5rem] mb-60 font-bold">
               إبدا رحلتك مع نخبة من أفضل المدرسين
             </h1>
             <div className="grid items-center justify-center grid-cols-1 gap-8 mb-16 md:grid-cols-2 lg:grid-cols-4 gap-y-60">
@@ -323,7 +322,6 @@ function Home() {
           </motion.section>
         </motion.div>
       </motion.div>
-      <Footer />
     </>
   );
 }

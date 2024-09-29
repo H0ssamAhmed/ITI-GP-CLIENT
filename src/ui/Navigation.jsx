@@ -6,6 +6,7 @@ import LinkWithUnderline from "./LinkWithUnderline";
 import Logo from "./Logo";
 import MultiLevelDropdown from "./MultiLevelDropdown";
 import SearchBar from "./SearchBar";
+import { Link } from "react-router-dom";
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +14,7 @@ function Navigation() {
   const navOpacity = useTransform(scrollY, [0, 50], [1, 0.9]); // Shrinks opacity as user scrolls
   const navY = useTransform(scrollY, [0, 50], [0, -10]); // Animates Y position on scroll
 
-  console.log(isOpen);
+  // console.log(isOpen);
   function toggleIsOpen() {
     setIsOpen(!isOpen);
   }
@@ -21,7 +22,7 @@ function Navigation() {
   return (
     <motion.nav
       style={{ opacity: navOpacity, y: navY }}
-      className="fixed top-0 left-0 z-[900] flex items-center justify-between w-full p-4 mb-5 shadow-md py-7 bg-brand-700 menu lg:justify-around"
+      className="sticky top-0 left-0 z-[900] flex items-center justify-between w-full p-4 shadow-md py-7 bg-brand-700 menu lg:justify-around"
       initial={false}
       animate={isOpen ? "open" : "close"}
     >
@@ -43,18 +44,26 @@ function Navigation() {
             <MultiLevelDropdown onOpenDropdown={isOpen} />
           </div>
 
-          <LinkWithUnderline>من نحن</LinkWithUnderline>
-          <LinkWithUnderline>تواصل معنا</LinkWithUnderline>
+          <Link to={"/about-us"}>
+            <LinkWithUnderline>من نحن</LinkWithUnderline>
+          </Link>
+          <Link to={"/contact"}>
+            <LinkWithUnderline>تواصل معنا</LinkWithUnderline>
+          </Link>
         </div>
         <SearchBar />
       </div>
       <div className="hidden gap-4 lg:flex">
-        <Button className="px-4 py-2 font-bold text-black transition-all duration-300 bg-yellow-500 rounded-full hover:bg-yellow-100 ">
-          حساب جديد
-        </Button>
-        <Button className="px-4 py-2 font-bold text-white transition-all duration-300 bg-transparent border-2 rounded-full hover:bg-gray-300 ring-white">
-          تسجيل الدخول
-        </Button>
+        <Link to={"/signup"}>
+          <Button className="px-4 py-2 font-bold text-black transition-all duration-300 bg-yellow-500 rounded-full hover:bg-yellow-100 ">
+            حساب جديد
+          </Button>
+        </Link>
+        <Link to={"/login"}>
+          <Button className="px-4 py-2 font-bold text-white transition-all duration-300 bg-transparent border-2 rounded-full hover:bg-gray-300 ring-white">
+            تسجيل الدخول
+          </Button>
+        </Link>
       </div>
     </motion.nav>
   );

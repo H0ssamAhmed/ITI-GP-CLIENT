@@ -8,14 +8,14 @@ function LinkWithUnderline({
   onMouseOver,
 }) {
   return (
-    <motion.a
+    <motion.div
       whileTap={{ scale: 0.97 }}
       onClick={onMouseOver}
       type="button"
       href="#"
       id={id}
       data-dropdown-toggle={dataDropdownToggle}
-      className={`relative px-4   font-bold transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-opacity-80 hover:rounded-full ${fontSize}`}
+      className={`relative px-4 cursor-pointer  font-bold transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-opacity-80 hover:rounded-full ${fontSize}`}
       whileHover="hover"
     >
       {children}
@@ -27,7 +27,7 @@ function LinkWithUnderline({
         initial={{ width: "0%" }}
         transition={{ duration: 0.5, ease: "easeInOut" }}
       />
-    </motion.a>
+    </motion.div>
   );
 }
 

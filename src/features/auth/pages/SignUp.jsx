@@ -4,6 +4,8 @@ import SignUpValidation from "../validations/SignUpValidation"; // Import valida
 import InputForm from "../components/InputForm"; // Import input component
 import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
+import Logo from "../../../ui/Logo";
+import { Link } from "react-router-dom";
 export default function SignUp() {
   const {
     register,
@@ -24,39 +26,34 @@ export default function SignUp() {
 
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
-      <img
-        src={signup}
-        alt="signup"
-        className="w-[30%] object-contain   hidden lg:block"
-      />
+
       <div className="flex flex-col text-right  justify-items-around lg:w-[30%] w-[90%] h-[100%]">
         <div className=" flex  items-center justify-end  mt-[30px] mb-[30px] w-[100%] ">
           <h2 className="text-4xl text-brand-700 font-bold  ">
             تسجيل حساب جديد
           </h2>
-          <img src={logo} alt="signup" className="w-[20%] object-contain" />
+          <Logo type="dark" />
+          {/* <img src={logo} alt="signup" className="w-[20%] object-contain" /> */}
         </div>
-        {/* <h2 className="text-2xl text-brand-700 font-semibold mb-[30px] ">
-يمكنك الان الانضمام لفريق ذاكرلي لتستمع بتجربه لذيذه وممتعه           </h2> */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           noValidate
           className="text-right w-[100%] "
         >
-          <div className="flex flex-col lg:flex-row-reverse lg:justify-items-between  gap-4">
+          <div className="flex flex-col lg:flex-row lg:justify-items-between  gap-4">
             <InputForm
               label=" الاسم الاول"
               type="text"
               placeholder="اسمك"
-              error={errors.firstName}
-              register={register("firstName")}
+              error={errors.FName}
+              register={register("FName")}
             />
             <InputForm
               label="الاسم الثاني"
               type="text"
               placeholder="اسمك"
-              error={errors.lastName}
-              register={register("lastName")}
+              error={errors.LName}
+              register={register("LName")}
             />
           </div>
           <InputForm
@@ -120,11 +117,16 @@ export default function SignUp() {
         </form>
         <p className="text-center">
           هل لديك حساب؟{" "}
-          <a className="text-brand-700" href="/login">
+          <Link to={"/login"} className="text-brand-700" >
             تسجيل الدخول
-          </a>
+          </Link>
         </p>
       </div>
+      <img
+        src={signup}
+        alt="signup"
+        className="w-[30%] object-contain   hidden lg:block"
+      />
     </div>
   );
 }

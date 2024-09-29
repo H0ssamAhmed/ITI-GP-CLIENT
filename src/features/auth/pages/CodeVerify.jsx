@@ -25,11 +25,7 @@ export default function CodeVerify() {
 
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200">
-      <img
-        src={signup}
-        alt="signup"
-        className="w-[30%] object-contain hidden lg:block"
-      />
+
       <div className="flex flex-col text-right lg:w-[30%] w-[90%] h-[60%]">
         <div className="flex items-center justify-end mt-[30px] mb-[60px] w-[100%]">
           <h2 className="text-4xl text-brand-700 font-bold">
@@ -61,7 +57,7 @@ export default function CodeVerify() {
                   onKeyDown={(e) => handleBackspace(e, index)}
                   inputRef={(el) => (inputRefs.current[index] = el)}
                 />
-                
+
               </div>
             ))}
           </div>

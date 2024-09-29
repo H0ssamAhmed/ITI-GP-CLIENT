@@ -17,9 +17,8 @@ const InputForm = ({ label, type, placeholder, error, register, options }) => {
         {type === "select" ? (
           <select
             {...register}
-            className={`shadow text-right appearance-none border rounded-xl w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-              error ? "border-red-500" : ""
-            }`}
+            className={`shadow text-right appearance-none border rounded-xl w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error ? "border-red-500" : ""
+              }`}
           >
             <option value="">{placeholder}</option>
             {options &&
@@ -35,9 +34,8 @@ const InputForm = ({ label, type, placeholder, error, register, options }) => {
               type={type === "password" && showPassword ? "text" : type}
               placeholder={placeholder}
               {...register}
-              className={`shadow text-right appearance-none border rounded-xl w-[100%] p-4   text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                error ? "border-red-500" : ""
-              }`}
+              className={`shadow text-right appearance-none border rounded-xl w-[100%] p-4   text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error ? "border-red-500" : ""
+                }`}
             />
             {type === "password" && (
               <span

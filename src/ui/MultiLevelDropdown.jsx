@@ -3,6 +3,7 @@ import { TbMoodBoy } from "react-icons/tb";
 import { CgGirl } from "react-icons/cg";
 import { PiStudent } from "react-icons/pi";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 function MultiLevelDropdown({ onOpenDropdown }) {
   const [isSubmenuOpen1, setIsSubmenuOpen1] = useState(false);
@@ -51,9 +52,8 @@ function MultiLevelDropdown({ onOpenDropdown }) {
                     المرحلة الإبتدائية
                   </div>
                   <svg
-                    className={`w-4 h-4 ms-3 transform transition-transform ${
-                      isSubmenuOpen1 ? "rotate-90" : ""
-                    }`}
+                    className={`w-4 h-4 ms-3 transform transition-transform ${isSubmenuOpen1 ? "rotate-90" : ""
+                      }`}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 6 10"
@@ -78,36 +78,32 @@ function MultiLevelDropdown({ onOpenDropdown }) {
                       variants={submenuVariants}
                     >
                       <li>
-                        <a
-                          href="#"
+                        <Link to={"/courses/:pri3"}
                           className="block px-6 py-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           الصف الثالث الإبتدائي
-                        </a>
+                        </Link>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <Link to={"/courses"}
                           className="block px-6 py-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           الصف الرابع الإبتدائي
-                        </a>
+                        </Link>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <Link to={"/courses"}
                           className="block px-6 py-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           الصف الخامس الإبتدائي
-                        </a>
+                        </Link>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <Link to={"/courses"}
                           className="block px-6 py-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           الصف السادس الإبتدائي
-                        </a>
+                        </Link>
                       </li>
                     </motion.ul>
                   )}
@@ -125,9 +121,8 @@ function MultiLevelDropdown({ onOpenDropdown }) {
                     المرحلة الإعدادية
                   </div>
                   <svg
-                    className={`w-4 h-4 ms-3 transform transition-transform ${
-                      isSubmenuOpen2 ? "rotate-90" : ""
-                    }`}
+                    className={`w-4 h-4 ms-3 transform transition-transform ${isSubmenuOpen2 ? "rotate-90" : ""
+                      }`}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 6 10"
@@ -151,28 +146,25 @@ function MultiLevelDropdown({ onOpenDropdown }) {
                       variants={submenuVariants}
                     >
                       <li>
-                        <a
-                          href="#"
+                        <Link to={"/courses"}
                           className="block px-6 py-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           الصف الأول الإعدادي
-                        </a>
+                        </Link>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <Link to={"/courses"}
                           className="block px-6 py-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           الصف الثاني الإعدادي
-                        </a>
+                        </Link>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <Link to={"/courses"}
                           className="block px-6 py-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           الصف الثالث الإعدادي
-                        </a>
+                        </Link>
                       </li>
                     </motion.ul>
                   )}
@@ -190,9 +182,8 @@ function MultiLevelDropdown({ onOpenDropdown }) {
                     المرحلة الثانوية
                   </div>
                   <svg
-                    className={`w-4 h-4 ms-3 transform transition-transform ${
-                      isSubmenuOpen3 ? "rotate-90" : ""
-                    }`}
+                    className={`w-4 h-4 ms-3 transform transition-transform ${isSubmenuOpen3 ? "rotate-90" : ""
+                      }`}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 6 10"
@@ -216,28 +207,25 @@ function MultiLevelDropdown({ onOpenDropdown }) {
                       variants={submenuVariants}
                     >
                       <li>
-                        <a
-                          href="#"
+                        <Link to={"/courses"}
                           className="block px-6 py-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           الصف الأول الثانوي
-                        </a>
+                        </Link>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <Link to={"/courses"}
                           className="block px-6 py-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           الصف الثاني الثانوي
-                        </a>
+                        </Link>
                       </li>
                       <li>
-                        <a
-                          href="#"
+                        <Link to={"/courses"}
                           className="block px-6 py-4 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           الصف الثالث الثانوي
-                        </a>
+                        </Link>
                       </li>
                     </motion.ul>
                   )}

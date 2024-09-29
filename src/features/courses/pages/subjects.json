@@ -1,0 +1,227 @@
+[
+  {
+    "subject": "AR",
+    "level": "pri-1",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "CH",
+    "level": "pri-2",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "EN",
+    "level": "pri-2",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "MA",
+    "level": "pri-3",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "SC",
+    "level": "pri-1",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "RE",
+    "level": "pri-1",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "PE",
+    "level": "pri-2",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "FR",
+    "level": "pri-2",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "PH",
+    "level": "pri-3",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "HI",
+    "level": "pri-3",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "BI",
+    "level": "pri-4",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "GE",
+    "level": "pri-4",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "IT",
+    "level": "pri-5",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "CH",
+    "level": "pri-5",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "SC",
+    "level": "pri-6",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "MA",
+    "level": "pri-5",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "AR",
+    "level": "pri-5",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "EN",
+    "level": "pri-6",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "RE",
+    "level": "pri-5",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "PE",
+    "level": "pri-5",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "GE",
+    "level": "pri-6",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "HI",
+    "level": "pri-6",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "FR",
+    "level": "pre-1",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "MA",
+    "level": "pre-1",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "SC",
+    "level": "pre-2",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "IT",
+    "level": "pre-1",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "CH",
+    "level": "pre-2",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "PH",
+    "level": "pre-2",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "BI",
+    "level": "pre-3",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "EN",
+    "level": "pre-3",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "RE",
+    "level": "pre-3",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "AR",
+    "level": "pre-3",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "PE",
+    "level": "pre-3",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "PH",
+    "level": "sec-1",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "CH",
+    "level": "sec-1",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "MA",
+    "level": "sec-2",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "SC",
+    "level": "sec-2",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "FR",
+    "level": "sec-3",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "HI",
+    "level": "sec-3",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "GE",
+    "level": "sec-1",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "IT",
+    "level": "sec-1",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "AR",
+    "level": "sec-2",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "EN",
+    "level": "sec-2",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "BI",
+    "level": "sec-3",
+    "Teacher": "<TeacherCard />"
+  },
+  {
+    "subject": "PE",
+    "level": "sec-3",
+    "Teacher": "<TeacherCard />"
+  }
+]

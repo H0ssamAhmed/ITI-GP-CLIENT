@@ -1,7 +1,18 @@
 import * as yup from "yup";
 
 const SignUpValidation = yup.object({
-  name: yup.string().required("الاسم مطلوب"),
+  FName: yup
+    .string()
+    .required("الاسم الاول مطلوب")
+    .min(3, "يجب أن يكون الاسم على 3 أحرف على الأقل")
+    .max(20, "يجب أن يكون الاسم على 20 أحرف على الأكثر")
+  ,
+  LName: yup
+    .string()
+    .required("الاسم الثاني مطلوب")
+    .min(3, "يجب أن يكون الاسم على 3 أحرف على الأقل")
+    .max(20, "يجب أن يكون الاسم على 20 أحرف على الأكثر")
+  ,
   email: yup
     .string()
     .email("البريد الإلكتروني غير صالح")
@@ -18,6 +29,12 @@ const SignUpValidation = yup.object({
     .string()
     .matches(/^(\+?[0-9]{1,3})?([0-9]{10})$/, "رقم الهاتف غير صالح")
     .required("رقم الهاتف مطلوب"),
+
+  parentPhone: yup
+    .string()
+    .matches(/^(\+?[0-9]{1,3})?([0-9]{10})$/, "رقم الهاتف غير صالح")
+    .required("هاتف ولي الامر مطلوب"),
+
   nationalID: yup.string().required("رقم الهوية مطلوب"),
   level: yup.string().required("المرحلة مطلوبة"),
   confirmPassword: yup
