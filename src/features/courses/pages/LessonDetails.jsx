@@ -38,8 +38,8 @@ function LessonDetails() {
                   {Array.from({ length: 5 }).map((lesson, index) => <Typography
                     padding={1}
                     marginTop={2}
-                    className="hover:bg-brand-600 hover:text-white transition-all rounded-lg cursor-pointer"
                     fontSize={20}
+                    className="hover:bg-brand-600 hover:text-white transition-all rounded-lg cursor-pointer"
                     key={index}
                   >الدرس {index + 1}</Typography>)}
 
