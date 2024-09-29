@@ -29,8 +29,8 @@ function App() {
             <Route path="about-us" element={<About />} />
             <Route path="courses" element={<Outlet />}>
               <Route index element={<CourseCatalog />} />
-              <Route path="courseId" element={<CourseDetail />} />
-              <Route path="courseId/:lessonId" element={<LessonDetails />} />
+              <Route path=":courseId" element={<CourseDetail />} />
+              <Route path=":courseId/:lessonId" element={<LessonDetails />} />
             </Route>
           </Route>
           <Route path="/signup" element={<SignUp />} />

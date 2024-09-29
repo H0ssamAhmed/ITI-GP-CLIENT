@@ -7,7 +7,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function LessonDetails() {
   return (
-    <main className='my-40'>
+    <main className='my-8'>
       <div className='container mx-auto'>
         <div className=" grid grid-cols-12 gap-4">
           <section className="col-span-12 md:col-span-9 grid-cols-subgrid">

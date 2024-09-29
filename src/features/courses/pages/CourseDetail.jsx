@@ -4,7 +4,7 @@ import { FaClock, FaPlay } from 'react-icons/fa6';
 
 const CourseDetail = () => {
   return (
-    <div className='mt-36 py-5 '>
+    <div className=''>
       <div className='mx-auto'>
         <section>
           <div className='bg-brand-100 py-8'>
