@@ -42,7 +42,7 @@ export default {
         },
 
         beige: {
-          300: "#F5F5DC",
+          300: "#F5F5DC"
         },
         // Grey
         grey: {
@@ -86,6 +86,7 @@ export default {
           500: "#D32F2F",
           700: "#b91c1c",
           800: "#991b1b",
+
         },
       },
       // Add box shadows
@@ -96,14 +97,14 @@ export default {
       },
       // Add border radii
       borderRadius: {
-        tiny: "3px",
-        sm: "5px",
-        md: "7px",
-        lg: "9px",
-        xl: "20px",
-        "2xl": "28px",
-        "3xl": "32px",
-        "4xl": "36px"
+        "tiny": "3px",
+        "sm": "5px",
+        "md": "7px",
+        "lg": "9px",
+        "xl": "12px",
+        "2xl": "15px",
+        "3xl": "18px",
+        "4xl": "20px",
       },
     },
   },
