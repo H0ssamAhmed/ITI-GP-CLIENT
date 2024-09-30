@@ -1,5 +1,9 @@
-
-import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+} from "react-router-dom";
 import ChooseRole from "./features/auth/pages/ChooseRole";
 import SignUp from "./features/auth/pages/SignUp";
 // import Login from "./features/auth/pages/Login";
@@ -16,13 +20,12 @@ import LessonDetails from "./features/courses/pages/LessonDetails";
 import Mainlayout from "./layouts/mainlayout";
 import Login from "./features/auth/pages/Login";
 
-
 function App() {
   return (
     <div>
       <Router>
         <Routes>
-          <Route path="/" element={<Mainlayout />} >
+          <Route path="/" element={<Mainlayout />}>
             <Route index element={<Home />} />
             {/* <Route path="*" element={<p>this errom</p>} /> */}
             <Route path="contact" element={<Contact />} />
@@ -37,15 +40,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<VerifyEmail />} />
         </Routes>
-
       </Router>
-
-
-
     </div>
-
   );
 }
 
-export default App
-
+export default App;
