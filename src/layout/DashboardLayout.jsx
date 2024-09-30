@@ -3,9 +3,8 @@ import DashboardMenu from "../components/DashboardMenu";
 import DashbordNavbar from "../components/DashbordNavbar";
 
 const DashboardLayout = () => (
-  <div className="flex h-screen">
+  <div className="flex">
     {/* Right */}
-
     <div className="w-[14%] md:w-[8%] p-4 lg:w-[16%] xl:w-[16%] ">
       <Link to="/dashboard">
         <img src="/src/assets/logo-smalldark.png" alt="logo" />

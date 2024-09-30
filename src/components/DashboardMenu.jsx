@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { role } from "../lib/data";
 
 const menuItems = [
   {
@@ -30,19 +31,19 @@ const menuItems = [
       },
       {
         icon: "/src/assets/dashboard/subject.png",
-        label: "المواد",
+        label: "المواد الدراسية",
         href: "list/subjects",
         visible: ["admin"],
       },
       {
         icon: "/src/assets/dashboard/class.png",
-        label: "الصفوف",
+        label: "الصفوف الدراسية",
         href: "list/classes",
         visible: ["admin", "teacher"],
       },
       {
         icon: "/src/assets/dashboard/lesson.png",
-        label: "الدروس",
+        label: "الكورسات",
         href: "list/lessons",
         visible: ["admin", "teacher"],
       },
@@ -52,24 +53,14 @@ const menuItems = [
         href: "list/exams",
         visible: ["admin", "teacher", "student", "parent"],
       },
-      {
-        icon: "/src/assets/dashboard/assignment.png",
-        label: "الفروض",
-        href: "list/assignments",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
+
       {
         icon: "/src/assets/dashboard/result.png",
         label: "النتائج",
         href: "list/results",
         visible: ["admin", "teacher", "student", "parent"],
       },
-      {
-        icon: "/src/assets/dashboard/attendance.png",
-        label: "الحضور",
-        href: "list/attendance",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
+
       {
         icon: "/src/assets/dashboard/calendar.png",
         label: "الأحداث",
@@ -120,19 +111,23 @@ const DashboardMenu = () => {
     <div>
       {menuItems.map((item) => (
         <div className="flex flex-col gap-2" key={item.title}>
-          <span className="hidden my-4 font-light text-brand-800 lg:block">
+          <span className="hidden my-4 font-light text-brand-800 lg:flex">
             {item.title}
           </span>
-          {item.items.map((i) => (
-            <Link
-              to={i.href}
-              key={i.label}
-              className="flex items-center justify-center gap-4 py-3 text-gray-700 lg:justify-start"
-            >
-              <img src={i.icon} alt="menu-icon" className="w-10 h-10" />
-              <span className="hidden lg:block">{i.label}</span>
-            </Link>
-          ))}
+          {item.items.map((i) => {
+            if (i.visible.includes(role)) {
+              return (
+                <Link
+                  to={i.href}
+                  key={i.label}
+                  className="flex items-center justify-center gap-4 py-3 text-gray-700 rounded-md md:px-2 hover:bg-brand-100 lg:justify-start"
+                >
+                  <img src={i.icon} alt="menu-icon" className="w-10 h-10" />
+                  <span className="hidden lg:block">{i.label}</span>
+                </Link>
+              );
+            }
+          })}
         </div>
       ))}
     </div>
