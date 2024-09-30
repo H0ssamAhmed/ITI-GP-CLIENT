@@ -125,7 +125,7 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 
@@ -179,6 +179,42 @@ img {
   }
 }
 
+:-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  /* box-shadow: inset 0 0 20px var(--color-brand-800); */
+  border-radius: 0px;
+  background-color: var(--color-brand-100);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-300);
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-500);
+}
+
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+  font-family: "Cairo", sans-serif !important;
+}
+
+.react-calendar__navigation__label__labelText {
+  font-weight: 600 !important;
+}
+
+.react-calendar__tile--active {
+  background: #c3ebfa !important;
+  color: black !important;
+}
 
 ::-webkit-scrollbar {
   width: 10px;
