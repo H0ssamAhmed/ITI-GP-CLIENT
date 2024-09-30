@@ -8,7 +8,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { amber, indigo } from '@mui/material/colors';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateProfileData } from '../../services/apiUpdateProfileDetails';
+import { updateProfileData } from '../../../services/apiUpdateProfileDetails';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';

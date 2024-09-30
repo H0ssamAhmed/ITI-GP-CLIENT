@@ -1,7 +1,7 @@
 import { Grid2 } from '@mui/material';
-import ProfilePicture from '../features/ProfileDetailsComponents/ProfilePicture';
-import ProfileHeader from '../features/ProfileDetailsComponents/ProfileDetailsHeader';
-import ProfileDetails from '../features/ProfileDetailsComponents/ProfileDetails';
+import ProfilePicture from '../features/ProfileDetails/components/ProfilePicture';
+import ProfileHeader from '../features/ProfileDetails/components/ProfileDetailsHeader';
+import ProfileDetails from '../features/ProfileDetails/components/ProfileDetails';
 
 export default function ProfilePage() {
   return (

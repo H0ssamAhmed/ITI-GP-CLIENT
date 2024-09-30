@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
-import Navigation from '../../ui/Navigation';
-import Footer from '../../ui/Footer';
+import Navigation from '../../../ui/Navigation';
+import Footer from '../../../ui/Footer';
 
 const ProfileDetailsLayout = () => {
   return (

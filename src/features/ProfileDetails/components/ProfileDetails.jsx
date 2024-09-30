@@ -12,7 +12,7 @@ import {
   faChalkboardTeacher,
 } from '@fortawesome/free-solid-svg-icons';
 import { useQuery } from '@tanstack/react-query';
-import { getProfileData } from '../../services/apiGetProfileDetails';
+import { getProfileData } from '../../../services/apiGetProfileDetails';
 export default function ProfileDetails() {
   const [editingField, setEditingField] = useState(null);
   const {
