@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { role } from "../lib/data";
+import { role } from "../../../lib/data";
 
 const menuItems = [
   {
@@ -8,7 +8,7 @@ const menuItems = [
       {
         icon: "/src/assets/dashboard/home.png",
         label: "الرئيسية",
-        href: "home",
+        href: "userHome",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
@@ -61,12 +61,6 @@ const menuItems = [
         visible: ["admin", "teacher", "student", "parent"],
       },
 
-      {
-        icon: "/src/assets/dashboard/calendar.png",
-        label: "الأحداث",
-        href: "list/events",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
       {
         icon: "/src/assets/dashboard/message.png",
         label: "الرسائل",

@@ -1,7 +1,7 @@
-import Announcement from "../../../../components/Announcement";
-import CoursesOverview from "../../../../components/CoursesOverview ";
-import EventCalender from "../../../../components/EventCalender";
-import FinanceChart from "../../../../components/FinanceChart";
+import Announcement from "../../components/Announcement";
+import CoursesOverview from "../../components/CoursesOverview ";
+import EventCalender from "../../components/EventCalender";
+import FinanceChart from "../../components/FinanceChart";
 
 const TeacherPage = () => {
   return (

@@ -1,9 +1,9 @@
-import DashbooardPagination from "../../../components/DashboardPagination";
-import DashboardTable from "../../../components/DashboardTable";
-import TableSearch from "../../../components/TableSearch";
+import DashbooardPagination from "../components/DashboardPagination";
+import DashboardTable from "../components/DashboardTable";
+import TableSearch from "../components/TableSearch";
 import { resultsData, role } from "../../../lib/data";
 import { RiDeleteBinLine } from "react-icons/ri";
-import FormModal from "../../../components/FormModal";
+import FormModal from "../components/FormModal";
 const columns = [
   {
     header: "المادة",

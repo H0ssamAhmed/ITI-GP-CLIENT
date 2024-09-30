@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { RiDeleteBinLine } from "react-icons/ri"; // Importing the icon
-import TeacherForm from "../features/dashboard/components/forms/TeacherForm";
+import TeacherForm from "./forms/TeacherForm";
 
 const FormModal = ({ table, type, data, id }) => {
   const size = type === "create" ? "w-9 h-9" : "w-10 h-10";

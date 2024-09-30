@@ -1,7 +1,7 @@
 import { CiMoneyBill } from "react-icons/ci";
-import CoursesList from "../../../components/CoursesList";
-import Announcement from "../../../components/Announcement";
-import StudentPerformanceChart from "../../../components/StudentPerformanceChart";
+import CoursesList from "../components/CoursesList";
+import Announcement from "../components/Announcement";
+import StudentPerformanceChart from "../components/StudentPerformanceChart";
 
 const StudentsDetails = () => {
   return (

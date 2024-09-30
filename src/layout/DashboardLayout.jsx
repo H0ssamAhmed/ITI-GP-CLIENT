@@ -1,6 +1,6 @@
 import { Link, Outlet } from "react-router-dom";
-import DashboardMenu from "../components/DashboardMenu";
-import DashbordNavbar from "../components/DashbordNavbar";
+import DashboardMenu from "../features/dashboard/components/DashboardMenu";
+import DashbordNavbar from "../features/dashboard/components/DashbordNavbar";
 
 const DashboardLayout = () => (
   <div className="flex">

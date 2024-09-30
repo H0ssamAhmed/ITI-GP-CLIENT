@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { role, transformedClasses } from "./lib/data";
 import AdminPage from "./features/dashboard/pages/admin/AdminPage";
 import TeacherPage from "./features/dashboard/pages/teacher/TeacherPage";
@@ -25,6 +25,28 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Redirect based on role when accessing userHome */}
+        <Route
+          path="/dashboard/userHome"
+          element={
+            role ? (
+              role === "admin" ? (
+                <Navigate to="/dashboard/admin" />
+              ) : role === "teacher" ? (
+                <Navigate to="/dashboard/teacher" />
+              ) : role === "student" ? (
+                <Navigate to="/dashboard/student" />
+              ) : role === "parent" ? (
+                <Navigate to="/dashboard/parent" />
+              ) : (
+                <Navigate to="/dashboard/profile" />
+              )
+            ) : (
+              <Navigate to="/" /> // Redirect to home or login if no role found
+            )
+          }
+        />
+
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route path="admin" element={<AdminPage />} />
@@ -32,8 +54,7 @@ function App() {
           <Route path="student" element={<StudentPage />} />
           <Route path="parent" element={<ParentPage />} />
           <Route path="profile" element={<ProfileList />} />
-
-          {/* Nested Lists under Dashboard */}
+          {/* Other nested routes */}
           <Route path="list/teachers" element={<TeachersList />} />
           <Route path="list/teachers/:id" element={<TeacherDetails />} />
           <Route path="list/students" element={<StudentsList />} />

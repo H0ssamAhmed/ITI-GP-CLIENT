@@ -1,6 +1,6 @@
-import Announcement from "../../../../components/Announcement";
-import ExamResults from "../../../../components/ExamResults";
-import ParentCourseList from "../../../../components/ParentCourseList";
+import Announcement from "../../components/Announcement";
+import ExamResults from "../../components/ExamResults";
+import ParentCourseList from "../../components/ParentCourseList";
 import { sons } from "../../../../lib/data";
 
 const ParentPage = () => {

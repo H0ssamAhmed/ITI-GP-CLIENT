@@ -1,6 +1,6 @@
-import Announcement from "../../../../components/Announcement";
-import CoursesList from "../../../../components/CoursesList";
-import EventCalender from "../../../../components/EventCalender";
+import Announcement from "../../components/Announcement";
+import CoursesList from "../../components/CoursesList";
+import EventCalender from "../../components/EventCalender";
 
 const StudentPage = () => {
   return (

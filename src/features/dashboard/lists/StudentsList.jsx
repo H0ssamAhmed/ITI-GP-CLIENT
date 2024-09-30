@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-import DashbooardPagination from "../../../components/DashboardPagination";
-import DashboardTable from "../../../components/DashboardTable";
-import TableSearch from "../../../components/TableSearch";
+import DashbooardPagination from "../components/DashboardPagination";
+import DashboardTable from "../components/DashboardTable";
+import TableSearch from "../components/TableSearch";
 import { role, studentsData } from "../../../lib/data";
 import { GrView } from "react-icons/gr";
 import { RiDeleteBinLine } from "react-icons/ri";
-import FormModal from "../../../components/FormModal";
+import FormModal from "../components/FormModal";
 const columns = [
   {
     header: "معلومات",

@@ -1,6 +1,6 @@
-import Announcement from "../../../components/Announcement";
-import FinanceChart from "../../../components/FinanceChart";
-import TeacherPerformanceChart from "../../../components/TeacherPerformanceChart";
+import Announcement from "../components/Announcement";
+import FinanceChart from "../components/FinanceChart";
+import TeacherPerformanceChart from "../components/TeacherPerformanceChart";
 
 const TeacherDetails = () => {
   return (

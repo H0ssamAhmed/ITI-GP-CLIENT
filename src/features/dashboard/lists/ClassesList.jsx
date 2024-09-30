@@ -1,8 +1,8 @@
-import DashbooardPagination from "../../../components/DashboardPagination";
-import DashboardTable from "../../../components/DashboardTable";
-import TableSearch from "../../../components/TableSearch";
+import DashbooardPagination from "../components/DashboardPagination";
+import DashboardTable from "../components/DashboardTable";
+import TableSearch from "../components/TableSearch";
 import { role } from "../../../lib/data"; // Assuming role is coming from the data file
-import FormModal from "../../../components/FormModal";
+import FormModal from "../components/FormModal";
 
 // Updated columns
 const columns = [
