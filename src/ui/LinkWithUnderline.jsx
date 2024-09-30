@@ -12,7 +12,7 @@ function LinkWithUnderline({
       whileTap={{ scale: 0.97 }}
       onClick={onMouseOver}
       type="button"
-      href="/about-us"
+      href="#"
       id={id}
       data-dropdown-toggle={dataDropdownToggle}
       className={`relative px-4   font-bold transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-opacity-80 hover:rounded-full ${fontSize}`}

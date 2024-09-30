@@ -1,11 +1,20 @@
 import React from 'react';
-import { Box, IconButton, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  Grid2,
+  IconButton,
+  Typography,
+} from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { useLoaderData } from 'react-router-dom';
 
 const carouselData = {
   aboutUs: {
-    title: 'منصة “ذاكرلي”:',
+    title: 'منصة ذاكرلي',
     items: [
       {
         primary: 'منصة تعليمية مبتكرة',
@@ -49,7 +58,7 @@ const carouselData = {
     ],
   },
   vision: {
-    title: 'رؤية منصة “ذاكرلي”:',
+    title: 'رؤية منصة ذاكرلي',
     items: [
       {
         primary: 'أن نكون المنصة التعليمية الرائدة',
@@ -79,7 +88,7 @@ const carouselData = {
     ],
   },
   mission: {
-    title: 'هدف منصة “ذاكرلي”:',
+    title: 'هدف منصة ذاكرلي',
     items: [
       {
         primary: 'تقديم محتوى تعليمي متميز يغطي جميع المراحل الدراسية.',
@@ -183,7 +192,6 @@ export default function About() {
         }}
       >
         <ArrowBack sx={{ fontSize: { xs: '30px', sm: '30px', md: '30px' } }} />
-        {/* Adjust icon size */}
       </IconButton>
 
       <Box
@@ -231,60 +239,83 @@ export default function About() {
             width: '100%',
             mx: '0',
 
-            scrollbarWidth: 'none',
             '&::-webkit-scrollbar': {
-              display: 'none',
+              width: '8px',
+              height: '8px',
+              backgroundColor: '#ddd',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#888',
+              borderRadius: '50%',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: '#f9f9f9',
+            },
+            '&:hover::-webkit-scrollbar-thumb': {
+              backgroundColor: 'rgb(255 215 0)',
             },
           }}
         >
-          {carouselData[sections[currentIndex]].items.map((item, index) => (
-            <Box
-              key={index}
-              sx={{
-                margin: '10px 0',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                transition: 'background-color 0.3s, transform 0.3s',
-                border: '1px solid',
-                borderColor: 'rgb(255 215 0)',
-                mb: 1,
-                '&:hover': {
-                  backgroundColor: 'rgb(255 215 0)',
-                  transform: 'scale(1.02)',
-                  '& .secondary-text': {
-                    opacity: 1,
-                    transform: 'translateY(0)',
-                  },
-                },
-              }}
-            >
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 'bold',
-                  fontSize: { xs: '1.5rem', sm: '2.2rem' },
-                  color: '#555',
-                }}
-              >
-                {item.primary}
-              </Typography>
-              {item.secondary && (
-                <Typography
-                  variant="body1"
-                  className="secondary-text"
+          <Grid container spacing={2}>
+            {carouselData[sections[currentIndex]].items.map((item, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card
                   sx={{
-                    opacity: 0,
-                    transform: 'translateY(10px)',
-                    transition: 'opacity 0.3s ease, transform 0.3s ease',
-                    fontSize: { xs: '1rem', sm: '1.9rem' },
-                    color: '#777',
+                    borderRadius: '8px',
+                    border: '1px solid rgb(255 215 0)',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    transition: 'background-color 0.3s, transform 0.3s',
+                    '&:hover': {
+                      backgroundColor: 'rgb(255 215 0)',
+                      transform: 'scale(1.02)',
+                    },
                   }}
                 >
-                  {item.secondary}
-                </Typography>
-              )}
-            </Box>
-          ))}
+                  <CardContent
+                    sx={{
+                      flexGrow: 1,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 'bold',
+                        fontSize: { xs: '1.5rem', sm: '2.2rem' },
+                        color: '#555',
+                      }}
+                    >
+                      {item.primary}
+                    </Typography>
+                    {item.secondary && (
+                      <Typography
+                        variant="body1"
+                        className="secondary-text"
+                        sx={{
+                          opacity: 0,
+                          transform: 'translateY(10px)',
+                          transition: 'opacity 0.3s ease, transform 0.3s ease',
+                          fontSize: { xs: '1rem', sm: '1.5rem' },
+                          color: '#777',
+                          '&:hover': {
+                            opacity: 1,
+                            transform: 'translateY(0)',
+                          },
+                        }}
+                      >
+                        {item.secondary}
+                      </Typography>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
         </Box>
       </Box>
 
@@ -313,7 +344,6 @@ export default function About() {
         <ArrowForward
           sx={{ fontSize: { xs: '30px', sm: '30px', md: '30px' } }}
         />
-        {/* Adjust icon size */}
       </IconButton>
     </Box>
   );
