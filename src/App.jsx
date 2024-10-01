@@ -5,7 +5,6 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
-import ChooseRole from "./features/auth/pages/ChooseRole";
 import SignUp from "./features/auth/pages/SignUp";
 import Login from "./features/auth/pages/Login";
 import VerifyEmail from "./features/auth/pages/VerifyEmail";
@@ -35,6 +34,7 @@ import ProfileList from "./features/dashboard/components/ProfileDetails";
 import CreateCourseList from "./features/dashboard/lists/CreateCourseList";
 import ExamsList from "./features/dashboard/lists/ExamsList";
 import { role, transformedClasses } from "./lib/data";
+import Error from "./pages/Error";
 
 function App() {
   return (
@@ -102,6 +102,8 @@ function App() {
           />
           <Route path="list/results" element={<ResultsList />} />
         </Route>
+
+        <Route path="*" element={<Error />} />
       </Routes>
     </Router>
   );
