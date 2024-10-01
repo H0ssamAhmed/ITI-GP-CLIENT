@@ -15,7 +15,7 @@ function LinkWithUnderline({
       href="#"
       id={id}
       data-dropdown-toggle={dataDropdownToggle}
-      className={`relative px-4 cursor-pointer  font-bold transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-opacity-80 hover:rounded-full ${fontSize}`}
+      className={`relative inline-block cursor-pointer font-bold transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-opacity-80 ${fontSize}`}
       whileHover="hover"
     >
       {children}

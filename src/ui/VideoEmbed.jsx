@@ -1,6 +1,6 @@
 function VideoEmbed({ url }) {
   return (
-    <div className="relative pb-[56.25%] h-0 overflow-hidden border border-yellow-500  rounded-lg">
+    <div className="relative pb-[56.25%] h-0 overflow-hidden  border-8 border-yellow-300 border-dotted  rounded-lg">
       <iframe
         className="absolute top-0 left-0 w-full h-full"
         src="https://www.youtube.com/embed/VIDEO_ID" // Replace VIDEO_ID with the actual YouTube video ID
@@ -11,7 +11,6 @@ function VideoEmbed({ url }) {
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
       ></iframe>
-
     </div>
   );
 }
