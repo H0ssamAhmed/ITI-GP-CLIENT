@@ -4,10 +4,12 @@ import Home from './pages/Home';
 import AboutLayout from './ui/AboutLayout';
 import ProfileDetailsLayout from './features/ProfileDetails/components/ProfileDetailsLayout';
 import ProfileDetails from './pages/ProfileDetails';
+import Features from './pages/Features';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import FeaturesLayout from './features/features/components/FeaturesLayout';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -28,6 +30,9 @@ function App() {
             </Route>
             <Route path="/profile-details" element={<ProfileDetailsLayout />}>
               <Route index element={<ProfileDetails />} />
+            </Route>
+            <Route path="/features" element={<FeaturesLayout />}>
+              <Route index element={<Features />} />
             </Route>
           </Routes>
         </Router>

@@ -1,39 +1,22 @@
-import { Grid2 } from '@mui/material';
+import { Box, Grid2 } from '@mui/material';
 import ProfilePicture from '../features/ProfileDetails/components/ProfilePicture';
 import ProfileHeader from '../features/ProfileDetails/components/ProfileDetailsHeader';
 import ProfileDetails from '../features/ProfileDetails/components/ProfileDetails';
 
 export default function ProfilePage() {
   return (
-    <Grid2 container spacing={2}>
-      <Grid2
-        size={{ xs: 12, sm: 12, md: 2 }}
-        className="upload-pic-container flex flex-col gap-3"
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: { xs: 2, sm: 2 },
-          mt: { xs: 10, sm: 12 },
-        }}
-      >
+    <Box
+      sx={{
+        py: 6,
+        px: { xs: 2, sm: 2, md: 9 },
+        backgroundColor: '#eaeff1',
+        mt: 10,
+      }}
+    >
+      <Grid2 container spacing={4}>
         <ProfilePicture />
-      </Grid2>
-      <Grid2
-        size={{ xs: 12, sm: 12, md: 8, lg: 8 }}
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: { xs: 2, sm: 2 },
-          justifyContent: 'center',
-        }}
-      >
-        <ProfileHeader />
-      </Grid2>
-      <Grid2 size={{ xs: 12, sm: 8 }} m={'auto'}>
         <ProfileDetails />
       </Grid2>
-    </Grid2>
+    </Box>
   );
 }

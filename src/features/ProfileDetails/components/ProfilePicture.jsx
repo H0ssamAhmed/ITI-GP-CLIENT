@@ -1,48 +1,90 @@
-import { Avatar, Button } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  Card,
+  CardContent,
+  Grid2,
+  styled,
+  Typography,
+} from '@mui/material';
 import { amber, indigo } from '@mui/material/colors';
 
 // colors
 const amberBgColor = amber[300];
 const indigoColor = indigo[500];
+// Styled components for the profile card
+const ProfileCard = styled(Card)({
+  backgroundColor: '#f5f5f5',
+  borderRadius: '10px',
+  padding: '20px',
+});
 
+const AvatarStyled = styled(Avatar)({
+  width: '100px',
+  height: '100px',
+  margin: '0 auto',
+});
 export default function ProfilePicture() {
   return (
-    <>
-      <Avatar
-        alt="Profile Picture"
-        src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+    <Grid2 size={{ xs: 12, sm: 12, md: 3 }}>
+      <ProfileCard
         sx={{
-          width: { xs: 100, sm: 100 },
-          height: { xs: 100, sm: 100 },
-          borderRadius: '50%',
-          border: `4px solid  ${indigoColor}`,
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          bgcolor: indigo[700],
+          color: '#fff',
+          height: '230px',
+          pt: 0,
+          width: { xs: '100%', sm: '40%', md: '100%' },
+          margin: 'auto',
         }}
-      />
+      >
+        <CardContent>
+          <AvatarStyled src="https://randomuser.me/api/portraits/men/1.jpg" />
+          <Typography
+            variant="h4"
+            align="center"
+            sx={{ marginY: 2, fontFamily: 'cairo' }}
+          >
+            احمد رخا
+          </Typography>
+          <Typography variant="h5" align="center" sx={{ fontFamily: 'cairo' }}>
+            مشرف
+          </Typography>
+          <Typography
+            variant="h5"
+            align="center"
+            sx={{
+              marginBottom: 2,
+              fontFamily: 'cairo',
+              fontSize: { sx: '1.5rem', sm: '1.5rem', md: '1.5rem' },
+            }}
+          >
+            ahmed@example.com
+          </Typography>
+        </CardContent>
+      </ProfileCard>
+
       <Button
         variant="contained"
-        className="upload-button"
         sx={{
-          width: { xs: '30%', sm: '22%', md: '100%', lg: '80%' },
-          fontSize: {
-            xs: '1.8rem',
-            sm: '1.7rem',
-            md: '1.5rem',
-            lg: '1.5rem',
-          },
+          fontFamily: 'cairo',
+          fontSize: '1.8rem',
+          bgcolor: amber[500],
+          color: '#000',
           fontWeight: 'bold',
-          py: 0.5,
-          mt: 1,
-          backgroundColor: indigoColor,
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          mt: 0.8,
+          display: 'block',
+          width: { xs: '100%', sm: '40%', md: '100%' },
+          border: '1px solid #000',
+          mx: 'auto',
           '&:hover': {
-            backgroundColor: amberBgColor,
-            color: indigoColor,
+            bgcolor: amber[600],
+            color: '#000',
           },
         }}
+        fullWidth
       >
         تغيير الصورة
       </Button>
-    </>
+    </Grid2>
   );
 }
