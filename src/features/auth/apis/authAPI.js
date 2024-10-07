@@ -43,8 +43,8 @@ export const useLogin = () => {
 
 export const useSignup = () => {
   const dispatch = useDispatch();
-
-  return useMutation(signupUser, {
+  return useMutation({
+    mutationFn: signupUser,
     onMutate: () => {
       dispatch(startLoading());
     },
@@ -58,4 +58,3 @@ export const useSignup = () => {
     },
   });
 };
-

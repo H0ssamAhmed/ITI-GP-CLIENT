@@ -23,7 +23,7 @@ export default function SignUp() {
     // console.log(data);
   };
   const levels = [
-    { label: "المرحلة الابتدائيه", value: "level1" },
+    { label: "المرحلة الابتدائيه", value: "022078cf-8180-46dc-82dc-ac48831d9cba" },
     { label: "المرحلة الاعداديه ", value: "level2" },
     { label: "المرحلة الثانويه", value: "level3" },
   ];
@@ -91,8 +91,8 @@ export default function SignUp() {
             label="المرحلة"
             type="select"
             placeholder="اختر المرحلة"
-            error={errors.level}
-            register={register("level")}
+            error={errors.levelId}
+            register={register("levelId")}
             options={levels}
           />
           <InputForm
@@ -114,7 +114,7 @@ export default function SignUp() {
               type="submit"
               className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-3 p-3 w-full rounded-lg"
             >
-              تسجيل
+              {isLoading? "جار�� التسجيل..." : "تسجيل"}{" "}
             </button>
           </div>
         </form>

@@ -36,7 +36,7 @@ const SignUpValidation = yup.object({
     .required("هاتف ولي الامر مطلوب"),
 
   nationalID: yup.string().required("رقم الهوية مطلوب"),
-  level: yup.string().required("المرحلة مطلوبة"),
+  levelId: yup.string().required("المرحلة مطلوبة"),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password"), null], "كلمات المرور غير متطابقة")
