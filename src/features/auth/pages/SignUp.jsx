@@ -6,6 +6,7 @@ import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
 import Logo from "../../../ui/Logo";
 import { Link } from "react-router-dom";
+import { useSignup } from "../apis/authAPI";
 export default function SignUp() {
   const {
     register,
@@ -14,9 +15,12 @@ export default function SignUp() {
   } = useForm({
     resolver: yupResolver(SignUpValidation),
   });
+  
+  const { mutate: signupUser, isLoading, error } = useSignup();
 
   const onSubmit = (data) => {
-    console.log(data);
+    signupUser(data);
+    // console.log(data);
   };
   const levels = [
     { label: "المرحلة الابتدائيه", value: "level1" },
@@ -44,15 +48,15 @@ export default function SignUp() {
               label=" الاسم الاول"
               type="text"
               placeholder="اسمك"
-              error={errors.FName}
-              register={register("FName")}
+              error={errors.firstName}
+              register={register("firstName")}
             />
             <InputForm
               label="الاسم الثاني"
               type="text"
               placeholder="اسمك"
-              error={errors.LName}
-              register={register("LName")}
+              error={errors.lastName}
+              register={register("lastName")}
             />
           </div>
           <InputForm
@@ -66,8 +70,8 @@ export default function SignUp() {
             label="رقم الهاتف"
             type="text"
             placeholder="رقم الهاتف"
-            error={errors.phone}
-            register={register("phone")}
+            error={errors.phoneNumber}
+            register={register("phoneNumber")}
           />
           <InputForm
             label="الرقم القومي"
@@ -80,8 +84,8 @@ export default function SignUp() {
             label="رقم الهاتف ولي الأمر"
             type="text"
             placeholder="رقم الهاتف ولي الأمر"
-            error={errors.parentPhone}
-            register={register("parentPhone")}
+            error={errors.parentPhoneNumber}
+            register={register("parentPhoneNumber")}
           />
           <InputForm
             label="المرحلة"
