@@ -12,7 +12,7 @@ const SpinnerOverlay = () => (
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 9999, // Ensure it overlays on top
+      zIndex: 9999,
     }}
   >
     <CircularProgress />

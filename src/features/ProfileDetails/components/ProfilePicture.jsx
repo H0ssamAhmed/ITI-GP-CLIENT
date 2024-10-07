@@ -1,13 +1,16 @@
+import { PhotoCamera } from '@mui/icons-material';
 import {
   Avatar,
+  Box,
   Button,
   Card,
   CardContent,
   Grid2,
+  IconButton,
   styled,
   Typography,
 } from '@mui/material';
-import { amber, indigo } from '@mui/material/colors';
+import { amber, grey, indigo } from '@mui/material/colors';
 
 // colors
 const amberBgColor = amber[300];
@@ -25,11 +28,12 @@ const AvatarStyled = styled(Avatar)({
   margin: '0 auto',
 });
 export default function ProfilePicture() {
+  function handleImageUpload() {}
   return (
     <Grid2 size={{ xs: 12, sm: 12, md: 3 }}>
       <ProfileCard
         sx={{
-          bgcolor: indigo[700],
+          bgcolor: grey[900],
           color: '#fff',
           height: '230px',
           pt: 0,
@@ -37,7 +41,7 @@ export default function ProfilePicture() {
           margin: 'auto',
         }}
       >
-        <CardContent>
+        <CardContent sx={{ position: 'relative' }}>
           <AvatarStyled src="https://randomuser.me/api/portraits/men/1.jpg" />
           <Typography
             variant="h4"
@@ -60,10 +64,41 @@ export default function ProfilePicture() {
           >
             ahmed@example.com
           </Typography>
+          <Box
+            sx={{
+              position: 'absolute',
+              right: 80,
+              top: 90,
+            }}
+          >
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="icon-button-file"
+              type="file"
+              onChange={handleImageUpload}
+            />
+            {/* Icon button for image upload */}
+            <label htmlFor="icon-button-file">
+              <IconButton
+                color="primary"
+                component="span"
+                sx={{
+                  mt: 1,
+                  bgcolor: amber[500],
+                  '&:hover': {
+                    bgcolor: amber[600],
+                  },
+                }}
+              >
+                <PhotoCamera />
+              </IconButton>
+            </label>
+          </Box>
         </CardContent>
       </ProfileCard>
 
-      <Button
+      {/* <Button
         variant="contained"
         sx={{
           fontFamily: 'cairo',
@@ -84,7 +119,7 @@ export default function ProfilePicture() {
         fullWidth
       >
         تغيير الصورة
-      </Button>
+      </Button> */}
     </Grid2>
   );
 }

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Box,
   Typography,
   Button,
   TextField,
@@ -9,22 +8,9 @@ import {
   Divider,
   Card,
   styled,
-  Avatar,
   FormLabel,
-  Badge,
-  Menu,
 } from '@mui/material';
-import ProfileDetail from './ProfileDetail';
-import {
-  faCircleUser,
-  faEnvelope,
-  faPhone,
-  faIdCard,
-  faLock,
-  faGraduationCap,
-  faWallet,
-  faChalkboardTeacher,
-} from '@fortawesome/free-solid-svg-icons';
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getProfileData } from '../../../services/apiGetProfileDetails';
 import { useForm } from 'react-hook-form';
@@ -32,10 +18,8 @@ import { toast } from 'react-toastify';
 import { amber, grey, indigo } from '@mui/material/colors';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  BadgeRounded,
   Mail,
   MenuBook,
-  Password,
   PermIdentity,
   Phone,
   School,
@@ -43,6 +27,7 @@ import {
 } from '@mui/icons-material';
 import { updateProfileData } from '../../../services/apiUpdateProfileDetails';
 import SpinnerOverlay from './SpinnerOverlay';
+import { resetPasswordApi } from '../../../services/resetPasswordApi';
 const ProfileCard = styled(Card)({
   backgroundColor: '#f5f5f5',
   borderRadius: '10px',
@@ -57,6 +42,12 @@ export default function ProfileDetails() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const {
+    register: registerResetPassowrd,
+    handleSubmit: handleSubmitResetPassowrd,
+    formState: { errors: errorsReset },
+    reset,
+  } = useForm();
   const queryClient = useQueryClient();
   const {
     isPending: isFetchingProfileData,
@@ -66,7 +57,7 @@ export default function ProfileDetails() {
     queryKey: ['profileData'],
     queryFn: getProfileData,
   });
-  const { mutate, isLoading: isSaving } = useMutation({
+  const { mutate, isLoading: isSavingProfileData } = useMutation({
     mutationFn: updateProfileData,
     onSuccess: () => {
       queryClient.invalidateQueries(['profileData']);
@@ -95,7 +86,30 @@ export default function ProfileDetails() {
     // Add your form submission logic here
   };
 
-  if (isFetchingProfileData || isSaving) {
+  const { mutate: mutateResetPassword, isPending: isSavingReset } = useMutation(
+    {
+      mutationFn: resetPasswordApi,
+      onSuccess: () => {
+        toast.success('Password updated successfully', {
+          type: 'success',
+          toastId: 'reset-password-success',
+        });
+      },
+      onError: (error) => {
+        console.error('Error updating profile:', error);
+        toast.error('Failed to update password. Please try again.', {
+          type: 'error',
+          toastId: 'reset-password-error',
+        });
+      },
+    }
+  );
+  const onSubmitResetPassword = (data) => {
+    console.log(data);
+
+    mutateResetPassword(data);
+  };
+  if (isFetchingProfileData || isSavingProfileData || isSavingReset) {
     return <SpinnerOverlay />;
   }
 
@@ -108,6 +122,8 @@ export default function ProfileDetails() {
   }
 
   let profileFields = [];
+  console.log(profileData.data);
+
   if (profileData) {
     profileFields.push(
       {
@@ -115,37 +131,97 @@ export default function ProfileDetails() {
         field: 'firstName',
         value: `${profileData.firstName}`,
         icon: <PermIdentity sx={{ fontSize: '1.9rem' }} />,
+        validation: {
+          required: {
+            value: true,
+            message: 'يجب عليك ادخال الاسم الاول',
+          },
+          minLength: {
+            value: 3,
+            message: ' الاسم الاول يجب ان يتكون على الاقل من 3 احرف',
+          },
+          maxLength: {
+            value: 20,
+            message: ' الاسم الاول يجب ان يتكون على الاكثر من 20 حرف',
+          },
+          pattern: {
+            value: /^[A-Za-z]+$/,
+            message: 'الاسم الاول يجب ان يحتوي على حروف فقط',
+          },
+        },
       },
       {
         label: 'اسم العائلة',
         field: 'lastName',
         value: `${profileData.lastName}`,
         icon: <PermIdentity sx={{ fontSize: '1.9rem' }} />,
+        validation: {
+          required: {
+            value: true,
+            message: 'يجب عليك ادخال الاسم الاول',
+          },
+          minLength: {
+            value: 3,
+            message: ' الاسم الاول يجب ان يتكون على الاقل من 3 احرف',
+          },
+          maxLength: {
+            value: 20,
+            message: ' الاسم الاول يجب ان يتكون على الاكثر من 20 حرف',
+          },
+          pattern: {
+            value: /^[A-Za-z]+$/,
+            message: 'الاسم الاول يجب ان يحتوي على حروف فقط',
+          },
+        },
       },
       {
         label: 'البريد الإلكتروني',
         field: 'email',
         value: profileData.email,
         icon: <Mail sx={{ fontSize: '1.9rem' }} />,
+        validation: {
+          required: {
+            value: true,
+            message: 'يجب عليك ادخال البريد الإلكتروني',
+          },
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: 'البريد الإلكتروني غير صالح',
+          },
+        },
       },
       {
         label: 'رقم الهاتف',
         field: 'phone',
-        value: profileData.phone,
+        value: profileData.phoneNumber,
         icon: <Phone sx={{ fontSize: '1.9rem' }} />,
-      },
-      {
-        label: 'الرقم القومي',
-        field: 'nationalID',
-        value: profileData.nationalID,
-        icon: <BadgeRounded sx={{ fontSize: '1.9rem' }} />,
-      },
-      {
-        label: 'كلمة المرور',
-        field: 'password',
-        value: profileData.password,
-        icon: <Password sx={{ fontSize: '1.9rem' }} />,
+        validation: {
+          required: {
+            value: true,
+            message: 'يجب عليك ادخال رقم الهاتف',
+          },
+          pattern: {
+            value: /^\d{11}$/,
+            message: 'رقم الهاتف غير صالح',
+          },
+        },
       }
+      // {
+      //   label: 'الرقم القومي',
+      //   field: 'nationalID',
+      //   value: profileData.nationalId,
+      //   icon: <BadgeRounded sx={{ fontSize: '1.9rem' }} />,
+      //   validation: {
+      //     required: {
+      //       value: true,
+      //       message: 'يجب عليك ادخال الرقم القومي',
+      //     },
+      //     pattern: {
+      //       value: /^\d{14}$/,
+      //       message: 'الرقم القومي غير صالح',
+      //     },
+      //   },
+      // }
     );
   }
   // Populate fields based on the role
@@ -156,11 +232,21 @@ export default function ProfileDetails() {
         field: 'parentPhoneNumber',
         value: profileData.parentPhoneNumber,
         icon: <Phone sx={{ fontSize: '1.9rem' }} />,
+        validation: {
+          required: {
+            value: true,
+            message: 'يجب عليك ادخال رقم هاتف ولي الأمر',
+          },
+          pattern: {
+            value: /^\d{11}$/,
+            message: 'رقم هاتف ولي الأمر غير صالح',
+          },
+        },
       },
       {
         label: 'المحفظة',
         field: 'wallet',
-        value: profileData.wallet,
+        value: profileData.walletBalance,
         icon: <Wallet sx={{ fontSize: '1.9rem' }} />,
       },
       {
@@ -168,6 +254,16 @@ export default function ProfileDetails() {
         field: 'level',
         value: profileData.level,
         icon: <MenuBook sx={{ fontSize: '2rem' }} />,
+        validation: {
+          required: {
+            value: true,
+            message: 'يجب عليك ادخال الصف الدراسي',
+          },
+          pattern: {
+            value: /^[A-Za-z]+$/,
+            message: 'الصف الدراسي يجب ان يحتوي على حروف فقط',
+          },
+        },
       }
     );
   }
@@ -179,31 +275,71 @@ export default function ProfileDetails() {
         field: 'teacherSpecialization',
         value: profileData.specialization,
         icon: <MenuBook sx={{ fontSize: '2rem' }} />,
+        validation: {
+          required: {
+            value: true,
+            message: 'يجب عليك ادخال التخصص',
+          },
+          pattern: {
+            value: /^[A-Za-z]+$/,
+            message: 'التخصص يجب ان يحتوي على حروف فقط',
+          },
+        },
       },
       {
         label: 'سنة التخرج',
         field: 'teacherGraduationYear',
         value: profileData.graduationYear,
         icon: <School sx={{ fontSize: '2rem' }} />,
+        validation: {
+          required: {
+            value: true,
+            message: 'يجب عليك ادخال سنة التخرج',
+          },
+          pattern: {
+            value: /^[0-9]+$/,
+            message: 'سنة التخرج يجب ان يحتوي على ارقام فقط',
+          },
+        },
       },
       {
         label: 'المؤهل التعليمي',
         field: 'educationalQualification',
         value: profileData.educationalQualification,
         icon: <School sx={{ fontSize: '2rem' }} />,
-      },
-      {
-        label: ' المستويات',
-        field: 'levels',
-        value: profileData.levels,
-        icon: <MenuBook sx={{ fontSize: '2rem' }} />,
+        validation: {
+          required: {
+            value: true,
+            message: 'يجب عليك ادخال المؤهل التعليمي',
+          },
+          // pattern: {
+          //   value: /^[A-Za-z]+$/,
+          //   message: 'المؤهل التعليمي يجب ان يحتوي على حروف فقط',
+          // },
+        },
       }
+      // {
+      //   label: ' المستويات',
+      //   field: 'levels',
+      //   value: profileData.levels,
+      //   icon: <MenuBook sx={{ fontSize: '2rem' }} />,
+      //   validation: {
+      //     required: {
+      //       value: true,
+      //       message: 'يجب عليك ادخال المستويات',
+      //     },
+      //     pattern: {
+      //       value: /^[A-Za-z]+$/,
+      //       message: 'المستويات يجب ان يحتوي على حروف فقط',
+      //     },
+      //   },
+      // }
     );
   }
   const isEmptyField = Object.keys(errors).length === 0;
   return (
     <Grid2 size={{ xs: 12, sm: 12, md: 9 }}>
-      <ProfileCard sx={{ bgcolor: indigo[700], color: '#fff' }}>
+      <ProfileCard sx={{ bgcolor: grey[900], color: '#fff' }}>
         <CardContent>
           <Typography
             variant="h3"
@@ -231,10 +367,7 @@ export default function ProfileDetails() {
                   <TextField
                     fullWidth
                     {...register(detail.field, {
-                      required: {
-                        value: true,
-                        message: 'This field is required',
-                      },
+                      ...detail.validation,
                     })}
                     disabled={
                       (!isEditing && isEmptyField) || detail.field === 'wallet'
@@ -327,7 +460,7 @@ export default function ProfileDetails() {
             تغيير كلمة المرور
           </Button>
           {passwordModalOpen && (
-            <form>
+            <form onSubmit={handleSubmitResetPassowrd(onSubmitResetPassword)}>
               <Grid2 container spacing={2}>
                 <Grid2 size={{ xs: 12 }}>
                   <FormLabel
@@ -355,6 +488,12 @@ export default function ProfileDetails() {
                         color: 'black',
                       },
                     }}
+                    {...registerResetPassowrd('oldPassword', {
+                      required: {
+                        value: true,
+                        message: 'كلمة المرور الحالية مطلوبة',
+                      },
+                    })}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 12 }}>
@@ -383,10 +522,21 @@ export default function ProfileDetails() {
                         color: 'black',
                       },
                     }}
+                    {...registerResetPassowrd('newPassword', {
+                      required: {
+                        value: true,
+                        message: 'كلمة المرور الجديدة مطلوبة',
+                      },
+                      minLength: {
+                        value: 8,
+                        message: 'كلمة المرور يجب الا يقل عن 8 حروف',
+                      },
+                    })}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 12 }}>
                   <Button
+                    type="submit"
                     variant="contained"
                     fullWidth
                     sx={{

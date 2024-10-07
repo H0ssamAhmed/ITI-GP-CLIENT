@@ -1,6 +1,5 @@
 import { Box, Grid2 } from '@mui/material';
 import ProfilePicture from '../features/ProfileDetails/components/ProfilePicture';
-import ProfileHeader from '../features/ProfileDetails/components/ProfileDetailsHeader';
 import ProfileDetails from '../features/ProfileDetails/components/ProfileDetails';
 
 export default function ProfilePage() {
