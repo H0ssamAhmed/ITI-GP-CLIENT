@@ -1,8 +1,32 @@
+import { useParams } from "react-router-dom";
 import Announcement from "../components/Announcement";
 import FinanceChart from "../components/FinanceChart";
 import TeacherPerformanceChart from "../components/TeacherPerformanceChart";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserById } from "../dashboardAPI";
+import Spinner from "../../../ui/Spinner";
+import ErrorMessage from "./ErrorMessage";
+import teacherDefault from "../../../assets/dashboard/profileDefualt.jpg";
+import UploadImageButton from "../../../ui/UploadImageButton";
 
 const TeacherDetails = () => {
+  const { id } = useParams();
+
+  const {
+    data: teacher,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["teacher"],
+    queryFn: () => fetchUserById(id),
+  });
+
+  if (isLoading) return <Spinner />;
+  if (error) return <ErrorMessage message="فشل تحميل بيانات المعلم" />;
+
+  //NOTE - TEST
+  console.log(teacher);
+
   return (
     <div className="flex flex-col flex-1 gap-4 p-4 xl:flex-row">
       {/* Right */}
@@ -12,32 +36,69 @@ const TeacherDetails = () => {
           {/* USER Info Card */}
           <div className="flex flex-1 gap-4 px-6 py-6 rounded-md bg-brand-100">
             <div className="w-1/3 ">
-              <img
-                className="object-cover rounded-full w-36 h-36"
-                alt="teacher Image"
-                src="/src/assets/videoalt.svg"
-              />
+              {teacher.picture ? (
+                <div className="relative">
+                  <img
+                    src={teacher.picture}
+                    alt="teacherImage"
+                    className="object-cover w-10 h-10 rounded-full md:hidden lg:block "
+                  />
+
+                  <UploadImageButton />
+                </div>
+              ) : (
+                <div className="relative">
+                  {/* User Profile Image */}
+                  <img
+                    src={teacherDefault}
+                    alt="userdefaultprofileimage"
+                    className="object-cover w-32 h-32 rounded-full md:hidden lg:block"
+                  />
+
+                  <UploadImageButton />
+                </div>
+              )}
             </div>
             <div className="flex flex-col justify-between w-2/3 gap-4">
-              <h1 className="text-[2rem] font-bold">حمادة محمد</h1>
+              <h1 className="text-[2rem] font-bold">
+                {`${teacher.firstName}  ${teacher.lastName}`}
+              </h1>
               <p className="text-[1rem] text-gray-400">
-                مدرس لغة عربية بالصف الأول الإبتدائي
+                {`مدرس لمادة ${teacher.specialization}`}
               </p>
-              <div className="flex flex-wrap items-center justify-between font-medium text-[0.7rem] gap-2">
-                <div className="flex items-center w-full gap-2 2xl:w-1/3 lg:w-full md:w-1/3">
+              <div className="flex flex-col flex-wrap items-start justify-around font-medium text-[0.7rem] gap-2 w-full">
+                {/* Graduation Year */}
+                <div className="flex items-center w-full gap-2">
                   <img className="w-5" src="/src/assets/dashboard/date.png" />
-                  <span className="text-[0.9rem]">يناير 2025</span>
+                  <span className="flex-grow text-[0.9rem]">{`سنة التخرج : ${teacher.graduationYear}`}</span>
                 </div>
-                <div className="flex items-center w-full gap-2 2xl:w-1/3 lg:w-full md:w-1/3">
+
+                {/* Email */}
+                <div className="flex items-center w-full gap-2">
                   <img className="w-5" src="/src/assets/dashboard/mail.png" />
-                  <span className="text-[0.9rem]">user@gmail.com</span>
+                  <span className="flex-grow text-[0.9rem]">
+                    {teacher.email}
+                  </span>
                 </div>
-                <div className="flex items-center w-full gap-2 2xl:w-1/3 lg:w-full md:w-1/3">
+
+                {/* Phone Number */}
+                <div className="flex items-center w-full gap-2">
                   <img
                     className="w-5 rotate-[270deg]"
                     src="/src/assets/dashboard/phone.png"
                   />
-                  <span className="text-[0.9rem]">01092006446</span>
+                  <span className="flex-grow text-[0.9rem]">
+                    {teacher.phoneNumber}
+                  </span>
+                </div>
+
+                {/* Educational Qualification */}
+                <div className="flex items-center w-full gap-2">
+                  <img
+                    className="w-5"
+                    src="/src/assets/dashboard/edutcation.png"
+                  />
+                  <span className="flex-grow text-[0.9rem]">{`المؤهل الدراسي : ${teacher.educationalQualification}`}</span>
                 </div>
               </div>
             </div>

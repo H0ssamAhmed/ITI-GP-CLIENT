@@ -5,7 +5,7 @@ import { role, subjectsData } from "../../../lib/data";
 import FormModal from "../components/FormModal";
 const columns = [
   {
-    header: "إسم المادة",
+    header: "إسم الكورس",
     accessor: "subjectName",
   },
   {
@@ -37,7 +37,6 @@ const SubjectsList = () => {
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="المادة" type="update" data={item} />
               <FormModal table="المادة" type="delete" item={item.id} />
             </>
           )}
@@ -51,7 +50,7 @@ const SubjectsList = () => {
       {/* Top */}
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block font-semibold text-[1.9rem]">
-          جميع المواد الدراسية
+          جميع كورسات المنصة
         </h1>
         {/* Search Bar + Buttons */}
         <div className="flex flex-col items-center w-full gap-4 md:flex-row md:w-auto">

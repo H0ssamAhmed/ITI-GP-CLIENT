@@ -3,7 +3,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import SignUpValidation from "../validations/SignUpValidation"; // Import validation schema
 import InputForm from "../components/InputForm"; // Import input component
 import signup from "../../../assets/Online learning-amico.svg";
-import logo from "../../../assets/Group 3.svg";
 import Logo from "../../../ui/Logo";
 import { Link } from "react-router-dom";
 export default function SignUp() {
@@ -17,6 +16,7 @@ export default function SignUp() {
 
   const onSubmit = (data) => {
     console.log(data);
+    alert("hello");
   };
   const levels = [
     { label: "المرحلة الابتدائيه", value: "level1" },
@@ -25,10 +25,10 @@ export default function SignUp() {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
+    <div className="flex flex-col items-center justify-around h-screen lg:flex-row bg-gradient-to-b from-brand-200 ">
       <div className="flex flex-col text-right  justify-items-around lg:w-[30%] w-[90%] h-[100%]">
         <div className=" flex  items-center justify-end  mt-[30px] mb-[30px] w-[100%] ">
-          <h2 className="text-4xl text-brand-700 font-bold  ">
+          <h2 className="text-4xl font-bold text-brand-700 ">
             تسجيل حساب جديد
           </h2>
           <Logo type="dark" />
@@ -39,7 +39,7 @@ export default function SignUp() {
           noValidate
           className="text-right w-[100%] "
         >
-          <div className="flex flex-col lg:flex-row lg:justify-items-between  gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row lg:justify-items-between">
             <InputForm
               label=" الاسم الاول"
               type="text"
@@ -108,7 +108,7 @@ export default function SignUp() {
           <div className="flex items-center justify-center">
             <button
               type="submit"
-              className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-3 p-3 w-full rounded-lg"
+              className="w-full p-3 my-3 font-bold text-white bg-indigo-500 rounded-lg hover:bg-indigo-700"
             >
               تسجيل
             </button>

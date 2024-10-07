@@ -4,7 +4,9 @@ import LoginValidation from "../validations/LoginValidation"; // Import validati
 import InputForm from "../components/InputForm"; // Import input component
 import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { loginUser } from "../apis/authAPI";
 export default function Login() {
   const {
     register,
@@ -14,16 +16,45 @@ export default function Login() {
     resolver: yupResolver(LoginValidation),
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const [loginError, setLoginError] = useState("");
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const onSubmit = async (data) => {
+    try {
+      // Call loginUser function
+      const accessToken = await loginUser(data.email, data.password);
+
+      // Assuming the backend returns the role in the response
+      const userRole = parseJwt(accessToken).role; // Assuming the token has a 'role' field
+
+      if (userRole === "admin") {
+        // Redirect to admin dashboard
+        navigate("/dashboard/admin");
+      } else {
+        // Redirect to user dashboard
+        navigate("/user/dashboard");
+      }
+    } catch (error) {
+      setLoginError("Login failed. Please check your credentials.");
+    }
+  };
+
+  // Function to decode JWT (if your token is a JWT and includes role information)
+  const parseJwt = (token) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      return JSON.parse(atob(base64));
+    } catch (e) {
+      return null;
+    }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
-
+    <div className="flex flex-col items-center justify-around h-screen lg:flex-row bg-gradient-to-b from-brand-200 ">
       <div className="flex flex-col text-right  justify-items-center lg:w-[30%] w-[90%] h-[60%]">
         <div className=" flex  items-center justify-end  mt-[30px] mb-[60px] w-[100%] ">
-          <h2 className="text-4xl text-brand-700 font-bold  ">
+          <h2 className="text-4xl font-bold text-brand-700 ">
             مرحبا بك مجددا في مجتمع ذاكرلي{" "}
           </h2>
           <img src={logo} alt="signup" className="w-[20%] object-contain" />
@@ -49,11 +80,19 @@ export default function Login() {
             error={errors.password}
             register={register("password")}
           />
-          <Link to={"/reset-password"} className="text-brand-700 text-right" href="/">نسيت كلمة المرور؟</Link>
+
+          {loginError && <p className="text-red-500">{loginError}</p>}
+          <Link
+            to={"/reset-password"}
+            className="text-right text-brand-700"
+            href="/"
+          >
+            نسيت كلمة المرور؟
+          </Link>
 
           <button
             type="submit"
-            className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-10 p-3 w-full rounded-lg"
+            className="w-full p-3 my-10 font-bold text-white bg-indigo-500 rounded-lg hover:bg-indigo-700"
           >
             تسجيل الدخول
           </button>
