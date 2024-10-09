@@ -1,12 +1,19 @@
-import { useRef, React, useState } from "react";
+import { useRef, useState } from "react";
 import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
 import { Input } from "@material-tailwind/react";
+import { useLocation } from "react-router-dom";
+import { useVerifyOTP, useResendOTP } from "../apis/authAPI"; // Import the custom hook
+import { useNavigate } from "react-router-dom";
 
 export default function CodeVerify() {
+  const location = useLocation();
+  const email = location.state?.email || "";
+  const { mutate: verifyOTP, isLoading } = useVerifyOTP();
+  const { mutate: resendOTP, isLoading: resendLoading } = useResendOTP();
   const inputRefs = useRef([]);
-  const [otp, setOtp] = useState(Array(4).fill(""));
-
+  const [otp, setOtp] = useState(Array(6).fill(""));
+  const navigate = useNavigate();
   const handleChange = (index, value) => {
     const newOtp = [...otp];
     newOtp[index] = value.replace(/[^0-9]/g, "");
@@ -22,10 +29,24 @@ export default function CodeVerify() {
       inputRefs.current[index - 1].focus();
     }
   }
-
+  const handleSubmit = async () => {
+    // const otpCode = otp.join(""); // Join OTP digits into a single string
+    // if (otpCode.length === 6) {
+    try {
+      await verifyOTP({ otp: otp }); // Call the mutation with email and OTP
+      navigate("/login");
+    } catch (e) {
+      console.log("Error verifying OTP", e);
+    }
+    // } else {
+    //   console.log("Invalid OTP");
+    // }
+  };
+  const handleResend = async () => {
+    await resendOTP();
+  };
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200">
-
       <div className="flex flex-col text-right lg:w-[30%] w-[90%] h-[60%]">
         <div className="flex items-center justify-end mt-[30px] mb-[60px] w-[100%]">
           <h2 className="text-4xl text-brand-700 font-bold">
@@ -35,12 +56,12 @@ export default function CodeVerify() {
         </div>
         <div className="w-[100%]">
           <h2 className="flex items-center justify-center gap-1 text-center text-2xl font-semibold">
-            <span className="font-bold">nada@gmail.com</span> ادخل الكود المكون
-            من 6 ارقام الذي تم ارساله للبريد الالكتروني
+            <span className="font-bold">{email}</span> ادخل الكود المكون من 6
+            ارقام الذي تم ارساله للبريد الالكتروني
           </h2>
 
           <div className="mt-[40px] mb-[40px] flex items-center justify-center gap-4 w-[100%]">
-            {otp.map((digit, index) => (
+            {/* {otp.map((digit, index) => (
               <div key={index}>
                 <Input
                   type="text"
@@ -57,14 +78,21 @@ export default function CodeVerify() {
                   onKeyDown={(e) => handleBackspace(e, index)}
                   inputRef={(el) => (inputRefs.current[index] = el)}
                 />
-
               </div>
-            ))}
+            ))} */}
+            <Input
+              type="text"
+              maxLength={6}
+              onChange={(e) => setOtp(e.target.value)}
+            />
           </div>
 
           <h2 className="text-center text-blue-gray-500 font-medium ">
             هل لم يستلم الكود؟{" "}
-            <span className="font-bold cursor-pointer text-indigo-600">
+            <span
+              className="font-bold cursor-pointer text-indigo-600"
+              onClick={handleResend}
+            >
               اعادة الارسال
             </span>
           </h2>
@@ -73,8 +101,10 @@ export default function CodeVerify() {
         <button
           type="submit"
           className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 w-full rounded-lg mt-10 transition-all duration-300"
+          onClick={handleSubmit}
+          disabled={isLoading}
         >
-          ارسل كود التفعيل
+          {isLoading ? "جارٍ التحقق..." : "ارسل كود التفعيل"}
         </button>
       </div>
     </div>

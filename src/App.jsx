@@ -8,6 +8,8 @@ import {
 import SignUp from "./features/auth/pages/SignUp";
 import Login from "./features/auth/pages/Login";
 import VerifyEmail from "./features/auth/pages/VerifyEmail";
+import CodeVerify from "./features/auth/pages/CodeVerify";
+import ForgetPassword from "./features/auth/pages/ForgetPassword";
 import Home from "./pages/Home";
 import CourseCatalog from "./features/courses/pages/CourseCatalog";
 import CourseDetail from "./features/courses/pages/CourseDetail";
@@ -53,7 +55,9 @@ function App() {
           </Route>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<VerifyEmail />} />
+          <Route path="/forget-password-email" element={<VerifyEmail />} />
+          <Route path="/verify-otp" element={<CodeVerify />} />
+          <Route path="/forget-password" element={<ForgetPassword />} />
 
           {/* Redirect based on role when accessing userHome */}
           <Route

@@ -5,9 +5,10 @@ import InputForm from "../components/InputForm"; // Import input component
 import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
 import Logo from "../../../ui/Logo";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSignup } from "../apis/authAPI";
 export default function SignUp() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -15,17 +16,31 @@ export default function SignUp() {
   } = useForm({
     resolver: yupResolver(SignUpValidation),
   });
-  
+
   const { mutate: signupUser, isLoading, error } = useSignup();
 
-  const onSubmit = (data) => {
-    signupUser(data);
-    // console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      console.log(data);
+      await signupUser(data);
+      navigate("/verify-otp", { state: { email: data.email } });
+    } catch (err) {
+      console.error("Signup error:", err);
+    }
   };
   const levels = [
-    { label: "المرحلة الابتدائيه", value: "022078cf-8180-46dc-82dc-ac48831d9cba" },
-    { label: "المرحلة الاعداديه ", value: "level2" },
-    { label: "المرحلة الثانويه", value: "level3" },
+    {
+      label: "المرحلة الابتدائيه",
+      value: "44fab77e-e2f8-44fa-b1da-3615e7caef84",
+    },
+    {
+      label: "المرحلة الاعداديه ",
+      value: "2561084b-5936-453e-b8d3-3dcbce60d945",
+    },
+    {
+      label: "المرحلة الثانويه",
+      value: "375818c0-2035-4f5e-82fa-0fd194c65507",
+    },
   ];
 
   return (
@@ -114,7 +129,7 @@ export default function SignUp() {
               type="submit"
               className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-3 p-3 w-full rounded-lg"
             >
-              {isLoading? "جار�� التسجيل..." : "تسجيل"}{" "}
+              {isLoading ? "جار�� التسجيل..." : "تسجيل"}{" "}
             </button>
           </div>
         </form>
