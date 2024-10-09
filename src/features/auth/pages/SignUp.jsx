@@ -11,24 +11,28 @@ import SignUpContext from '../../store/signup-context';
 import { apiCreateUser } from '../../../services/apiCreateUser';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import getSignUpValidationSchema from '../validations/SignUpValidation';
 export default function SignUp() {
   const { type } = useContext(SignUpContext);
-
+  console.log(getSignUpValidationSchema(type));
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(SignUpValidation),
+    resolver: yupResolver(getSignUpValidationSchema(type)),
   });
+  console.log(errors);
 
   const onSubmit = (data) => {
+    console.log(data);
+
     mutate(data);
   };
   const { mutate } = useMutation({
     mutationFn: (data) => apiCreateUser(data, type),
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success('تم تسجيل حسابك بنجاح');
       reset();
     },
@@ -62,15 +66,15 @@ export default function SignUp() {
               label=" الاسم الاول"
               type="text"
               placeholder="اسمك"
-              error={errors.FName}
-              register={register('FName')}
+              error={errors.firstName}
+              register={register('firstName')}
             />
             <InputForm
               label="الاسم الثاني"
               type="text"
               placeholder="اسمك"
-              error={errors.LName}
-              register={register('LName')}
+              error={errors.lastName}
+              register={register('lastName')}
             />
           </div>
           <InputForm
@@ -84,8 +88,8 @@ export default function SignUp() {
             label="رقم الهاتف"
             type="text"
             placeholder="رقم الهاتف"
-            error={errors.phone}
-            register={register('phone')}
+            error={errors.phoneNumber}
+            register={register('phoneNumber')}
           />
           <InputForm
             label="الرقم القومي"
@@ -110,20 +114,6 @@ export default function SignUp() {
                 error={errors.level}
                 register={register('level')}
                 options={levels}
-              />
-              <InputForm
-                label="كلمة المرور"
-                type="password"
-                placeholder="كلمة المرور"
-                error={errors.password}
-                register={register('password')}
-              />
-              <InputForm
-                label="تأكيد كلمة المرور"
-                type="password"
-                placeholder="تأكيد كلمة المرور"
-                error={errors.confirmPassword}
-                register={register('confirmPassword')}
               />
             </>
           ) : (
@@ -151,6 +141,20 @@ export default function SignUp() {
               />
             </>
           )}
+          <InputForm
+            label="كلمة المرور"
+            type="password"
+            placeholder="كلمة المرور"
+            error={errors.password}
+            register={register('password')}
+          />
+          <InputForm
+            label="تأكيد كلمة المرور"
+            type="password"
+            placeholder="تأكيد كلمة المرور"
+            error={errors.confirmPassword}
+            register={register('confirmPassword')}
+          />
           <div className="flex items-center justify-center">
             <button
               type="submit"
