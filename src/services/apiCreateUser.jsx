@@ -3,6 +3,7 @@ const API_URL = 'http://localhost:3000';
 export const apiCreateUser = async (data, type) => {
   try {
     let endpoint;
+    console.log(data);
 
     // Determine the endpoint based on user type
     if (type === 'student') {
@@ -29,8 +30,8 @@ export const apiCreateUser = async (data, type) => {
         }`
       );
     }
-
-    return response.json();
+    const { message } = await response.json();
+    return message;
   } catch (error) {
     console.error('API call failed:', error);
     throw new Error(`Failed to create user: ${error.message}`);

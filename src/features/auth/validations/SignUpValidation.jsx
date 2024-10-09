@@ -35,11 +35,11 @@ const SignUpBaseValidation = yup.object({
 });
 
 const studentSpecificValidation = yup.object({
-  parentPhone: yup
+  parentPhoneNumber: yup
     .string()
     .matches(/^(\+?[0-9]{1,3})?([0-9]{10})$/, 'رقم الهاتف غير صالح')
     .required('هاتف ولي الامر مطلوب'),
-  level: yup.string().required('المرحلة مطلوبة'),
+  levelId: yup.string().required('المرحلة مطلوبة'),
 });
 
 const teacherSpecificValidation = yup.object({

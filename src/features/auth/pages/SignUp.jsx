@@ -6,13 +6,17 @@ import signup from '../../../assets/Online learning-amico.svg';
 import logo from '../../../assets/Group 3.svg';
 import Logo from '../../../ui/Logo';
 import { Link } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import SignUpContext from '../../store/signup-context';
 import { apiCreateUser } from '../../../services/apiCreateUser';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import getSignUpValidationSchema from '../validations/SignUpValidation';
+import 'react-toastify/dist/ReactToastify.css';
+import { apiGetAllLevels } from '../../../services/apiGetAllLevels';
+import { Menu, MenuItem, TextField } from '@mui/material';
 export default function SignUp() {
+  const [levels, setLevel] = useState([]);
   const { type } = useContext(SignUpContext);
   console.log(getSignUpValidationSchema(type));
   const {
@@ -23,7 +27,6 @@ export default function SignUp() {
   } = useForm({
     resolver: yupResolver(getSignUpValidationSchema(type)),
   });
-  console.log(errors);
 
   const onSubmit = (data) => {
     console.log(data);
@@ -32,19 +35,27 @@ export default function SignUp() {
   };
   const { mutate } = useMutation({
     mutationFn: (data) => apiCreateUser(data, type),
-    onSuccess: () => {
-      toast.success('تم تسجيل حسابك بنجاح');
+    onSuccess: (message) => {
+      toast.success(message || 'تم تسجيل حسابك بنجاح');
       reset();
     },
     onError: (error) => {
       toast.error(error.message);
     },
   });
-  const levels = [
-    { label: 'المرحلة الابتدائيه', value: 'level1' },
-    { label: 'المرحلة الاعداديه ', value: 'level2' },
-    { label: 'المرحلة الثانويه', value: 'level3' },
-  ];
+
+  //  get levels data
+  useEffect(() => {
+    const getAllLevels = async () => {
+      const levelsData = await apiGetAllLevels();
+      console.log('levelsData:', levelsData);
+      const levelsArray = levelsData.map((level) => {
+        return { label: level.title, value: level.id };
+      });
+      setLevel(levelsArray);
+    };
+    getAllLevels();
+  }, []);
 
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
@@ -104,15 +115,16 @@ export default function SignUp() {
                 label="رقم الهاتف ولي الأمر"
                 type="text"
                 placeholder="رقم الهاتف ولي الأمر"
-                error={errors.parentPhone}
-                register={register('parentPhone')}
+                error={errors.parentPhoneNumber}
+                register={register('parentPhoneNumber')}
               />
+
               <InputForm
                 label="المرحلة"
                 type="select"
                 placeholder="اختر المرحلة"
-                error={errors.level}
-                register={register('level')}
+                error={errors.levelId}
+                register={register('levelId')}
                 options={levels}
               />
             </>
@@ -176,6 +188,7 @@ export default function SignUp() {
         alt="signup"
         className="w-[30%] object-contain   hidden lg:block"
       />
+      <ToastContainer />
     </div>
   );
 }
