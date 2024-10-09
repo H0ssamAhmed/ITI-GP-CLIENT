@@ -1,27 +1,45 @@
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import SignUpValidation from "../validations/SignUpValidation"; // Import validation schema
-import InputForm from "../components/InputForm"; // Import input component
-import signup from "../../../assets/Online learning-amico.svg";
-import logo from "../../../assets/Group 3.svg";
-import Logo from "../../../ui/Logo";
-import { Link } from "react-router-dom";
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import SignUpValidation from '../validations/SignUpValidation'; // Import validation schema
+import InputForm from '../components/InputForm'; // Import input component
+import signup from '../../../assets/Online learning-amico.svg';
+import logo from '../../../assets/Group 3.svg';
+import Logo from '../../../ui/Logo';
+import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import SignUpContext from '../../store/signup-context';
+import { apiCreateUser } from '../../../services/apiCreateUser';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 export default function SignUp() {
+  const { type } = useContext(SignUpContext);
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(SignUpValidation),
   });
 
   const onSubmit = (data) => {
-    console.log(data);
+    mutate(data);
   };
+  const { mutate } = useMutation({
+    mutationFn: (data) => apiCreateUser(data, type),
+    onSuccess: (data) => {
+      toast.success('تم تسجيل حسابك بنجاح');
+      reset();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
   const levels = [
-    { label: "المرحلة الابتدائيه", value: "level1" },
-    { label: "المرحلة الاعداديه ", value: "level2" },
-    { label: "المرحلة الثانويه", value: "level3" },
+    { label: 'المرحلة الابتدائيه', value: 'level1' },
+    { label: 'المرحلة الاعداديه ', value: 'level2' },
+    { label: 'المرحلة الثانويه', value: 'level3' },
   ];
 
   return (
@@ -45,14 +63,14 @@ export default function SignUp() {
               type="text"
               placeholder="اسمك"
               error={errors.FName}
-              register={register("FName")}
+              register={register('FName')}
             />
             <InputForm
               label="الاسم الثاني"
               type="text"
               placeholder="اسمك"
               error={errors.LName}
-              register={register("LName")}
+              register={register('LName')}
             />
           </div>
           <InputForm
@@ -60,51 +78,79 @@ export default function SignUp() {
             type="email"
             placeholder="بريدك الإلكتروني"
             error={errors.email}
-            register={register("email")}
+            register={register('email')}
           />
           <InputForm
             label="رقم الهاتف"
             type="text"
             placeholder="رقم الهاتف"
             error={errors.phone}
-            register={register("phone")}
+            register={register('phone')}
           />
           <InputForm
             label="الرقم القومي"
             type="text"
             placeholder="الرقم القومي"
             error={errors.nationalID}
-            register={register("nationalID")}
+            register={register('nationalID')}
           />
-          <InputForm
-            label="رقم الهاتف ولي الأمر"
-            type="text"
-            placeholder="رقم الهاتف ولي الأمر"
-            error={errors.parentPhone}
-            register={register("parentPhone")}
-          />
-          <InputForm
-            label="المرحلة"
-            type="select"
-            placeholder="اختر المرحلة"
-            error={errors.level}
-            register={register("level")}
-            options={levels}
-          />
-          <InputForm
-            label="كلمة المرور"
-            type="password"
-            placeholder="كلمة المرور"
-            error={errors.password}
-            register={register("password")}
-          />
-          <InputForm
-            label="تأكيد كلمة المرور"
-            type="password"
-            placeholder="تأكيد كلمة المرور"
-            error={errors.confirmPassword}
-            register={register("confirmPassword")}
-          />
+          {type === 'student' ? (
+            <>
+              <InputForm
+                label="رقم الهاتف ولي الأمر"
+                type="text"
+                placeholder="رقم الهاتف ولي الأمر"
+                error={errors.parentPhone}
+                register={register('parentPhone')}
+              />
+              <InputForm
+                label="المرحلة"
+                type="select"
+                placeholder="اختر المرحلة"
+                error={errors.level}
+                register={register('level')}
+                options={levels}
+              />
+              <InputForm
+                label="كلمة المرور"
+                type="password"
+                placeholder="كلمة المرور"
+                error={errors.password}
+                register={register('password')}
+              />
+              <InputForm
+                label="تأكيد كلمة المرور"
+                type="password"
+                placeholder="تأكيد كلمة المرور"
+                error={errors.confirmPassword}
+                register={register('confirmPassword')}
+              />
+            </>
+          ) : (
+            <>
+              <InputForm
+                label="التخصص"
+                type="text"
+                placeholder="التخصص"
+                error={errors.specialization}
+                register={register('specialization')}
+              />
+              <InputForm
+                label="سنة التخرج"
+                type="text"
+                placeholder="سنة التخرج"
+                error={errors.graduationYear}
+                register={register('graduationYear')}
+              />
+              <InputForm
+                register={register('educationalQualification')}
+                label="المؤهل التعليمي"
+                type="text"
+                placeholder="المؤهل التعليمي"
+                error={errors.educationalQualification}
+              />
+            </>
+          )}
           <div className="flex items-center justify-center">
             <button
               type="submit"
@@ -115,8 +161,8 @@ export default function SignUp() {
           </div>
         </form>
         <p className="text-center">
-          هل لديك حساب؟{" "}
-          <Link to={"/login"} className="text-brand-700">
+          هل لديك حساب؟{' '}
+          <Link to={'/login'} className="text-brand-700">
             تسجيل الدخول
           </Link>
         </p>
