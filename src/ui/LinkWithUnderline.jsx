@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 function LinkWithUnderline({
   children,
@@ -22,10 +22,10 @@ function LinkWithUnderline({
       <motion.span
         className="absolute bottom-0 left-0 w-0 h-[2px] bg-yellow-500"
         variants={{
-          hover: { width: "100%" },
+          hover: { width: '100%' },
         }}
-        initial={{ width: "0%" }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
+        initial={{ width: '0%' }}
+        transition={{ duration: 0.5, ease: 'easeInOut' }}
       />
     </motion.div>
   );
