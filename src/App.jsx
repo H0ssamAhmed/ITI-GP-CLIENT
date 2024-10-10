@@ -38,79 +38,80 @@ import ExamsList from "./features/dashboard/lists/ExamsList";
 import { role, transformedClasses } from "./lib/data";
 import Error from "./pages/Error";
 
-
 function App() {
   return (
-      <Router>
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="about-us" element={<About />} />
-            <Route path="courses" element={<Outlet />}>
-              <Route index element={<CourseCatalog />} />
-              <Route path="courseId" element={<CourseDetail />} />
-              <Route path="courseId/:lessonId" element={<LessonDetails />} />
-            </Route>
-          </Route>
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="about-us" element={<About />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forget-password-email" element={<VerifyEmail />} />
           <Route path="/verify-otp" element={<CodeVerify />} />
+
           <Route path="/forget-password" element={<ForgetPassword />} />
 
-          {/* Redirect based on role when accessing userHome */}
-          <Route
-            path="/dashboard/userHome"
-            element={
-              role ? (
-                role === "admin" ? (
-                  <Navigate to="/dashboard/admin" />
-                ) : role === "teacher" ? (
-                  <Navigate to="/dashboard/teacher" />
-                ) : role === "student" ? (
-                  <Navigate to="/dashboard/student" />
-                ) : role === "parent" ? (
-                  <Navigate to="/dashboard/parent" />
-                ) : (
-                  <Navigate to="/dashboard/profile" />
-                )
-              ) : (
-                <Navigate to="/" /> // Redirect to home or login if no role found
-              )
-            }
-          />
-
-          {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route path="admin" element={<AdminPage />} />
-            <Route path="teacher" element={<TeacherPage />} />
-            <Route path="student" element={<StudentPage />} />
-            <Route path="parent" element={<ParentPage />} />
-            <Route path="profile" element={<ProfileList />} />
-            <Route path="list/teachers" element={<TeachersList />} />
-            <Route path="list/teachers/:id" element={<TeacherDetails />} />
-            <Route path="list/students" element={<StudentsList />} />
-            <Route path="list/students/:id" element={<StudentsDetails />} />
-            <Route path="list/Parents" element={<ParentsList />} />
-            <Route path="list/subjects" element={<SubjectsList />} />
-            <Route path="list/messages" element={<MessagesList />} />
-            <Route path="list/lessons" element={<CreateCourseList />} />
-            <Route path="list/exams" element={<ExamsList />} />
-            <Route
-              path="list/announcements"
-              element={<AnnouncementList userRole={role} />}
-            />
-            <Route
-              path="list/classes"
-              element={<ClassesList data={transformedClasses} />}
-            />
-            <Route path="list/results" element={<ResultsList />} />
+          <Route path="courses" element={<Outlet />}>
+            <Route index element={<CourseCatalog />} />
+            <Route path="courseId" element={<CourseDetail />} />
+            <Route path="courseId/:lessonId" element={<LessonDetails />} />
           </Route>
+        </Route>
 
-          <Route path="*" element={<Error />} />
-        </Routes>
-      </Router>
+        {/* Redirect based on role when accessing userHome */}
+        <Route
+          path="/dashboard/userHome"
+          element={
+            role ? (
+              role === "admin" ? (
+                <Navigate to="/dashboard/admin" />
+              ) : role === "teacher" ? (
+                <Navigate to="/dashboard/teacher" />
+              ) : role === "student" ? (
+                <Navigate to="/dashboard/student" />
+              ) : role === "parent" ? (
+                <Navigate to="/dashboard/parent" />
+              ) : (
+                <Navigate to="/dashboard/profile" />
+              )
+            ) : (
+              <Navigate to="/" /> // Redirect to home or login if no role found
+            )
+          }
+        />
+
+        {/* Dashboard Routes */}
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route path="admin" element={<AdminPage />} />
+          <Route path="teacher" element={<TeacherPage />} />
+          <Route path="student" element={<StudentPage />} />
+          <Route path="parent" element={<ParentPage />} />
+          <Route path="profile" element={<ProfileList />} />
+          <Route path="list/teachers" element={<TeachersList />} />
+          <Route path="list/teachers/:id" element={<TeacherDetails />} />
+          <Route path="list/students" element={<StudentsList />} />
+          <Route path="list/students/:id" element={<StudentsDetails />} />
+          <Route path="list/Parents" element={<ParentsList />} />
+          <Route path="list/subjects" element={<SubjectsList />} />
+          <Route path="list/messages" element={<MessagesList />} />
+          <Route path="list/lessons" element={<CreateCourseList />} />
+          <Route path="list/exams" element={<ExamsList />} />
+          <Route
+            path="list/announcements"
+            element={<AnnouncementList userRole={role} />}
+          />
+          <Route
+            path="list/classes"
+            element={<ClassesList data={transformedClasses} />}
+          />
+          <Route path="list/results" element={<ResultsList />} />
+        </Route>
+
+        <Route path="*" element={<Error />} />
+      </Routes>
+    </Router>
   );
 }
 

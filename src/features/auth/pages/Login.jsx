@@ -29,7 +29,7 @@ export default function Login() {
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
       <div className="flex flex-col text-right  justify-items-center lg:w-[30%] w-[90%] h-[60%]">
-        <div className=" flex  items-center justify-end  mt-[30px] mb-[60px] w-[100%] ">
+        <div className=" flex  items-center justify-end  mt-[0px] mb-[60px] w-[100%] ">
           <h2 className="text-4xl text-brand-700 font-bold  ">
             مرحبا بك مجددا في مجتمع ذاكرلي{" "}
           </h2>
@@ -57,7 +57,7 @@ export default function Login() {
             register={register("password")}
           />
           <Link
-            to={"/reset-password"}
+            to={"/forget-password"}
             className="text-brand-700 text-right"
             href="/"
           >
