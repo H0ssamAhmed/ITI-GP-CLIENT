@@ -1,28 +1,61 @@
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import SignUpValidation from "../validations/SignUpValidation"; // Import validation schema
-import InputForm from "../components/InputForm"; // Import input component
-import signup from "../../../assets/Online learning-amico.svg";
-import logo from "../../../assets/Group 3.svg";
-import Logo from "../../../ui/Logo";
-import { Link } from "react-router-dom";
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import SignUpValidation from '../validations/SignUpValidation'; // Import validation schema
+import InputForm from '../components/InputForm'; // Import input component
+import signup from '../../../assets/Online learning-amico.svg';
+import logo from '../../../assets/Group 3.svg';
+import Logo from '../../../ui/Logo';
+import { Link } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import SignUpContext from '../../store/signup-context';
+import { apiCreateUser } from '../../../services/apiCreateUser';
+import { useMutation } from '@tanstack/react-query';
+import { toast, ToastContainer } from 'react-toastify';
+import getSignUpValidationSchema from '../validations/SignUpValidation';
+import 'react-toastify/dist/ReactToastify.css';
+import { apiGetAllLevels } from '../../../services/apiGetAllLevels';
+import { Menu, MenuItem, TextField } from '@mui/material';
 export default function SignUp() {
+  const [levels, setLevel] = useState([]);
+  const { type } = useContext(SignUpContext);
+  console.log(getSignUpValidationSchema(type));
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(SignUpValidation),
+    resolver: yupResolver(getSignUpValidationSchema(type)),
   });
 
   const onSubmit = (data) => {
     console.log(data);
+
+    mutate(data);
   };
-  const levels = [
-    { label: "المرحلة الابتدائيه", value: "level1" },
-    { label: "المرحلة الاعداديه ", value: "level2" },
-    { label: "المرحلة الثانويه", value: "level3" },
-  ];
+  const { mutate } = useMutation({
+    mutationFn: (data) => apiCreateUser(data, type),
+    onSuccess: (message) => {
+      toast.success(message || 'تم تسجيل حسابك بنجاح');
+      reset();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  //  get levels data
+  useEffect(() => {
+    const getAllLevels = async () => {
+      const levelsData = await apiGetAllLevels();
+      console.log('levelsData:', levelsData);
+      const levelsArray = levelsData.map((level) => {
+        return { label: level.title, value: level.id };
+      });
+      setLevel(levelsArray);
+    };
+    getAllLevels();
+  }, []);
 
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
@@ -44,15 +77,15 @@ export default function SignUp() {
               label=" الاسم الاول"
               type="text"
               placeholder="اسمك"
-              error={errors.FName}
-              register={register("FName")}
+              error={errors.firstName}
+              register={register('firstName')}
             />
             <InputForm
               label="الاسم الثاني"
               type="text"
               placeholder="اسمك"
-              error={errors.LName}
-              register={register("LName")}
+              error={errors.lastName}
+              register={register('lastName')}
             />
           </div>
           <InputForm
@@ -60,50 +93,79 @@ export default function SignUp() {
             type="email"
             placeholder="بريدك الإلكتروني"
             error={errors.email}
-            register={register("email")}
+            register={register('email')}
           />
           <InputForm
             label="رقم الهاتف"
             type="text"
             placeholder="رقم الهاتف"
-            error={errors.phone}
-            register={register("phone")}
+            error={errors.phoneNumber}
+            register={register('phoneNumber')}
           />
           <InputForm
             label="الرقم القومي"
             type="text"
             placeholder="الرقم القومي"
             error={errors.nationalID}
-            register={register("nationalID")}
+            register={register('nationalID')}
           />
-          <InputForm
-            label="رقم الهاتف ولي الأمر"
-            type="text"
-            placeholder="رقم الهاتف ولي الأمر"
-            error={errors.parentPhone}
-            register={register("parentPhone")}
-          />
-          <InputForm
-            label="المرحلة"
-            type="select"
-            placeholder="اختر المرحلة"
-            error={errors.level}
-            register={register("level")}
-            options={levels}
-          />
+          {type === 'student' ? (
+            <>
+              <InputForm
+                label="رقم الهاتف ولي الأمر"
+                type="text"
+                placeholder="رقم الهاتف ولي الأمر"
+                error={errors.parentPhoneNumber}
+                register={register('parentPhoneNumber')}
+              />
+
+              <InputForm
+                label="المرحلة"
+                type="select"
+                placeholder="اختر المرحلة"
+                error={errors.levelId}
+                register={register('levelId')}
+                options={levels}
+              />
+            </>
+          ) : (
+            <>
+              <InputForm
+                label="التخصص"
+                type="text"
+                placeholder="التخصص"
+                error={errors.specialization}
+                register={register('specialization')}
+              />
+              <InputForm
+                label="سنة التخرج"
+                type="text"
+                placeholder="سنة التخرج"
+                error={errors.graduationYear}
+                register={register('graduationYear')}
+              />
+              <InputForm
+                register={register('educationalQualification')}
+                label="المؤهل التعليمي"
+                type="text"
+                placeholder="المؤهل التعليمي"
+                error={errors.educationalQualification}
+              />
+            </>
+          )}
           <InputForm
             label="كلمة المرور"
             type="password"
             placeholder="كلمة المرور"
             error={errors.password}
-            register={register("password")}
+            register={register('password')}
           />
           <InputForm
             label="تأكيد كلمة المرور"
             type="password"
             placeholder="تأكيد كلمة المرور"
             error={errors.confirmPassword}
-            register={register("confirmPassword")}
+            register={register('confirmPassword')}
           />
           <div className="flex items-center justify-center">
             <button
@@ -115,8 +177,8 @@ export default function SignUp() {
           </div>
         </form>
         <p className="text-center">
-          هل لديك حساب؟{" "}
-          <Link to={"/login"} className="text-brand-700">
+          هل لديك حساب؟{' '}
+          <Link to={'/login'} className="text-brand-700">
             تسجيل الدخول
           </Link>
         </p>
@@ -126,6 +188,7 @@ export default function SignUp() {
         alt="signup"
         className="w-[30%] object-contain   hidden lg:block"
       />
+      <ToastContainer />
     </div>
   );
 }

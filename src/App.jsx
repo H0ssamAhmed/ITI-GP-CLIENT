@@ -41,6 +41,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useState } from 'react';
+import SignUpContext from './features/store/signup-context';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,93 +52,99 @@ const queryClient = new QueryClient({
   },
 });
 function App() {
+  const [type, setType] = useState('student');
+  const handleTypeChange = (newType) => {
+    setType(newType);
+  };
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <Router>
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="about-us" element={<About />} />
-            <Route path="/profile-details" element={<ProfileDetails />} />
-            <Route path="/features" element={<Features />} />
-            <Route path="courses" element={<Outlet />}>
-              <Route index element={<CourseCatalog />} />
-              <Route path="courseId" element={<CourseDetail />} />
-              <Route path="courseId/:lessonId" element={<LessonDetails />} />
+    <SignUpContext.Provider value={{ type, handleTypeChange }}>
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <Router>
+          <Routes>
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<Home />} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="about-us" element={<About />} />
+              <Route path="/profile-details" element={<ProfileDetails />} />
+              <Route path="/features" element={<Features />} />
+              <Route path="courses" element={<Outlet />}>
+                <Route index element={<CourseCatalog />} />
+                <Route path="courseId" element={<CourseDetail />} />
+                <Route path="courseId/:lessonId" element={<LessonDetails />} />
+              </Route>
             </Route>
-          </Route>
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<VerifyEmail />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<VerifyEmail />} />
 
-          {/* Redirect based on role when accessing userHome */}
-          <Route
-            path="/dashboard/userHome"
-            element={
-              role ? (
-                role === 'admin' ? (
-                  <Navigate to="/dashboard/admin" />
-                ) : role === 'teacher' ? (
-                  <Navigate to="/dashboard/teacher" />
-                ) : role === 'student' ? (
-                  <Navigate to="/dashboard/student" />
-                ) : role === 'parent' ? (
-                  <Navigate to="/dashboard/parent" />
+            {/* Redirect based on role when accessing userHome */}
+            <Route
+              path="/dashboard/userHome"
+              element={
+                role ? (
+                  role === 'admin' ? (
+                    <Navigate to="/dashboard/admin" />
+                  ) : role === 'teacher' ? (
+                    <Navigate to="/dashboard/teacher" />
+                  ) : role === 'student' ? (
+                    <Navigate to="/dashboard/student" />
+                  ) : role === 'parent' ? (
+                    <Navigate to="/dashboard/parent" />
+                  ) : (
+                    <Navigate to="/dashboard/profile" />
+                  )
                 ) : (
-                  <Navigate to="/dashboard/profile" />
+                  <Navigate to="/" /> // Redirect to home or login if no role found
                 )
-              ) : (
-                <Navigate to="/" /> // Redirect to home or login if no role found
-              )
-            }
+              }
+            />
+
+            {/* Dashboard Routes */}
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route path="admin" element={<AdminPage />} />
+              <Route path="teacher" element={<TeacherPage />} />
+              <Route path="student" element={<StudentPage />} />
+              <Route path="parent" element={<ParentPage />} />
+              <Route path="profile" element={<ProfileList />} />
+              <Route path="list/teachers" element={<TeachersList />} />
+              <Route path="list/teachers/:id" element={<TeacherDetails />} />
+              <Route path="list/students" element={<StudentsList />} />
+              <Route path="list/students/:id" element={<StudentsDetails />} />
+              <Route path="list/Parents" element={<ParentsList />} />
+              <Route path="list/subjects" element={<SubjectsList />} />
+              <Route path="list/messages" element={<MessagesList />} />
+              <Route path="list/lessons" element={<CreateCourseList />} />
+              <Route path="list/exams" element={<ExamsList />} />
+              <Route
+                path="list/announcements"
+                element={<AnnouncementList userRole={role} />}
+              />
+              <Route
+                path="list/classes"
+                element={<ClassesList data={transformedClasses} />}
+              />
+              <Route path="list/results" element={<ResultsList />} />
+            </Route>
+
+            <Route path="*" element={<Error />} />
+          </Routes>
+          {/* toast container */}
+          <ToastContainer
+            position="bottom-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            closeOnClick={true}
+            pauseOnHover={true}
+            draggable={true}
+            progress={undefined}
+            theme="light"
+            icon={true}
+            draggablePercent={100}
           />
-
-          {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route path="admin" element={<AdminPage />} />
-            <Route path="teacher" element={<TeacherPage />} />
-            <Route path="student" element={<StudentPage />} />
-            <Route path="parent" element={<ParentPage />} />
-            <Route path="profile" element={<ProfileList />} />
-            <Route path="list/teachers" element={<TeachersList />} />
-            <Route path="list/teachers/:id" element={<TeacherDetails />} />
-            <Route path="list/students" element={<StudentsList />} />
-            <Route path="list/students/:id" element={<StudentsDetails />} />
-            <Route path="list/Parents" element={<ParentsList />} />
-            <Route path="list/subjects" element={<SubjectsList />} />
-            <Route path="list/messages" element={<MessagesList />} />
-            <Route path="list/lessons" element={<CreateCourseList />} />
-            <Route path="list/exams" element={<ExamsList />} />
-            <Route
-              path="list/announcements"
-              element={<AnnouncementList userRole={role} />}
-            />
-            <Route
-              path="list/classes"
-              element={<ClassesList data={transformedClasses} />}
-            />
-            <Route path="list/results" element={<ResultsList />} />
-          </Route>
-
-          <Route path="*" element={<Error />} />
-        </Routes>
-        {/* toast container */}
-        <ToastContainer
-          position="bottom-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          closeOnClick={true}
-          pauseOnHover={true}
-          draggable={true}
-          progress={undefined}
-          theme="light"
-          icon={true}
-          draggablePercent={100}
-        />
-      </Router>
-    </QueryClientProvider>
+        </Router>
+      </QueryClientProvider>
+    </SignUpContext.Provider>
   );
 }
 
