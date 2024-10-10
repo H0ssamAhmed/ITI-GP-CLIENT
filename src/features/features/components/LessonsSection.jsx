@@ -10,6 +10,8 @@ import student_6 from '../../../assets/FeaturesPage/students/student_6.jpeg';
 import students from '../../../assets/FeaturesPage/students/students.avif';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { useQuery } from '@tanstack/react-query';
+import { getLessons } from '../../../services/apiGetLessons';
 const cardData = [
   {
     level: 'الصف الرابع الابتدائي',
@@ -90,6 +92,32 @@ function LessonsSection() {
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  const {
+    data: lessons,
+    isPending: isFethcingLessons,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['lessons'],
+    queryFn: getLessons,
+    refetchOnWindowFocus: true,
+    retry: false,
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  if (isFethcingLessons) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error: {error.message}</div>;
+  }
   return (
     <motion.div
       ref={ref}
