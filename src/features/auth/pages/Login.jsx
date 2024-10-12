@@ -7,6 +7,9 @@ import logo from "../../../assets/Group 3.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { loginUser } from "../apis/authAPI";
+import Cookies from "js-cookie"; // Import js-cookie to manage cookies
+import { jwtDecode } from "jwt-decode"; // Optional: for decoding JWT tokens
+
 export default function Login() {
   const {
     register,
@@ -21,32 +24,27 @@ export default function Login() {
 
   const onSubmit = async (data) => {
     try {
-      // Call loginUser function
-      const accessToken = await loginUser(data.email, data.password);
+      const response = await loginUser(data);
 
-      // Assuming the backend returns the role in the response
-      const userRole = parseJwt(accessToken).role; // Assuming the token has a 'role' field
+      const accessToken = response.data.accessToken;
+
+      // Store the access token in cookies
+      Cookies.set("accessToken", accessToken);
+
+      // Decode the token to get user role (ensure you have a 'role' claim in your token)
+      const decodedToken = jwtDecode(accessToken);
+      const userRole = decodedToken.role; // Adjust based on your token's structure
+
+      console.log("User Role:", userRole);
 
       if (userRole === "admin") {
-        // Redirect to admin dashboard
         navigate("/dashboard/admin");
       } else {
-        // Redirect to user dashboard
         navigate("/user/dashboard");
       }
     } catch (error) {
       setLoginError("Login failed. Please check your credentials.");
-    }
-  };
-
-  // Function to decode JWT (if your token is a JWT and includes role information)
-  const parseJwt = (token) => {
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      return JSON.parse(atob(base64));
-    } catch (e) {
-      return null;
+      console.error(error);
     }
   };
 

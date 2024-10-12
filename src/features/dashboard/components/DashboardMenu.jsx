@@ -14,14 +14,14 @@ const menuItems = [
       {
         icon: "/src/assets/dashboard/request.png",
         label: "طلبات المنصة",
-        href: "list/subjects",
+        href: "list/requests",
         visible: ["admin"],
       },
       {
         icon: "/src/assets/dashboard/teacher.png",
         label: "المعلمين",
         href: "list/teachers",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
 
       {
@@ -30,12 +30,7 @@ const menuItems = [
         href: "list/students",
         visible: ["admin", "teacher"],
       },
-      {
-        icon: "/src/assets/dashboard/parent.png",
-        label: "الأباء",
-        href: "list/parents",
-        visible: ["admin", "teacher"],
-      },
+
       {
         icon: "/src/assets/dashboard/subject.png",
         label: "الكورسات",
@@ -47,7 +42,7 @@ const menuItems = [
         icon: "/src/assets/dashboard/class.png",
         label: "الصفوف الدراسية",
         href: "list/classes",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
       {
         icon: "/src/assets/dashboard/lesson.png",

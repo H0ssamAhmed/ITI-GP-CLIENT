@@ -4,25 +4,14 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Modal from "react-modal";
 import { FaPlus } from "react-icons/fa";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createAnnouncements, fetchAllAnnouncements } from "../dashboardAPI";
+import Spinner from "../../../ui/Spinner";
+import ErrorMessage from "../components/ErrorMessage";
 
-Modal.setAppElement("#root");
-
-const AnnouncementList = ({ userRole }) => {
-  const [announcements, setAnnouncements] = useState([
-    {
-      header: "مرحبًا بكم",
-      description: "مرحبًا بكم في المنصة! نأمل أن تجدوا كل ما تحتاجونه.",
-      time: "2024-09-20 10:30",
-      courseLink: null, // No link initially
-    },
-    {
-      header: "دورات جديدة",
-      description: "تم إضافة دورات جديدة في مختلف التخصصات، لا تفوتوا الفرصة!",
-      time: "2024-09-25 15:00",
-      courseLink: null, // No link initially
-    },
-  ]);
+const AnnouncementList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -31,61 +20,94 @@ const AnnouncementList = ({ userRole }) => {
     formState: { errors },
   } = useForm();
 
+  const {
+    data: announcements,
+    isLoading: isLoadingAnnouncements,
+    isError: isErrorAnnouncements,
+    error: queryError,
+  } = useQuery({
+    queryKey: ["announcements"],
+    queryFn: fetchAllAnnouncements,
+  });
+
+  console.log(announcements?.data); // Make sure you're checking the correct structure
+
+  const mutation = useMutation({
+    mutationFn: createAnnouncements,
+    onSuccess: () => {
+      toast.success("تم إضافة الإعلان بنجاح!", {
+        position: window.innerWidth > 768 ? "top-right" : "bottom-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: { width: window.innerWidth > 768 ? "350px" : "100%" },
+      });
+      queryClient.invalidateQueries(["announcements"]);
+      setIsModalOpen(false);
+      reset();
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("حدث خطأ أثناء إضافة الإعلان.", {
+        position: window.innerWidth > 768 ? "top-right" : "bottom-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: { width: window.innerWidth > 768 ? "350px" : "100%" },
+      });
+    },
+  });
+
+  if (isLoadingAnnouncements) return <Spinner />;
+  if (isErrorAnnouncements) {
+    console.error("Query error:", queryError);
+    return <ErrorMessage message="فشل تحميل بيانات الإعلانات" />;
+  }
+
   const handleAddAnnouncement = (data) => {
-    const currentTime = new Date().toISOString().slice(0, 16).replace("T", " ");
-    setAnnouncements([
-      ...announcements,
-      {
-        header: data.header,
-        description: data.description,
-        time: currentTime,
-        courseLink: data.courseLink || null, // Add the course link if provided
-      },
-    ]);
+    const payload = {
+      title: data.title,
+      description: data.description,
+      start: new Date(data.start).toISOString(),
+      end: new Date(data.end).toISOString(),
+      eventUrl: data.eventUrl || null, // Adjust this if needed
+    };
 
-    toast.success("تم إضافة الإعلان بنجاح!", {
-      position: window.innerWidth > 768 ? "top-right" : "bottom-center",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      style: { width: window.innerWidth > 768 ? "350px" : "100%" },
-    });
-
-    setIsModalOpen(false);
-    reset();
+    mutation.mutate(payload);
   };
 
   return (
     <div className="p-4" dir="rtl">
       <div className="flex items-center justify-between mb-4">
         <h2 className="mb-4 text-[2.5rem] font-bold">الإعلانات</h2>
-        {userRole === "admin" && (
-          <div>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="p-2 text-white rounded-full bg-brand-500 hover:bg-brand-200"
-            >
-              <FaPlus />
-            </button>
-          </div>
-        )}
+
+        <div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="p-2 text-white rounded-full bg-brand-500 hover:bg-brand-200"
+          >
+            <FaPlus />
+          </button>
+        </div>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {announcements.map((announcement, index) => (
+        {announcements?.data?.map((announcement, index) => (
           <div
-            key={index}
+            key={announcement.id}
             className="p-4 bg-white border border-gray-300 rounded-lg shadow-lg"
           >
             <h3 className="mb-2 text-xl font-semibold text-blue-600">
-              {announcement.header}
+              {announcement.title}
             </h3>
             <p className="mb-2 text-gray-700">{announcement.description}</p>
-            {announcement.courseLink && (
+            {announcement.eventUrl && (
               <p className="mb-2 text-blue-500 underline cursor-pointer">
                 <a
-                  href={announcement.courseLink}
+                  href={announcement.eventUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -94,7 +116,7 @@ const AnnouncementList = ({ userRole }) => {
               </p>
             )}
             <small className="text-gray-500">
-              تمت الإضافة: {announcement.time}
+              تمت الإضافة: {announcement.start}
             </small>
           </div>
         ))}
@@ -114,11 +136,11 @@ const AnnouncementList = ({ userRole }) => {
               <label className="block mb-2">عنوان الإعلان</label>
               <input
                 type="text"
-                {...register("header", { required: "هذا الحقل مطلوب" })}
+                {...register("title", { required: "هذا الحقل مطلوب" })}
                 className="w-full p-2 border border-gray-300 rounded"
               />
-              {errors.header && (
-                <p className="text-red-600">{errors.header.message}</p>
+              {errors.title && (
+                <p className="text-red-600">{errors.title.message}</p>
               )}
             </div>
             <div className="mb-4">
@@ -131,11 +153,36 @@ const AnnouncementList = ({ userRole }) => {
                 <p className="text-red-600">{errors.description.message}</p>
               )}
             </div>
+
+            <div className="mb-4">
+              <label>تاريخ البدء</label>
+              <input
+                type="datetime-local"
+                {...register("start", { required: "هذا الحقل مطلوب" })}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+              {errors.start && (
+                <p className="text-red-600">{errors.start.message}</p>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <label>تاريخ الإنتهاء</label>
+              <input
+                type="datetime-local"
+                {...register("end", { required: "هذا الحقل مطلوب" })}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+              {errors.end && (
+                <p className="text-red-600">{errors.end.message}</p>
+              )}
+            </div>
+
             <div className="mb-4">
               <label className="block mb-2">رابط الكورس (اختياري)</label>
               <input
                 type="text"
-                {...register("courseLink")}
+                {...register("eventUrl")}
                 placeholder="https://example.com/course"
                 className="w-full p-2 border border-gray-300 rounded"
               />

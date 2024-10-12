@@ -5,12 +5,12 @@ import TableSearch from "../components/TableSearch";
 import { role } from "../../../lib/data";
 import { GrView } from "react-icons/gr";
 import FormModal from "../components/FormModal";
-import { useQuery } from "@tanstack/react-query";
-import { fetchTeachers } from "../dashboardAPI";
-import Spinner from "../../../ui/Spinner";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import { fetchTeacherLevel, fetchTeachers } from "../dashboardAPI";
 import teacherDefault from "../../../assets/dashboard/profileDefualt.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import { setSortConfig } from "../listSlice";
+import Spinner from "../../../ui/Spinner";
 import ErrorMessage from "../components/ErrorMessage";
 const columns = [
   {
@@ -52,24 +52,55 @@ const columns = [
 ];
 
 const TeachersList = () => {
-  // Connecting UI State Mangement
   const dispatch = useDispatch();
-
   const { searchTerm, sortConfig, filter } = useSelector((state) => state.list);
 
-  // Connecting The Server
+  // Fetch teachers
   const {
     data: teachers,
-    isLoading,
-    error,
+    isLoading: isTeachersLoading,
+    error: isTeachersError,
   } = useQuery({
     queryKey: ["teachers"],
     queryFn: fetchTeachers,
   });
 
-  if (isLoading) return <Spinner />;
-  if (error) return <ErrorMessage message="فشل تحميل بيانات المعلمين" />;
+  // Get teacher IDs
+  const teacherIds = teachers ? teachers.map((teacher) => teacher.id) : [];
 
+  // Fetch teacher levels
+  const teacherLevelQueries = useQueries({
+    queries: teacherIds.map((id) => ({
+      queryKey: ["teacherLevel", id],
+      queryFn: () => fetchTeacherLevel(id),
+      staleTime: Infinity,
+      cacheTime: 5 * 60 * 1000,
+      enabled: !!id,
+    })),
+  });
+
+  // Debugging log to inspect the teacher level queries
+  console.log("teacherLevelQueries:", teacherLevelQueries);
+
+  // Map teacher levels
+  const teacherLevels = teacherLevelQueries.map((query, index) => {
+    if (query.isError) {
+      console.log(`Error fetching level for teacher ${teacherIds[index]}`);
+      return "لا يوجد";
+    } else if (query.isSuccess && query.data) {
+      const level = query.data[0]?.level?.title || "لا يوجد فصول محددة";
+      console.log(`Fetched level for teacher ${teacherIds[index]}: ${level}`);
+      return level;
+    }
+  });
+
+  console.log("teacherLevels:", teacherLevels);
+
+  if (isTeachersLoading) return <Spinner />;
+  if (isTeachersError)
+    return <ErrorMessage message="فشل تحميل بيانات المعلمين" />;
+
+  // Filter Operation
   let filteredTeachers = teachers?.filter((teacher) => {
     const teacherName = teacher.firstName?.normalize("NFC") || "";
     const searchTermNormalized = searchTerm?.normalize("NFC") || "";
@@ -84,6 +115,7 @@ const TeachersList = () => {
     });
   }
 
+  // Sort operation
   if (sortConfig) {
     filteredTeachers.sort((a, b) => {
       const aValue = a[sortConfig.key]?.toString() || "";
@@ -110,7 +142,7 @@ const TeachersList = () => {
     }
   };
 
-  const rednderRow = (item) => (
+  const renderRow = (item, index) => (
     <tr
       className="text-[1rem] hover:bg-brand-50 cursor-default even:bg-gray-50 border-b border-gray-200"
       key={item.id}
@@ -138,7 +170,9 @@ const TeachersList = () => {
         {item.id.slice(0, 8).toUpperCase()}
       </td>
       <td className="hidden md:table-cell">{item.specialization}</td>
-      <td className="hidden md:table-cell">{item.classes?.join(",")}</td>
+      <td className="hidden md:table-cell">
+        {teacherLevels[index] || "لا يوجد"}
+      </td>
       <td className="hidden md:table-cell">{item.phoneNumber}</td>
       <td className="hidden md:table-cell">{item.educationalQualification}</td>
       <td>
@@ -187,7 +221,7 @@ const TeachersList = () => {
       <div>
         <DashboardTable
           columns={columns}
-          rednderRow={rednderRow}
+          renderRow={renderRow}
           data={filteredTeachers}
         />
       </div>

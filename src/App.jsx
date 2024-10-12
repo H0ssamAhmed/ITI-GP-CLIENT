@@ -42,6 +42,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import store from "../store";
 import { Provider } from "react-redux";
+import PlatformRequestsList from "./features/dashboard/lists/PlatformRequestsList";
 // Initialize QueryClient
 const queryClient = new QueryClient();
 function App() {
@@ -64,7 +65,7 @@ function App() {
               </Route>
             </Route>
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login-user" element={<Login />} />
             <Route path="/reset-password" element={<VerifyEmail />} />
 
             {/* Redirect based on role when accessing userHome */}
@@ -103,6 +104,7 @@ function App() {
               <Route path="list/Parents" element={<ParentsList />} />
               <Route path="list/subjects" element={<SubjectsList />} />
               <Route path="list/messages" element={<MessagesList />} />
+              <Route path="list/requests" element={<PlatformRequestsList />} />
               <Route path="list/lessons" element={<CreateCourseList />} />
               <Route path="list/exams" element={<ExamsList />} />
               <Route

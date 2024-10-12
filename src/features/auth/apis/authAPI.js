@@ -1,21 +1,15 @@
 import axios from "axios";
 
+// Create AxiosInstance with custom config
+const API = axios.create({
+  baseURL: "http://localhost:3000", // Replace with your actual base URL
+
+  withCredentials: true, // Send cookies along with requests if needed
+});
+
 // Function to login and get the access token from the server and store it in cookies
-export const loginUser = async (email, password) => {
-  try {
-    const response = await axios.post(
-      "http://localhost:3000/api/auth/login-user",
-      { email, password }
-    );
-
-    const accessToken = response.data.accessToken;
-
-    // Set token in cookies (expires in 1 hour)
-    document.cookie = `access-token=${accessToken}; path=/; max-age=3600; SameSite=Lax`;
-
-    return accessToken;
-  } catch (error) {
-    console.error("Login failed:", error);
-    throw new Error("Login failed. Please check your credentials.");
-  }
-};
+export const registerStudent = (data) => API.post("student/auth/signup", data);
+export const verifyOtp = (data) => API.post("student/auth/verify-otp", data);
+export const resendOtp = () => API.post("student/auth/resend-otp");
+export const loginUser = (data) => API.post("/user/auth/login-user", data);
+export const logoutUser = () => API.post("user/auth/logout");
