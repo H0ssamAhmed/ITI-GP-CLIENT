@@ -43,6 +43,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react';
 import SignUpContext from './features/store/signup-context';
+import Certificate from './pages/Certificate';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,18 +63,19 @@ function App() {
         <ReactQueryDevtools initialIsOpen={false} />
         <Router>
           <Routes>
-            <Route path="/" element={<MainLayout />}>
-              <Route index element={<Home />} />
-              <Route path="contact" element={<Contact />} />
-              <Route path="about-us" element={<About />} />
-              <Route path="/profile-details" element={<ProfileDetails />} />
-              <Route path="/features" element={<Features />} />
-              <Route path="courses" element={<Outlet />}>
-                <Route index element={<CourseCatalog />} />
-                <Route path="courseId" element={<CourseDetail />} />
-                <Route path="courseId/:lessonId" element={<LessonDetails />} />
-              </Route>
+            {/* <Route path="/" element={<MainLayout />}> */}
+            <Route index element={<Home />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="about-us" element={<About />} />
+            <Route path="/profile-details" element={<ProfileDetails />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/certificate" element={<Certificate />} />
+            <Route path="courses" element={<Outlet />}>
+              <Route index element={<CourseCatalog />} />
+              <Route path="courseId" element={<CourseDetail />} />
+              <Route path="courseId/:lessonId" element={<LessonDetails />} />
             </Route>
+            {/* </Route> */}
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/reset-password" element={<VerifyEmail />} />
