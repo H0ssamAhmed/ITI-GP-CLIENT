@@ -1,13 +1,13 @@
 import * as yup from "yup";
 
 const SignUpValidation = yup.object({
-  FName: yup
+  firstName: yup
     .string()
     .required("الاسم الاول مطلوب")
     .min(3, "يجب أن يكون الاسم على 3 أحرف على الأقل")
     .max(20, "يجب أن يكون الاسم على 20 أحرف على الأكثر")
   ,
-  LName: yup
+  lastName: yup
     .string()
     .required("الاسم الثاني مطلوب")
     .min(3, "يجب أن يكون الاسم على 3 أحرف على الأقل")
@@ -25,18 +25,18 @@ const SignUpValidation = yup.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
       "يجب أن تكون كلمة المرور 6 أحرف على الأقل وتحتوي على حروف كبيرة وصغيرة ورقم ورمز"
     ),
-  phone: yup
+  phoneNumber: yup
     .string()
     .matches(/^(\+?[0-9]{1,3})?([0-9]{10})$/, "رقم الهاتف غير صالح")
     .required("رقم الهاتف مطلوب"),
 
-  parentPhone: yup
+  parentPhoneNumber: yup
     .string()
     .matches(/^(\+?[0-9]{1,3})?([0-9]{10})$/, "رقم الهاتف غير صالح")
     .required("هاتف ولي الامر مطلوب"),
 
   nationalID: yup.string().required("رقم الهوية مطلوب"),
-  level: yup.string().required("المرحلة مطلوبة"),
+  levelId: yup.string().required("المرحلة مطلوبة"),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password"), null], "كلمات المرور غير متطابقة")

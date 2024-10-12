@@ -4,43 +4,45 @@ import {
   Route,
   Navigate,
   Outlet,
-} from 'react-router-dom';
-import SignUp from './features/auth/pages/SignUp';
-import Login from './features/auth/pages/Login';
-import VerifyEmail from './features/auth/pages/VerifyEmail';
-import Home from './pages/Home';
-import CourseCatalog from './features/courses/pages/CourseCatalog';
-import CourseDetail from './features/courses/pages/CourseDetail';
-import Contact from './pages/Contact';
-import About from './pages/About';
-import LessonDetails from './features/courses/pages/LessonDetails';
-import MainLayout from './layouts/mainlayout';
-import DashboardLayout from './layout/DashboardLayout';
-import AdminPage from './features/dashboard/pages/admin/AdminPage';
-import TeacherPage from './features/dashboard/pages/teacher/TeacherPage';
-import StudentPage from './features/dashboard/pages/student/StudentPage';
-import ParentPage from './features/dashboard/pages/parent/ParentPage';
-import TeachersList from './features/dashboard/lists/TeachersList';
-import StudentsList from './features/dashboard/lists/StudentsList';
-import ParentsList from './features/dashboard/lists/ParentsList';
-import SubjectsList from './features/dashboard/lists/SubjectsList';
-import AnnouncementList from './features/dashboard/lists/AnnouncementList';
-import ClassesList from './features/dashboard/lists/ClassesList';
-import ResultsList from './features/dashboard/lists/ResultsList';
-import TeacherDetails from './features/dashboard/components/TeacherDetails';
-import StudentsDetails from './features/dashboard/components/StudentsDetails';
-import MessagesList from './features/dashboard/lists/MessagesList';
-import ProfileList from './features/dashboard/components/ProfileDetails';
-import CreateCourseList from './features/dashboard/lists/CreateCourseList';
-import ExamsList from './features/dashboard/lists/ExamsList';
-import { role, transformedClasses } from './lib/data';
-import Error from './pages/Error';
-import ProfileDetails from './pages/ProfileDetails';
-import Features from './pages/Features';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+} from "react-router-dom";
+import SignUp from "./features/auth/pages/SignUp";
+import Login from "./features/auth/pages/Login";
+import VerifyEmail from "./features/auth/pages/VerifyEmail";
+import CodeVerify from "./features/auth/pages/CodeVerify";
+import ForgetPassword from "./features/auth/pages/ForgetPassword";
+import Home from "./pages/Home";
+import CourseCatalog from "./features/courses/pages/CourseCatalog";
+import CourseDetail from "./features/courses/pages/CourseDetail";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import LessonDetails from "./features/courses/pages/LessonDetails";
+import MainLayout from "./layouts/mainlayout";
+import DashboardLayout from "./layout/DashboardLayout";
+import AdminPage from "./features/dashboard/pages/admin/AdminPage";
+import TeacherPage from "./features/dashboard/pages/teacher/TeacherPage";
+import StudentPage from "./features/dashboard/pages/student/StudentPage";
+import ParentPage from "./features/dashboard/pages/parent/ParentPage";
+import TeachersList from "./features/dashboard/lists/TeachersList";
+import StudentsList from "./features/dashboard/lists/StudentsList";
+import ParentsList from "./features/dashboard/lists/ParentsList";
+import SubjectsList from "./features/dashboard/lists/SubjectsList";
+import AnnouncementList from "./features/dashboard/lists/AnnouncementList";
+import ClassesList from "./features/dashboard/lists/ClassesList";
+import ResultsList from "./features/dashboard/lists/ResultsList";
+import TeacherDetails from "./features/dashboard/components/TeacherDetails";
+import StudentsDetails from "./features/dashboard/components/StudentsDetails";
+import MessagesList from "./features/dashboard/lists/MessagesList";
+import ProfileList from "./features/dashboard/components/ProfileDetails";
+import CreateCourseList from "./features/dashboard/lists/CreateCourseList";
+import ExamsList from "./features/dashboard/lists/ExamsList";
+import { role, transformedClasses } from "./lib/data";
+import Error from "./pages/Error";
+import ProfileDetails from "./pages/ProfileDetails";
+import Features from "./pages/Features";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -59,30 +61,30 @@ function App() {
             <Route index element={<Home />} />
             <Route path="contact" element={<Contact />} />
             <Route path="about-us" element={<About />} />
-            <Route path="/profile-details" element={<ProfileDetails />} />
-            <Route path="/features" element={<Features />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forget-password-email" element={<VerifyEmail />} />
+            <Route path="/verify-otp" element={<CodeVerify />} />
+            <Route path="/forget-password" element={<ForgetPassword />} />
             <Route path="courses" element={<Outlet />}>
               <Route index element={<CourseCatalog />} />
               <Route path="courseId" element={<CourseDetail />} />
               <Route path="courseId/:lessonId" element={<LessonDetails />} />
             </Route>
           </Route>
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<VerifyEmail />} />
 
           {/* Redirect based on role when accessing userHome */}
           <Route
             path="/dashboard/userHome"
             element={
               role ? (
-                role === 'admin' ? (
+                role === "admin" ? (
                   <Navigate to="/dashboard/admin" />
-                ) : role === 'teacher' ? (
+                ) : role === "teacher" ? (
                   <Navigate to="/dashboard/teacher" />
-                ) : role === 'student' ? (
+                ) : role === "student" ? (
                   <Navigate to="/dashboard/student" />
-                ) : role === 'parent' ? (
+                ) : role === "parent" ? (
                   <Navigate to="/dashboard/parent" />
                 ) : (
                   <Navigate to="/dashboard/profile" />
