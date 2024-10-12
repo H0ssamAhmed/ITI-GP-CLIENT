@@ -6,6 +6,7 @@ import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
 import { Link } from "react-router-dom";
 import { useLogin } from "../apis/authAPI";
+import { ToastContainer } from "react-toastify";
 // import { useSelector } from "react-redux";
 
 export default function Login() {
@@ -17,7 +18,7 @@ export default function Login() {
   } = useForm({
     resolver: yupResolver(LoginValidation),
   });
-  const { mutate: loginUser, isLoading, error } = useLogin();
+  const { mutate: loginUser, isLoading } = useLogin();
   const onSubmit = async (data) => {
     try {
       await loginUser(data);
@@ -25,7 +26,7 @@ export default function Login() {
       console.error("Login error:", err);
     }
   };
-// console.log(userRole)
+  // console.log(userRole)
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
       <div className="flex flex-col text-right  justify-items-center lg:w-[30%] w-[90%] h-[60%]">
@@ -57,7 +58,7 @@ export default function Login() {
             register={register("password")}
           />
           <Link
-            to={"/forget-password"}
+            to={"/forget-password-email"}
             className="text-brand-700 text-right"
             href="/"
           >
@@ -83,6 +84,7 @@ export default function Login() {
         alt="signup"
         className="w-[30%] object-contain  hidden lg:block"
       />
+      <ToastContainer />
     </div>
   );
 }

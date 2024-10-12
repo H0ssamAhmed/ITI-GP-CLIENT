@@ -1,49 +1,31 @@
-import { useRef, useState } from "react";
-import signup from "../../../assets/Online learning-amico.svg";
+import { useState } from "react";
+// import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
 import { Input } from "@material-tailwind/react";
 import { useLocation } from "react-router-dom";
-import { useVerifyOTP, useResendOTP } from "../apis/authAPI"; // Import the custom hook
-import { useNavigate } from "react-router-dom";
+import { useVerifyOTP, useResendOTP } from "../apis/authAPI";
+import { ToastContainer } from "react-toastify";
 
 export default function CodeVerify() {
   const location = useLocation();
   const email = location.state?.email || "";
-  const { mutate: verifyOTP, isLoading } = useVerifyOTP();
+  const { mutate: verifyOTP, isLoading: verifyLoading } = useVerifyOTP();
   const { mutate: resendOTP, isLoading: resendLoading } = useResendOTP();
-  const inputRefs = useRef([]);
   const [otp, setOtp] = useState(Array(6).fill(""));
-  const navigate = useNavigate();
-  const handleChange = (index, value) => {
-    const newOtp = [...otp];
-    newOtp[index] = value.replace(/[^0-9]/g, "");
-    setOtp(newOtp);
 
-    if (value && index < inputRefs.current.length - 1) {
-      inputRefs.current[index + 1].focus();
-    }
-  };
-
-  function handleBackspace(event, index) {
-    if (event.key === "Backspace" && !event.target.value && index > 0) {
-      inputRefs.current[index - 1].focus();
-    }
-  }
   const handleSubmit = async () => {
-    // const otpCode = otp.join(""); // Join OTP digits into a single string
-    // if (otpCode.length === 6) {
     try {
-      await verifyOTP({ otp: otp }); // Call the mutation with email and OTP
-      navigate("/login");
+      await verifyOTP({ otp });
     } catch (e) {
       console.log("Error verifying OTP", e);
     }
-    // } else {
-    //   console.log("Invalid OTP");
-    // }
   };
   const handleResend = async () => {
-    await resendOTP();
+    try {
+      await resendOTP();
+    } catch (e) {
+      console.log("Error resending OTP", e);
+    }
   };
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200">
@@ -61,25 +43,6 @@ export default function CodeVerify() {
           </h2>
 
           <div className="mt-[40px] mb-[40px] flex items-center justify-center gap-4 w-[100%]">
-            {/* {otp.map((digit, index) => (
-              <div key={index}>
-                <Input
-                  type="text"
-                  maxLength={1}
-                  className="w-14  h-14 rounded-lg border border-gray-300 text-center text-xl font-bold shadow-lg transition-all focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-300"
-                  labelProps={{
-                    className: "before:content-none after:content-none",
-                  }}
-                  containerProps={{
-                    className: "!min-w-0",
-                  }}
-                  value={digit}
-                  onChange={(e) => handleChange(index, e.target.value)}
-                  onKeyDown={(e) => handleBackspace(e, index)}
-                  inputRef={(el) => (inputRefs.current[index] = el)}
-                />
-              </div>
-            ))} */}
             <Input
               type="text"
               maxLength={6}
@@ -102,11 +65,12 @@ export default function CodeVerify() {
           type="submit"
           className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 w-full rounded-lg mt-10 transition-all duration-300"
           onClick={handleSubmit}
-          disabled={isLoading}
+          // disabled={isLoading}
         >
-          {isLoading ? "جارٍ التحقق..." : "ارسل كود التفعيل"}
+          ارسل كود التفعيل
         </button>
       </div>
+      <ToastContainer />
     </div>
   );
 }

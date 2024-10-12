@@ -1,15 +1,15 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import SignUpValidation from "../validations/SignUpValidation";
+import SignUpValidation from "../validations/SignUpValidation"; 
 import InputForm from "../components/InputForm";
 import signup from "../../../assets/Online learning-amico.svg";
 import Logo from "../../../ui/Logo";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSignup } from "../apis/authAPI";
-import { useState } from "react";
+import { useState } from "react"; 
+import {  ToastContainer } from "react-toastify";
 
 export default function SignUp() {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -23,52 +23,58 @@ export default function SignUp() {
   const onSubmit = async (data) => {
     try {
       await signupUser(data);
-      navigate("/verify-otp", { state: { email: data.email } });
     } catch (err) {
       console.error("Signup error:", err);
     }
   };
 
   const [selectedLevel, setSelectedLevel] = useState("");
-  const levels = [
+  const [selectedSubLevel, setSelectedSubLevel] = useState("");
+
+  const levelsData = [
     {
-      title: "المرحلة الابتدائية",
-      value: "level1",
+      id: "17fcf78b-aeb1-48ac-8044-555c5a413fb9",
+      title: "المرحله الثانوية",
       subLevels: [
-        { title: "الصف الأول الابتدائي", value: "sublevel1" },
-        { title: "الصف الثاني الابتدائي", value: "sublevel2" },
-        { title: "الصف الثالث الابتدائي", value: "sublevel3" },
-        { title: "الصف الرابع الابتدائي", value: "sublevel4" },
-        { title: "الصف الخامس الابتدائي", value: "sublevel5" },
-        { title: "الصف السادس الابتدائي", value: "sublevel6" },
+        {
+          id: "17fcf78b-aeb1-48ac-8044-555c5a413fb9",
+          title: "الصف الاول الثانوي",
+        },
+        {
+          id: "a8dea5b4-ca88-4884-be18-7748387f6cfb",
+          title: "الصف الثالث الثانوي",
+        },
+        {
+          id: "db311981-84e9-4877-96eb-8944ce59e2e1",
+          title: "الصف الثاني الثانوي",
+        },
       ],
     },
     {
-      title: "المرحلة الإعدادية",
-      value: "level2",
+      id: "5a073624-80c6-4570-8288-7e270bc87ff3",
+      title: "المرحله الاعدادية",
       subLevels: [
-        { title: "الصف الأول الإعدادي", value: "sublevel7" },
-        { title: "الصف الثاني الإعدادي", value: "sublevel8" },
-        { title: "الصف الثالث الإعدادي", value: "sublevel9" },
-      ],
-    },
-    {
-      title: "المرحلة الثانوية",
-      value: "level3",
-      subLevels: [
-        { title: "الصف الأول الثانوي", value: "sublevel10" },
-        { title: "الصف الثاني الثانوي", value: "sublevel11" },
-        { title: "الصف الثالث الثانوي", value: "sublevel12" },
+        {
+          id: "70c99a0a-d19a-4c1d-baff-581b01c83243",
+          title: "الصف الاول الأعدادي",
+        },
+        {
+          id: "7f494b20-9e6e-45f8-9b63-860602176628",
+          title: "الصف الثاني الأعدادي",
+        },
+        {
+          id: "f569d4ce-30da-4250-ae86-5bf7b0aa6dd8",
+          title: "الصف الثالث الأعدادي",
+        },
       ],
     },
   ];
 
   const handleLevelChange = (e) => {
-    setSelectedLevel(e.target.value);
+    const selected = e.target.value;
+    setSelectedLevel(selected);
+    setSelectedSubLevel("");
   };
-  const selectedLevelData = levels.find(
-    (level) => level.value === selectedLevel
-  );
 
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200 overflow-y-auto">
@@ -127,29 +133,33 @@ export default function SignUp() {
             register={register("parentPhoneNumber")}
           />
 
+          {/* Level Selection */}
           <InputForm
             label="المرحلة"
             type="select"
             placeholder="اختر المرحلة"
             error={errors.levelId}
-            register={register("levelId", { onChange: handleLevelChange })}
-            options={levels.map((level) => ({
+            register={register("levelId", { onChange: handleLevelChange })} // Handle level change
+            options={levelsData.map((level) => ({
               label: level.title,
-              value: level.value,
+              value: level.id,
             }))}
           />
 
-          {selectedLevel && selectedLevelData && (
+          {/* Sub-level Selection (Dynamic based on selected level) */}
+          {selectedLevel && (
             <InputForm
               label="اختر الصف"
               type="select"
               placeholder="اختر الصف"
-              error={errors.levelId}
-              register={register("levelId")}
-              options={selectedLevelData.subLevels.map((sublevel) => ({
-                label: sublevel.title,
-                value: sublevel.value,
-              }))}
+              error={errors.subLevelId}
+              register={register("subLevelId")}
+              options={levelsData
+                .find((level) => level.id === selectedLevel)
+                ?.subLevels.map((sub) => ({
+                  label: sub.title,
+                  value: sub.id,
+                }))}
             />
           )}
 
@@ -188,6 +198,7 @@ export default function SignUp() {
         alt="signup"
         className="w-[30%] object-contain hidden lg:block"
       />
+      <ToastContainer />
     </div>
   );
 }
