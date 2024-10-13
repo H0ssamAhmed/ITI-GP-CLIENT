@@ -45,7 +45,7 @@ const columns = [
 ];
 
 const ResultsList = () => {
-  const rednderRow = (item) => (
+  const renderRow = (item) => (
     <tr
       className="text-[1rem] hover:bg-brand-50 cursor-default even:bg-gray-50 border-b border-gray-200"
       key={item.id}
@@ -105,7 +105,7 @@ const ResultsList = () => {
       <div>
         <DashboardTable
           columns={columns}
-          rednderRow={rednderRow}
+          renderRow={renderRow}
           data={resultsData}
         />
       </div>

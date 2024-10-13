@@ -180,7 +180,7 @@ export default function SignUp() {
           <div className="flex items-center justify-center">
             <button
               type="submit"
-              className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-3 p-3 w-full rounded-lg"
+              className="w-full p-3 my-3 font-bold text-white bg-indigo-500 rounded-lg hover:bg-indigo-700"
             >
               {isLoading ? "جاري التسجيل..." : "تسجيل"}
             </button>

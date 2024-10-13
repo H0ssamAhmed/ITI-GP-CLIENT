@@ -53,7 +53,16 @@ const queryClient = new QueryClient({
       staleTime: 60 * 1000,
     },
   },
-});
+});import Wallet from "./features/payment/pages/Wallet";
+import Checkout from "./features/payment/pages/checkout";
+import { ToastContainer } from "react-toastify";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import store from "../store";
+import { Provider } from "react-redux";
+import PlatformRequestsList from "./features/dashboard/lists/PlatformRequestsList";
+// Initialize QueryClient
+const queryClient = new QueryClient();
 function App() {
   const queryclient = new QueryClient()
 
@@ -102,32 +111,33 @@ function App() {
             }
           />
 
-          {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route path="admin" element={<AdminPage />} />
-            <Route path="teacher" element={<TeacherPage />} />
-            <Route path="student" element={<StudentPage />} />
-            <Route path="parent" element={<ParentPage />} />
-            <Route path="profile" element={<ProfileList />} />
-            <Route path="list/teachers" element={<TeachersList />} />
-            <Route path="list/teachers/:id" element={<TeacherDetails />} />
-            <Route path="list/students" element={<StudentsList />} />
-            <Route path="list/students/:id" element={<StudentsDetails />} />
-            <Route path="list/Parents" element={<ParentsList />} />
-            <Route path="list/subjects" element={<SubjectsList />} />
-            <Route path="list/messages" element={<MessagesList />} />
-            <Route path="list/lessons" element={<CreateCourseList />} />
-            <Route path="list/exams" element={<ExamsList />} />
-            <Route
-              path="list/announcements"
-              element={<AnnouncementList userRole={role} />}
-            />
-            <Route
-              path="list/classes"
-              element={<ClassesList data={transformedClasses} />}
-            />
-            <Route path="list/results" element={<ResultsList />} />
-          </Route>
+            {/* Dashboard Routes */}
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route path="admin" element={<AdminPage />} />
+              <Route path="teacher" element={<TeacherPage />} />
+              <Route path="student" element={<StudentPage />} />
+              <Route path="parent" element={<ParentPage />} />
+              <Route path="profile" element={<ProfileList />} />
+              <Route path="list/teachers" element={<TeachersList />} />
+              <Route path="list/teachers/:id" element={<TeacherDetails />} />
+              <Route path="list/students" element={<StudentsList />} />
+              <Route path="list/students/:id" element={<StudentsDetails />} />
+              <Route path="list/Parents" element={<ParentsList />} />
+              <Route path="list/subjects" element={<SubjectsList />} />
+              <Route path="list/messages" element={<MessagesList />} />
+              <Route path="list/requests" element={<PlatformRequestsList />} />
+              <Route path="list/lessons" element={<CreateCourseList />} />
+              <Route path="list/exams" element={<ExamsList />} />
+              <Route
+                path="list/announcements"
+                element={<AnnouncementList userRole={role} />}
+              />
+              <Route
+                path="list/classes"
+                element={<ClassesList data={transformedClasses} />}
+              />
+              <Route path="list/results" element={<ResultsList />} />
+            </Route>
 
           <Route path="*" element={<Error />} />
         </Routes>

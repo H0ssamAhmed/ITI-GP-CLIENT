@@ -12,51 +12,54 @@ const menuItems = [
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
+        icon: "/src/assets/dashboard/request.png",
+        label: "طلبات المنصة",
+        href: "list/requests",
+        visible: ["admin"],
+      },
+      {
         icon: "/src/assets/dashboard/teacher.png",
         label: "المعلمين",
         href: "list/teachers",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
+
       {
         icon: "/src/assets/dashboard/student.png",
         label: "التلاميذ",
         href: "list/students",
         visible: ["admin", "teacher"],
       },
-      {
-        icon: "/src/assets/dashboard/parent.png",
-        label: "الأباء",
-        href: "list/parents",
-        visible: ["admin", "teacher"],
-      },
+
       {
         icon: "/src/assets/dashboard/subject.png",
-        label: "المواد الدراسية",
+        label: "الكورسات",
         href: "list/subjects",
         visible: ["admin"],
       },
+
       {
         icon: "/src/assets/dashboard/class.png",
         label: "الصفوف الدراسية",
         href: "list/classes",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
       {
         icon: "/src/assets/dashboard/lesson.png",
-        label: "الكورسات",
+        label: "إنشاء كورس",
         href: "list/lessons",
-        visible: ["admin", "teacher"],
+        visible: ["teacher"],
       },
       {
         icon: "/src/assets/dashboard/exam.png",
-        label: "الإختبارات",
+        label: "إنشاء أختبار",
         href: "list/exams",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["teacher"],
       },
 
       {
         icon: "/src/assets/dashboard/result.png",
-        label: "النتائج",
+        label: "نتائج الإختبارات",
         href: "list/results",
         visible: ["admin", "teacher", "student", "parent"],
       },

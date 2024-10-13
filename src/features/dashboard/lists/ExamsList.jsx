@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAllTeacherCourses } from "../dashboardAPI";
 
 // Define Yup schema for validation
 const schema = yup.object().shape({
@@ -61,14 +63,25 @@ const ExamsList = () => {
     { id: "3", name: "History" },
   ];
 
+  const { data: teachersCourses } = useQuery({
+    queryKey: ["teacherCourses"],
+    queryFn: fetchAllTeacherCourses,
+  });
+
+  console.log(teachersCourses);
+
   const addQuestion = () => {
     setQuestions((prev) => [
       ...prev,
       {
         questionTitle: "",
         mark: 1,
-        answers: ["", "", "", ""],
-        correctAnswer: 0,
+        answers: [
+          { title: "", isCorrect: false },
+          { title: "", isCorrect: false },
+          { title: "", isCorrect: false },
+          { title: "", isCorrect: false },
+        ],
       },
     ]);
   };
@@ -85,6 +98,7 @@ const ExamsList = () => {
   };
 
   const onSubmit = (data) => {
+    // Prepare data to match backend structure
     console.log("Submitted Exam:", data);
     alert("Exam Submitted Successfully!");
   };
@@ -189,72 +203,76 @@ const ExamsList = () => {
   );
 };
 
-const QuestionComponent = ({ index, register, control, question, errors }) => (
-  <div>
-    {/* عنوان السؤال */}
-    <div className="flex flex-col mb-4">
-      <label className="font-semibold">عنوان السؤال:</label>
-      <input
-        type="text"
-        {...register(`questions[${index}].questionTitle`)}
-        className="p-2 border border-gray-300 rounded-md"
-        placeholder="أدخل السؤال"
-      />
-      {errors?.questions?.[index]?.questionTitle && (
-        <p className="text-red-500">
-          {errors.questions[index].questionTitle.message}
-        </p>
-      )}
-    </div>
+const QuestionComponent = ({ index, register, control, question, errors }) => {
+  return (
+    <div>
+      {/* Question Title */}
+      <div className="flex flex-col mb-4">
+        <label className="font-semibold">عنوان السؤال:</label>
+        <input
+          type="text"
+          {...register(`questions[${index}].questionTitle`)}
+          className="p-2 border border-gray-300 rounded-md"
+          placeholder="أدخل السؤال"
+        />
+        {errors?.questions?.[index]?.questionTitle && (
+          <p className="text-red-500">
+            {errors.questions[index].questionTitle.message}
+          </p>
+        )}
+      </div>
 
-    {/* الدرجة */}
-    <div className="flex flex-col mb-4">
-      <label className="font-semibold">الدرجة:</label>
-      <input
-        type="number"
-        {...register(`questions[${index}].mark`)}
-        className="p-2 border border-gray-300 rounded-md"
-      />
-      {errors?.questions?.[index]?.mark && (
-        <p className="text-red-500">{errors.questions[index].mark.message}</p>
-      )}
-    </div>
+      {/* Mark */}
+      <div className="flex flex-col mb-4">
+        <label className="font-semibold">الدرجة:</label>
+        <input
+          type="number"
+          {...register(`questions[${index}].mark`)}
+          className="p-2 border border-gray-300 rounded-md"
+        />
+        {errors?.questions?.[index]?.mark && (
+          <p className="text-red-500">{errors.questions[index].mark.message}</p>
+        )}
+      </div>
 
-    {/* الإجابات */}
-    <div className="mb-4">
-      <h4 className="font-semibold mb-2">الإجابات:</h4>
-
-      <span className="text-[1.3rem] text-gray-400 -mt-6">
-        قم باختيار الإجابة الصحيحة عن طريق الضغط على مربع الاختيار
-      </span>
-      {question.answers.map((_, answerIndex) => (
-        <div
-          key={answerIndex}
-          className="flex justify-between  items-center mb-2"
-        >
-          <div>
+      {/* Answers */}
+      <div className="mb-4">
+        <h4 className="font-semibold mb-2">الإجابات:</h4>
+        <span className="text-[1.3rem] text-gray-400 -mt-6">
+          قم باختيار الإجابة الصحيحة عن طريق الضغط على مربع الاختيار
+        </span>
+        {question.answers.map((answer, answerIndex) => (
+          <div
+            key={answerIndex}
+            className="flex justify-between items-center mb-2"
+          >
+            <div>
+              <input
+                type="text"
+                {...register(
+                  `questions[${index}].answers[${answerIndex}].title`
+                )}
+                className="p-2 border border-gray-300 rounded-md w-full"
+                placeholder={`الإجابة ${answerIndex + 1}`}
+              />
+              {errors?.questions?.[index]?.answers?.[answerIndex]?.title && (
+                <p className="text-red-500 text-[1.3rem]">
+                  {errors.questions[index].answers[answerIndex].title.message}
+                </p>
+              )}
+            </div>
             <input
-              type="text"
-              {...register(`questions[${index}].answers[${answerIndex}]`)}
-              className="p-2 border border-gray-300 rounded-md w-full"
-              placeholder={`الإجابة ${answerIndex + 1}`}
+              type="checkbox"
+              {...register(
+                `questions[${index}].answers[${answerIndex}].isCorrect`
+              )}
+              className="ml-4"
             />
-            {errors?.questions?.[index]?.answers?.[answerIndex] && (
-              <p className="text-red-500 text-[1.3rem]">
-                {errors.questions[index].answers[answerIndex].message}
-              </p>
-            )}
           </div>
-          <input
-            type="radio"
-            {...register(`questions[${index}].correctAnswer`)}
-            value={answerIndex}
-            className="ml-4"
-          />
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default ExamsList;
