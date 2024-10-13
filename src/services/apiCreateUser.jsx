@@ -7,9 +7,9 @@ export const apiCreateUser = async (data, type) => {
 
     // Determine the endpoint based on user type
     if (type === 'student') {
-      endpoint = `${API_URL}/api/auth/create-student`;
+      endpoint = `${API_URL}/student/auth/signup`;
     } else if (type === 'teacher') {
-      endpoint = `${API_URL}/api/auth/create-teacher`;
+      endpoint = `${API_URL}/teacher/auth/signup`;
     } else {
       throw new Error('Invalid user type');
     }

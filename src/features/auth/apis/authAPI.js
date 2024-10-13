@@ -1,19 +1,21 @@
-import AxiosInstance from "../../../utils/axiosInstance";
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import AxiosInstance from '../../../utils/axiosInstance';
+import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useDispatch } from "react-redux";
+import { useDispatch } from 'react-redux';
 import {
   startLoading,
   authSuccess,
   authFailure,
   setUserRole,
-} from "../slices/authSlice";
+} from '../slices/authSlice';
+import { useContext } from 'react';
+import SignUpContext from '../../store/signup-context';
 const verifyEmailForgetPassword = async (userData) => {
   try {
-    const response = await AxiosInstance.post("user/forget-password", userData);
+    const response = await AxiosInstance.post('user/forget-password', userData);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -24,7 +26,11 @@ const verifyEmailForgetPassword = async (userData) => {
 
 const loginUser = async (userData) => {
   try {
-    const response = await AxiosInstance.post("user/auth/login-user", userData,{  withCredentials: true });
+    const response = await AxiosInstance.post(
+      'user/auth/login-user',
+      userData,
+      { withCredentials: true }
+    );
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -33,23 +39,9 @@ const loginUser = async (userData) => {
   }
 };
 
-
 const signupUser = async (userData) => {
   try {
-    const response = await AxiosInstance.post(
-      "student/auth/signup",
-      userData,
-      { withCredentials: true }
-    );
-    return response.data;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-const verifyOTP = async (userData) => {
-  try {
-    const response = await AxiosInstance.post("student/auth/verify-otp", userData, {
+    const response = await AxiosInstance.post('student/auth/signup', userData, {
       withCredentials: true,
     });
     return response.data;
@@ -58,9 +50,24 @@ const verifyOTP = async (userData) => {
     throw error;
   }
 };
+const verifyOTP = async (userData) => {
+  try {
+    const response = await AxiosInstance.post(
+      'student/auth/verify-otp',
+      userData,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
 const resendOTP = async function () {
   try {
-    const response = await AxiosInstance.post("student/auth/resend-otp", {
+    const response = await AxiosInstance.post('student/auth/resend-otp', {
       withCredentials: true,
     });
     return response.data;
@@ -82,11 +89,11 @@ export const useResendOTP = () => {
     },
     onError: (error) => {
       dispatch(
-        authFailure(error.response?.data?.message || "Failed to resend OTP")
+        authFailure(error.response?.data?.message || 'Failed to resend OTP')
       );
-      toast.error(error.response?.data?.message || "Failed to resend OTP", {
-        position: "top-right",
-        autoClose: 5000, 
+      toast.error(error.response?.data?.message || 'Failed to resend OTP', {
+        position: 'top-right',
+        autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -107,15 +114,15 @@ export const useVerifyOTP = () => {
     },
     onSuccess: (data) => {
       dispatch(authSuccess(data));
-      navigate("/login");
+      navigate('/login');
     },
     onError: (error) => {
       dispatch(
-        authFailure(error.response?.data?.message || "Failed to verify OTP")
+        authFailure(error.response?.data?.message || 'Failed to verify OTP')
       );
-      toast.error(error.response?.data?.message || "Failed to verify OTP", {
-        position: "top-right",
-        autoClose: 5000, 
+      toast.error(error.response?.data?.message || 'Failed to verify OTP', {
+        position: 'top-right',
+        autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -140,15 +147,15 @@ export const useLogin = () => {
       dispatch(setUserRole(role));
 
       dispatch(authSuccess(data));
-      navigate("/");
+      navigate('/');
     },
     onError: (error) => {
       dispatch(
-        authFailure(error.response?.data?.message || "Failed to log in")
+        authFailure(error.response?.data?.message || 'Failed to log in')
       );
-      toast.error(error.response?.data?.message || "Failed to log in", {
-        position: "top-right",
-        autoClose: 5000, 
+      toast.error(error.response?.data?.message || 'Failed to log in', {
+        position: 'top-right',
+        autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -162,6 +169,7 @@ export const useLogin = () => {
 export const useSignup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  // const { type } = useContext(SignUpContext);
   return useMutation({
     mutationFn: signupUser,
     onMutate: () => {
@@ -169,15 +177,15 @@ export const useSignup = () => {
     },
     onSuccess: (data) => {
       dispatch(authSuccess(data));
-      navigate("/verify-otp", { state: { email: data.email } });
+      navigate('/verify-otp', { state: { email: data.email } });
     },
     onError: (error) => {
       dispatch(
-        authFailure(error.response?.data?.message || "Failed to sign up")
+        authFailure(error.response?.data?.message || 'Failed to sign up')
       );
-      toast.error(error.response?.data?.message || "Signup failed", {
-        position: "top-right",
-        autoClose: 5000, 
+      toast.error(error.response?.data?.message || 'Signup failed', {
+        position: 'top-right',
+        autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -198,21 +206,20 @@ export const useVerifyEmailForgetPassword = () => {
     },
     onSuccess: (data) => {
       dispatch(authSuccess(data));
-      navigate("/forget-password");
+      navigate('/forget-password');
     },
     onError: (error) => {
       dispatch(
-        authFailure(error.response?.data?.message || "Failed to verify email")
+        authFailure(error.response?.data?.message || 'Failed to verify email')
       );
-      toast.error(error.response?.data?.message || "Failed to verify email", {
-        position: "top-right",
-        autoClose: 5000, 
+      toast.error(error.response?.data?.message || 'Failed to verify email', {
+        position: 'top-right',
+        autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-
       });
     },
   });
