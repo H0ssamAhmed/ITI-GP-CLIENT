@@ -9,9 +9,21 @@ import {
 } from "date-fns";
 
 // Format date helper
-export const formatDate = (date, dateFormat = "dd MMMM yyyy") =>
-  format(date, dateFormat);
+// Function to format the date
 
+// Function to format the date
+export const formatDate = (isoDate) => {
+  const date = new Date(isoDate);
+  if (isNaN(date)) {
+    console.error("Invalid date encountered:", isoDate);
+    return "Invalid Date";
+  }
+  return date.toLocaleDateString("ar-EG", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 // Calculate remaining days helper
 export const daysLeft = (date) => differenceInDays(date, new Date());
 

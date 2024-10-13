@@ -1,11 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "react-toastify";
-import { createCourse } from "../dashboardAPI";
+import { createCourse, fetchAllLevels } from "../dashboardAPI";
 import CircularSize from "../../../ui/CircularSize";
 
 const CreateCourseList = ({ initialData }) => {
+  const [levels, setLevels] = useState([]);
   const {
     mutate: createCourseMutate,
     isLoading: isCreatingCourse,
@@ -13,7 +14,7 @@ const CreateCourseList = ({ initialData }) => {
   } = useMutation({
     mutationFn: createCourse,
     onSuccess: () => {
-      toast.success("تم إنشاء الكورس بنجاح");
+      toast.warn("تم إنشاء الكورس وسيتم مراجعته وموافاتك بالرد");
     },
     onError: (error) => {
       if (error.response) {
@@ -82,13 +83,28 @@ const CreateCourseList = ({ initialData }) => {
     }));
   };
 
+  useEffect(() => {
+    const getLevels = async () => {
+      try {
+        const fetchedLevels = await fetchAllLevels();
+        // Check if fetchedLevels is an array, otherwise set it as an empty array
+        setLevels(Array.isArray(fetchedLevels.data) ? fetchedLevels.data : []);
+      } catch (error) {
+        console.error("Failed to fetch levels:", error);
+        setLevels([]); // Set to an empty array if there's an error
+      }
+    };
+
+    getLevels();
+  }, []);
+
   const onSubmit = (data) => {
     const courseData = {
       title: data.title,
       description: data.description,
       price: +data.price,
       discountedPrice: +data.discountedPrice,
-      levelId: "cf36e6c5-ee9a-4310-ba8a-7941a132d95d",
+      levelId: data.levelId,
       sections: data.sections.map((section, sectionIndex) => ({
         title: section.title,
         lessons: lessons[sectionIndex].map((lesson, lessonIndex) => ({
@@ -106,13 +122,13 @@ const CreateCourseList = ({ initialData }) => {
 
   return (
     <div className="max-w-6xl p-6 mx-auto">
-      <h2 className="mb-8 text-3xl font-bold text-right text-brand-500">
-        إنشاء كورس جديد
+      <h2 className="mb-8 text-[3rem] text-center font-bold  text-brand-500">
+        إنشاء كورس جديد 👨‍🏫
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Course Title */}
         <div>
-          <label className="block mb-2 text-[1.4rem] text-sm font-semibold text-right">
+          <label className="block mb-2 text-[1.9rem] text-sm font-semibold text-right">
             عنوان الكورس
           </label>
           <input
@@ -130,7 +146,7 @@ const CreateCourseList = ({ initialData }) => {
 
         {/* Course Description */}
         <div>
-          <label className="block text-[1.5rem] mb-2 text-sm font-semibold text-right">
+          <label className="block text-[1.9rem] mb-2 text-sm font-semibold text-right">
             وصف الكورس
           </label>
           <textarea
@@ -147,7 +163,7 @@ const CreateCourseList = ({ initialData }) => {
 
         {/* Course Price */}
         <div>
-          <label className="block text-[1.5rem] mb-2 text-sm font-semibold text-right">
+          <label className="block text-[1.9rem] mb-2 text-sm font-semibold text-right">
             سعر الكورس
           </label>
           <input
@@ -165,7 +181,7 @@ const CreateCourseList = ({ initialData }) => {
 
         {/* Discounted Price */}
         <div>
-          <label className="block text-[1.5rem] mb-2 text-sm font-semibold text-right">
+          <label className="block text-[1.9rem] mb-2 text-sm font-semibold text-right">
             السعر بعد الخصم
           </label>
           <input
@@ -183,7 +199,7 @@ const CreateCourseList = ({ initialData }) => {
 
         {/* Course Level */}
         <div>
-          <label className="block text-[1.5rem] mb-2 text-sm font-semibold text-right">
+          <label className="block text-[1.9rem] mb-2 text-sm font-semibold text-right">
             المستوى الدراسي
           </label>
           <select
@@ -191,20 +207,13 @@ const CreateCourseList = ({ initialData }) => {
             className="w-full p-3 text-right border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-brand-200"
           >
             <option value="">اختر المستوى</option>
-            <option value="الصف الاول الابتدائي">الصف الاول الابتدائي</option>
-            <option value="الصف الثاني الابتدائي">الصف الثاني الابتدائي</option>
-            <option value="الصف الثالث الابتدائي">الصف الثالث الابتدائي</option>
-            <option value="الصف الرابع الابتدائي">الصف الرابع الابتدائي</option>
-            <option value="الصف الخامس الابتدائي">الصف الخامس الابتدائي</option>
-            <option value="الصف السادس الابتدائي">الصف السادس الابتدائي</option>
-            <option value="المرحلة الاعدادية">المرحلة الاعدادية</option>
-            <option value="الصف الاول الإعدادي">الصف الاول الإعدادي</option>
-            <option value="الصف الثاني الإعدادي">الصف الثاني الإعدادي</option>
-            <option value="الصف الثالث الاعدادي">الصف الثالث الاعدادي</option>
-            <option value="المرحلة الثانوية">المرحلة الثانوية</option>
-            <option value="الصف الاول الثانوي">الصف الاول الثانوي</option>
-            <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
-            <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
+            {levels.map((level) =>
+              level.subLevels.map((subLevel) => (
+                <option key={subLevel.id} value={subLevel.id}>
+                  {subLevel.title}
+                </option>
+              ))
+            )}
           </select>
           {errors.levelId && (
             <span className="text-[1rem] text-red-500">
@@ -364,7 +373,7 @@ const CreateCourseList = ({ initialData }) => {
           <button
             type="submit"
             disabled={isCreatingCourse}
-            className="px-4 py-2 text-white rounded-md bg-brand-200 hover:bg-brand-500"
+            className="px-4 py-2 text-white rounded-md w-full  bg-brand-600 hover:bg-brand-500"
           >
             {isCreatingCourse ? <CircularSize /> : "إنشاء الكورس"}
           </button>

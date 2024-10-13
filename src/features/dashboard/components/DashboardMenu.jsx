@@ -52,7 +52,7 @@ const menuItems = [
       },
       {
         icon: "/src/assets/dashboard/exam.png",
-        label: "الإختبارات",
+        label: "إنشاء أختبار",
         href: "list/exams",
         visible: ["teacher"],
       },

@@ -103,6 +103,47 @@ export const fetchCoursesInLevel = async (levelId) => {
   }
 };
 
+export const createLevel = async (newLevelData) => {
+  const token = getCookie("accessToken");
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/admin/level`,
+      newLevelData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const deleteLevel = async (levelId) => {
+  const token = getCookie("accessToken");
+  try {
+    const response = await axios.delete(
+      `http://localhost:3000/admin/level/${levelId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 //!SECTION Get all Anouncments
 export const fetchAllAnnouncements = async () => {
   try {
@@ -252,5 +293,28 @@ export const createCourse = async (courseData) => {
       console.error(error);
       throw new Error("حدث خطأ");
     }
+  }
+};
+
+export const fetchAllTeacherCourses = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/user/courses/teacher-courses`
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+};
+
+export const currentUser = async () => {
+  try {
+    const response = await axios.get("http://localhost:3000/user/current");
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
   }
 };
