@@ -57,6 +57,7 @@ function App() {
   return (
     <>
       <ReactQueryDevtools initialIsOpen={false} />
+      <ToastContainer />
       <Router>
         <Routes>
           {/* Main layout routes */}
@@ -172,18 +173,6 @@ function App() {
 
           <Route path="*" element={<Error />} />
         </Routes>
-        <ToastContainer
-          position="bottom-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          closeOnClick={true}
-          pauseOnHover={true}
-          draggable={true}
-          progress={undefined}
-          theme="light"
-          icon={true}
-          draggablePercent={100}
-        />
       </Router>
     </>
   );
