@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { role } from "../../../lib/data";
+import { useSelector } from "react-redux";
 
 const menuItems = [
   {
@@ -104,6 +104,8 @@ const menuItems = [
 ];
 
 const DashboardMenu = () => {
+  const role = useSelector((state) => state.auth.role);
+
   return (
     <div>
       {menuItems.map((item) => (
