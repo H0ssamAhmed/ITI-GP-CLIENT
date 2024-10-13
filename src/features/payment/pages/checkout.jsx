@@ -1,12 +1,15 @@
-import { useState } from "react"; // Import useState for managing state
-import { HiArrowRight } from "react-icons/hi";
-import { useMoveBack } from "../../../hooks/useMoveBack";
-import { useForm } from "react-hook-form";
+import { useState } from 'react'; // Import useState for managing state
+import { HiArrowRight } from 'react-icons/hi';
+import { useMoveBack } from '../../../hooks/useMoveBack';
+import { useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { chargeWalletApi } from '../apis/chargeWalletApi';
+import { toast } from 'react-toastify';
+import { Spinner } from '@material-tailwind/react';
 
 const Checkout = () => {
   const [isChecked, setIsChecked] = useState(false); // State for checkbox
-  const [amount, setAmount] = useState(""); // State for input amount
-
+  const [amount, setAmount] = useState(''); // State for input amount
   const {
     register,
     handleSubmit,
@@ -16,14 +19,29 @@ const Checkout = () => {
 
   // Form submission handler
   const onSubmit = (data) => {
-    console.log("Submitted amount:", data.amount);
+    console.log('Submitted amount:', +data.amount);
+    mutatePayment(Number(data.amount));
     // Handle successful submission (e.g., API call or state update)
   };
 
+  const { mutate: mutatePayment, isPending: isPaymentProcessing } = useMutation(
+    {
+      mutationFn: chargeWalletApi,
+      onSuccess: (paymentUrl) => {
+        window.location.href = paymentUrl;
+      },
+      onError: () => {
+        toast.error('Failed to charge wallet. Please try again.', {
+          type: 'error',
+          toastId: 'charge-wallet-error',
+        });
+      },
+    }
+  );
   // Function to handle checkbox change
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked); // Toggle checkbox state
-    if (isChecked) setAmount(""); // Reset amount if unchecked
+    if (isChecked) setAmount(''); // Reset amount if unchecked
   };
 
   return (
@@ -45,7 +63,7 @@ const Checkout = () => {
             {/* Change the background color based on checkbox state */}
             <div
               className={`w-full rounded-md p-4 shadow-lg transition-all duration-300 ${
-                isChecked ? "bg-brand-400 text-white" : "bg-white text-gray-800"
+                isChecked ? 'bg-brand-400 text-white' : 'bg-white text-gray-800'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -102,16 +120,16 @@ const Checkout = () => {
               >
                 <input
                   type="number"
-                  {...register("amount", {
-                    required: "هذا الحقل مطلوب",
+                  {...register('amount', {
+                    required: 'هذا الحقل مطلوب',
                     min: {
                       value: 1,
-                      message: "يجب أن يكون المبلغ أكبر من 0",
+                      message: 'يجب أن يكون المبلغ أكبر من 0',
                     },
                   })} // Register input with validation rules
                   placeholder="أدخل المبلغ"
                   className={`border border-gray-300 rounded-md p-3 w-full lg:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ${
-                    errors.amount ? "border-red-500" : ""
+                    errors.amount ? 'border-red-500' : ''
                   }`}
                 />
                 {errors.amount && (
@@ -121,10 +139,17 @@ const Checkout = () => {
                 )}
 
                 <button
-                  type="submit" // Set type to submit
+                  disabled={isPaymentProcessing}
+                  type="submit"
                   className="bg-green-500 flex items-center justify-center mt-5 ml-4 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-green-600 transition duration-200"
                 >
-                  تأكيد المبلغ
+                  {isPaymentProcessing ? (
+                    <>
+                      جاري الدفع <Spinner style={{ marginRight: '8px' }} />
+                    </>
+                  ) : (
+                    'تأكيد المبلغ'
+                  )}
                 </button>
               </form>
             )}

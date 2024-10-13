@@ -4,44 +4,45 @@ import {
   Route,
   Navigate,
   Outlet,
-} from "react-router-dom";
-import SignUp from "./features/auth/pages/SignUp";
-import Login from "./features/auth/pages/Login";
-import VerifyEmail from "./features/auth/pages/VerifyEmail";
-import Home from "./pages/Home";
-import CourseCatalog from "./features/courses/pages/CourseCatalog";
-import CourseDetail from "./features/courses/pages/CourseDetail";
-import Contact from "./pages/Contact";
-import About from "./pages/About";
-import LessonDetails from "./features/courses/pages/LessonDetails";
-import MainLayout from "./layouts/mainlayout";
-import DashboardLayout from "./layout/DashboardLayout";
-import AdminPage from "./features/dashboard/pages/admin/AdminPage";
-import TeacherPage from "./features/dashboard/pages/teacher/TeacherPage";
-import StudentPage from "./features/dashboard/pages/student/StudentPage";
-import ParentPage from "./features/dashboard/pages/parent/ParentPage";
-import TeachersList from "./features/dashboard/lists/TeachersList";
-import StudentsList from "./features/dashboard/lists/StudentsList";
-import ParentsList from "./features/dashboard/lists/ParentsList";
-import SubjectsList from "./features/dashboard/lists/SubjectsList";
-import AnnouncementList from "./features/dashboard/lists/AnnouncementList";
-import ClassesList from "./features/dashboard/lists/ClassesList";
-import ResultsList from "./features/dashboard/lists/ResultsList";
-import TeacherDetails from "./features/dashboard/components/TeacherDetails";
-import StudentsDetails from "./features/dashboard/components/StudentsDetails";
-import MessagesList from "./features/dashboard/lists/MessagesList";
-import ProfileList from "./features/dashboard/components/ProfileDetails";
-import CreateCourseList from "./features/dashboard/lists/CreateCourseList";
-import ExamsList from "./features/dashboard/lists/ExamsList";
-import { role, transformedClasses } from "./lib/data";
-import Error from "./pages/Error";
-import Wallet from "./features/payment/pages/Wallet";
-import Checkout from "./features/payment/pages/checkout";
-import { ToastContainer } from "react-toastify";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import store from "../store";
-import { Provider } from "react-redux";
+} from 'react-router-dom';
+import SignUp from './features/auth/pages/SignUp';
+import Login from './features/auth/pages/Login';
+import VerifyEmail from './features/auth/pages/VerifyEmail';
+import Home from './pages/Home';
+import CourseCatalog from './features/courses/pages/CourseCatalog';
+import CourseDetail from './features/courses/pages/CourseDetail';
+import Contact from './pages/Contact';
+import About from './pages/About';
+import LessonDetails from './features/courses/pages/LessonDetails';
+import MainLayout from './layouts/mainlayout';
+import DashboardLayout from './layout/DashboardLayout';
+import AdminPage from './features/dashboard/pages/admin/AdminPage';
+import TeacherPage from './features/dashboard/pages/teacher/TeacherPage';
+import StudentPage from './features/dashboard/pages/student/StudentPage';
+import ParentPage from './features/dashboard/pages/parent/ParentPage';
+import TeachersList from './features/dashboard/lists/TeachersList';
+import StudentsList from './features/dashboard/lists/StudentsList';
+import ParentsList from './features/dashboard/lists/ParentsList';
+import SubjectsList from './features/dashboard/lists/SubjectsList';
+import AnnouncementList from './features/dashboard/lists/AnnouncementList';
+import ClassesList from './features/dashboard/lists/ClassesList';
+import ResultsList from './features/dashboard/lists/ResultsList';
+import TeacherDetails from './features/dashboard/components/TeacherDetails';
+import StudentsDetails from './features/dashboard/components/StudentsDetails';
+import MessagesList from './features/dashboard/lists/MessagesList';
+import ProfileList from './features/dashboard/components/ProfileDetails';
+import CreateCourseList from './features/dashboard/lists/CreateCourseList';
+import ExamsList from './features/dashboard/lists/ExamsList';
+import { role, transformedClasses } from './lib/data';
+import Error from './pages/Error';
+import Wallet from './features/payment/pages/Wallet';
+import Checkout from './features/payment/pages/checkout';
+import { ToastContainer } from 'react-toastify';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import store from '../store';
+import { Provider } from 'react-redux';
+import { TransactionResult } from './features/payment/pages/transaactionResult';
 // Initialize QueryClient
 const queryClient = new QueryClient();
 function App() {
@@ -54,7 +55,12 @@ function App() {
             <Route path="/" element={<MainLayout />}>
               <Route index element={<Home />} />
               <Route path="wallet" element={<Wallet />} />
-              <Route path="wallet/checkout" element={<Checkout />} />
+              <Route path="wallet/checkout/" element={<Checkout />} />
+              <Route
+                path="wallet/checkout/result"
+                element={<TransactionResult />}
+              />
+
               <Route path="contact" element={<Contact />} />
               <Route path="about-us" element={<About />} />
               <Route path="courses" element={<Outlet />}>
@@ -72,13 +78,13 @@ function App() {
               path="/dashboard/userHome"
               element={
                 role ? (
-                  role === "admin" ? (
+                  role === 'admin' ? (
                     <Navigate to="/dashboard/admin" />
-                  ) : role === "teacher" ? (
+                  ) : role === 'teacher' ? (
                     <Navigate to="/dashboard/teacher" />
-                  ) : role === "student" ? (
+                  ) : role === 'student' ? (
                     <Navigate to="/dashboard/student" />
-                  ) : role === "parent" ? (
+                  ) : role === 'parent' ? (
                     <Navigate to="/dashboard/parent" />
                   ) : (
                     <Navigate to="/dashboard/profile" />
