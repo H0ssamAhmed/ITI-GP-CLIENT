@@ -41,6 +41,7 @@ const CreateCourseList = ({ initialData }) => {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -119,6 +120,7 @@ const CreateCourseList = ({ initialData }) => {
 
     console.log(courseData);
     createCourseMutate(courseData);
+    reset();
   };
 
   return (

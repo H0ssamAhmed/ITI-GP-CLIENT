@@ -314,10 +314,40 @@ export const fetchAllTeacherCourses = async () => {
   }
 };
 
+export const FetchTeacherSections = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/user/courses/teacher-sections`,
+      { withCredentials: true }
+    );
+
+    return response.data.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+};
+
 export const currentUser = async () => {
   try {
     const response = await axios.get("http://localhost:3000/user/current");
     return response.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+};
+
+export const createQuiz = async (quizData) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/teacher/quiz",
+      quizData,
+      {
+        withCredentials: true,
+      }
+    );
+    return response;
   } catch (error) {
     console.error(error);
     throw new Error(error);
