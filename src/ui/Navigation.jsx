@@ -7,8 +7,12 @@ import Logo from "./Logo";
 import MultiLevelDropdown from "./MultiLevelDropdown";
 import SearchBar from "./SearchBar";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import LoggedUser from "./LoggedUser";
 
 function Navigation() {
+  const userRole = useSelector((state) => state.auth.role);
+  console.log(userRole);
   const [isOpen, setIsOpen] = useState(false);
   const { scrollY } = useScroll();
   const navOpacity = useTransform(scrollY, [0, 50], [1, 0.9]); // Shrinks opacity as user scrolls
@@ -54,16 +58,22 @@ function Navigation() {
         <SearchBar />
       </div>
       <div className="hidden items-center gap-4 lg:flex">
-        <Link to={"/signup"}>
-          <Button className="px-4  py-2 font-bold text-black transition-all duration-300 bg-yellow-500 rounded-full hover:bg-yellow-300 ">
-            حساب جديد
-          </Button>
-        </Link>
-        <Link to={"/login"}>
-          <Button className="px-4 py-2  font-bold text-white transition-all duration-300 bg-transparent border-2 rounded-full hover:bg-gray-400 ring-white">
-            تسجيل الدخول
-          </Button>
-        </Link>
+        {!userRole ? (
+          <>
+            <Link to={"/signup"}>
+              <Button className="px-4 py-2 font-bold text-black transition-all duration-300 bg-yellow-500 rounded-full hover:bg-yellow-300">
+                حساب جديد
+              </Button>
+            </Link>
+            <Link to={"/login"}>
+              <Button className="px-4 py-2 font-bold text-white transition-all duration-300 bg-transparent border-2 rounded-full hover:bg-gray-400 ring-white">
+                تسجيل الدخول
+              </Button>
+            </Link>
+          </>
+        ) : (
+          <LoggedUser role={userRole} />
+        )}
       </div>
     </motion.nav>
   );
