@@ -13,11 +13,13 @@ const AnnouncementList = ({ userRole }) => {
       header: "مرحبًا بكم",
       description: "مرحبًا بكم في المنصة! نأمل أن تجدوا كل ما تحتاجونه.",
       time: "2024-09-20 10:30",
+      courseLink: null, // No link initially
     },
     {
       header: "دورات جديدة",
       description: "تم إضافة دورات جديدة في مختلف التخصصات، لا تفوتوا الفرصة!",
       time: "2024-09-25 15:00",
+      courseLink: null, // No link initially
     },
   ]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,25 +33,24 @@ const AnnouncementList = ({ userRole }) => {
 
   const handleAddAnnouncement = (data) => {
     const currentTime = new Date().toISOString().slice(0, 16).replace("T", " ");
-
     setAnnouncements([
       ...announcements,
       {
         header: data.header,
         description: data.description,
         time: currentTime,
+        courseLink: data.courseLink || null, // Add the course link if provided
       },
     ]);
 
-    // Show toast notification with custom responsive styles
     toast.success("تم إضافة الإعلان بنجاح!", {
-      position: window.innerWidth > 768 ? "top-right" : "bottom-center", // Responsive positioning
+      position: window.innerWidth > 768 ? "top-right" : "bottom-center",
       autoClose: 3000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
-      style: { width: window.innerWidth > 768 ? "350px" : "100%" }, // Responsive width
+      style: { width: window.innerWidth > 768 ? "350px" : "100%" },
     });
 
     setIsModalOpen(false);
@@ -81,6 +82,17 @@ const AnnouncementList = ({ userRole }) => {
               {announcement.header}
             </h3>
             <p className="mb-2 text-gray-700">{announcement.description}</p>
+            {announcement.courseLink && (
+              <p className="mb-2 text-blue-500 underline cursor-pointer">
+                <a
+                  href={announcement.courseLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  الذهاب إلى الكورس
+                </a>
+              </p>
+            )}
             <small className="text-gray-500">
               تمت الإضافة: {announcement.time}
             </small>
@@ -95,7 +107,7 @@ const AnnouncementList = ({ userRole }) => {
         className="fixed inset-0 flex items-center justify-center p-4 bg-gray-900 bg-opacity-50"
         overlayClassName="fixed inset-0 bg-black bg-opacity-50"
       >
-        <div className="w-5/6 p-6 bg-white rounded-lg md:w-2/6 ">
+        <div className="w-5/6 p-6 bg-white rounded-lg md:w-2/6">
           <h2 className="mb-4 text-[2rem] font-bold">إضافة إعلان جديد</h2>
           <form onSubmit={handleSubmit(handleAddAnnouncement)}>
             <div className="mb-4">
@@ -118,6 +130,15 @@ const AnnouncementList = ({ userRole }) => {
               {errors.description && (
                 <p className="text-red-600">{errors.description.message}</p>
               )}
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2">رابط الكورس (اختياري)</label>
+              <input
+                type="text"
+                {...register("courseLink")}
+                placeholder="https://example.com/course"
+                className="w-full p-2 border border-gray-300 rounded"
+              />
             </div>
             <div className="flex justify-end gap-4">
               <button

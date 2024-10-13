@@ -12,11 +12,18 @@ const menuItems = [
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
+        icon: "/src/assets/dashboard/request.png",
+        label: "طلبات المنصة",
+        href: "list/subjects",
+        visible: ["admin"],
+      },
+      {
         icon: "/src/assets/dashboard/teacher.png",
         label: "المعلمين",
         href: "list/teachers",
         visible: ["admin", "teacher"],
       },
+
       {
         icon: "/src/assets/dashboard/student.png",
         label: "التلاميذ",
@@ -31,10 +38,11 @@ const menuItems = [
       },
       {
         icon: "/src/assets/dashboard/subject.png",
-        label: "المواد الدراسية",
+        label: "الكورسات",
         href: "list/subjects",
         visible: ["admin"],
       },
+
       {
         icon: "/src/assets/dashboard/class.png",
         label: "الصفوف الدراسية",
@@ -43,20 +51,20 @@ const menuItems = [
       },
       {
         icon: "/src/assets/dashboard/lesson.png",
-        label: "الكورسات",
+        label: "إنشاء كورس",
         href: "list/lessons",
-        visible: ["admin", "teacher"],
+        visible: ["teacher"],
       },
       {
         icon: "/src/assets/dashboard/exam.png",
         label: "الإختبارات",
         href: "list/exams",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["teacher"],
       },
 
       {
         icon: "/src/assets/dashboard/result.png",
-        label: "النتائج",
+        label: "نتائج الإختبارات",
         href: "list/results",
         visible: ["admin", "teacher", "student", "parent"],
       },

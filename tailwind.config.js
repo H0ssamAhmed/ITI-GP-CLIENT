@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-import withMT  from "@material-tailwind/react/utils/withMT"
+import withMT from "@material-tailwind/react/utils/withMT";
 export default withMT({
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -10,6 +10,7 @@ export default withMT({
       },
       backgroundImage: {
         "custom-pattern": "url('src/assets/backgroundcover.png')",
+        "custom-gradient": "linear-gradient(-90deg, #818cf8 0%, #e0e7ff 100%)",
       },
       opacity: {
         20: "0.2",
@@ -42,7 +43,7 @@ export default withMT({
         },
 
         beige: {
-          300: "#F5F5DC"
+          300: "#F5F5DC",
         },
         // Grey
         grey: {
@@ -86,7 +87,6 @@ export default withMT({
           500: "#D32F2F",
           700: "#b91c1c",
           800: "#991b1b",
-
         },
       },
       // Add box shadows
@@ -97,11 +97,11 @@ export default withMT({
       },
       // Add border radii
       borderRadius: {
-        "tiny": "3px",
-        "sm": "5px",
-        "md": "7px",
-        "lg": "9px",
-        "xl": "12px",
+        tiny: "3px",
+        sm: "5px",
+        md: "7px",
+        lg: "9px",
+        xl: "12px",
         "2xl": "15px",
         "3xl": "18px",
         "4xl": "20px",
@@ -110,4 +110,4 @@ export default withMT({
   },
   plugins: [],
   darkMode: "class", // Add if you want to support dark mode
-})
+});
