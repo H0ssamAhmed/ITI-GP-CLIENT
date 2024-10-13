@@ -26,7 +26,6 @@ export default function SignUp() {
 
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
-
       <div className="flex flex-col text-right  justify-items-around lg:w-[30%] w-[90%] h-[100%]">
         <div className=" flex  items-center justify-end  mt-[30px] mb-[30px] w-[100%] ">
           <h2 className="text-4xl text-brand-700 font-bold  ">
@@ -117,7 +116,7 @@ export default function SignUp() {
         </form>
         <p className="text-center">
           هل لديك حساب؟{" "}
-          <Link to={"/login"} className="text-brand-700" >
+          <Link to={"/login"} className="text-brand-700">
             تسجيل الدخول
           </Link>
         </p>
