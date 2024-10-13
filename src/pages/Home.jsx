@@ -25,11 +25,12 @@ import VideoEmbed from "../ui/VideoEmbed";
 import teacherImg from "../assets/HomePageImages/teacher.png";
 import studentsImg from "../assets/HomePageImages/students.png";
 import { FaArrowLeft } from "react-icons/fa6";
-import Footer from "../ui/Footer";
-import Navigation from "../ui/Navigation";
-import ScrollToTopButton from "../ui/ScrollToTopButton";
 
-// // Temporary Data
+import ScrollToTopButton from "../ui/ScrollToTopButton";
+import { Link } from "react-router-dom";
+import StudentsAvatar from "../ui/StudentsAvatar";
+
+//  Temporary Data
 const subjects = [
   {
     img: mathImg,
@@ -79,7 +80,7 @@ function Home() {
               <ScrollToTopButton />
             </div>
             <motion.div
-              className="flex z-[60] flex-col top-[10rem]  lg:grid lg:grid-cols-2 relative bg-gray-50 w-[35rem] lg:w-[128rem] h-[49.6rem] mx-auto rounded-[32px]"
+              className="flex z-[60] flex-col top-[5rem]  lg:grid lg:grid-cols-2 relative bg-gray-50 w-[35rem] lg:w-[128rem] h-[49.6rem] mx-auto rounded-[32px]"
               initial={{ x: -100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 1.2, ease: "easeOut" }}
@@ -138,6 +139,13 @@ function Home() {
                   توفير محتوى تعليمي مبتكر يساعدك على التفوق
                   <br className="lg:hidden" /> في كل مرحلة دراسية.
                 </p>
+
+                <div className=" hidden mt-2 mb-5 lg:flex flex-col items-center w-[50rem] justify-between">
+                  <StudentsAvatar />
+                  <span className="text-[1.8rem] font-bold">
+                    معانا هتضمن نجاح ابنك في كل خطوة تعليمية{" "}
+                  </span>
+                </div>
                 <Button className="px-6 py-3 font-bold bg-yellow-500 rounded-full hover:bg-yellow-300">
                   انضم لآلاف الطلاب الناجحين
                 </Button>
@@ -304,10 +312,12 @@ function Home() {
                 <p className="text-black text-[1.8rem] lg:text-[2rem]">
                   تقدر تفتح حسابك على منصة ذاكرلي من اي مكان وتكمل تعليمك بسهولة
                 </p>
-                <Button className="flex items-center self-start gap-4 px-6 py-3 mt-4 font-bold text-white text-[1.6rem] rounded-full bg-brand-700 hover:bg-brand-500">
-                  <FaArrowLeft className="text-white text-[3rem]" />
-                  إشترك الأن
-                </Button>
+                <Link to="/signup">
+                  <Button className="flex items-center self-start gap-4 px-6 py-3 mt-4 font-bold text-white text-[1.6rem] rounded-full bg-brand-700 hover:bg-brand-500">
+                    <FaArrowLeft className="text-white text-[3rem]" />
+                    إشترك الأن
+                  </Button>
+                </Link>
               </div>
 
               {/* Image on the right */}

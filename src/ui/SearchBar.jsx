@@ -2,7 +2,7 @@ import { HiMagnifyingGlass } from "react-icons/hi2";
 
 function SearchBar() {
   return (
-    <div className="relative flex items-center w-full md:w-[35rem] lg:w-[45rem]">
+    <div className="relative flex items-center w-full md:w-[25rem] lg:w-[35rem]">
       <HiMagnifyingGlass className="absolute w-5 h-5 text-gray-500 left-3" />
       <input
         type="text"

@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import BurgerMenu from "./BurgerMenu";
 import Button from "./Button";
 import LinkWithUnderline from "./LinkWithUnderline";
@@ -22,7 +22,7 @@ function Navigation() {
   return (
     <motion.nav
       style={{ opacity: navOpacity, y: navY }}
-      className="sticky top-0 left-0 z-[900] flex items-center justify-between w-full p-4 shadow-md py-7 bg-brand-700 menu lg:justify-around"
+      className="sticky top-0 left-0 z-[900] flex items-center justify-between w-full  p-6 shadow-md text-[1.5rem]  bg-brand-700 menu lg:justify-around"
       initial={false}
       animate={isOpen ? "open" : "close"}
     >
@@ -53,14 +53,14 @@ function Navigation() {
         </div>
         <SearchBar />
       </div>
-      <div className="hidden gap-4 lg:flex">
+      <div className="hidden items-center gap-4 lg:flex">
         <Link to={"/signup"}>
-          <Button className="px-4 py-2 font-bold text-black transition-all duration-300 bg-yellow-500 rounded-full hover:bg-yellow-100 ">
+          <Button className="px-4  py-2 font-bold text-black transition-all duration-300 bg-yellow-500 rounded-full hover:bg-yellow-300 ">
             حساب جديد
           </Button>
         </Link>
         <Link to={"/login"}>
-          <Button className="px-4 py-2 font-bold text-white transition-all duration-300 bg-transparent border-2 rounded-full hover:bg-gray-300 ring-white">
+          <Button className="px-4 py-2  font-bold text-white transition-all duration-300 bg-transparent border-2 rounded-full hover:bg-gray-400 ring-white">
             تسجيل الدخول
           </Button>
         </Link>

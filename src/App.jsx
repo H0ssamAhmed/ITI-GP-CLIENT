@@ -5,10 +5,11 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
-import ChooseRole from "./features/auth/pages/ChooseRole";
 import SignUp from "./features/auth/pages/SignUp";
 import Login from "./features/auth/pages/Login";
 import VerifyEmail from "./features/auth/pages/VerifyEmail";
+import CodeVerify from "./features/auth/pages/CodeVerify";
+import ForgetPassword from "./features/auth/pages/ForgetPassword";
 import Home from "./pages/Home";
 import CourseCatalog from "./features/courses/pages/CourseCatalog";
 import CourseDetail from "./features/courses/pages/CourseDetail";
@@ -38,19 +39,38 @@ import { role, transformedClasses } from "./lib/data";
 import Exam from "./features/courses/pages/Exam";
 import ReviewAns from "./features/courses/pages/ReviewAns";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import Error from "./pages/Error";
+import ProfileDetails from "./pages/ProfileDetails";
+import Features from "./pages/Features";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
+    },
+  },
+});
 function App() {
   const queryclient = new QueryClient()
 
   return (
-    <QueryClientProvider client={queryclient}>
-
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={false} />
       <Router>
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
             <Route path="contact" element={<Contact />} />
             <Route path="about-us" element={<About />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forget-password-email" element={<VerifyEmail />} />
+            <Route path="/verify-otp" element={<CodeVerify />} />
+            <Route path="/forget-password" element={<ForgetPassword />} />
             <Route path="courses" element={<Outlet />}>
               <Route index element={<CourseCatalog />} />
               <Route path=":courseId" element={<CourseDetail />} />
@@ -59,9 +79,6 @@ function App() {
               <Route path=":courseId/:lessonId/:examId" element={<Exam />} />
             </Route>
           </Route>
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<VerifyEmail />} />
 
           {/* Redirect based on role when accessing userHome */}
           <Route
@@ -111,10 +128,24 @@ function App() {
             />
             <Route path="list/results" element={<ResultsList />} />
           </Route>
+
+          <Route path="*" element={<Error />} />
         </Routes>
+        {/* toast container */}
+        <ToastContainer
+          position="bottom-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          closeOnClick={true}
+          pauseOnHover={true}
+          draggable={true}
+          progress={undefined}
+          theme="light"
+          icon={true}
+          draggablePercent={100}
+        />
       </Router>
     </QueryClientProvider>
-
   );
 }
 
