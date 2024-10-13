@@ -39,14 +39,30 @@ const studentSpecificValidation = yup.object({
     .string()
     .matches(/^(\+?[0-9]{1,3})?([0-9]{10})$/, 'رقم الهاتف غير صالح')
     .required('هاتف ولي الامر مطلوب'),
-
-  nationalID: yup.string().required('رقم الهوية مطلوب'),
   levelId: yup.string().required('المرحلة مطلوبة'),
-  confirmPassword: yup
+});
+
+const teacherSpecificValidation = yup.object({
+  specialization: yup
+    .string()
+    .required('التخصص مطلوب')
+    .min(3, 'يجب أن يكون التخصص على 3 أحرف على الأقل')
+    .max(100, 'يجب أن يكون التخصص على 100 أحرف على الأكثر'),
+  graduationYear: yup
+    .string()
+    .required('السنة الدراسية مطلوبة')
+    .matches(/^(19|20)\d{2}$/, 'السنة الدراسية غير صحيحة'),
+  educationalQualification: yup
     .string()
     .required('المؤهل العلمي مطلوب')
     .min(3, 'يجب أن يكون المؤهل التعليمي  3 أحرف على الأقل')
     .max(100, 'يجب أن يكون المؤهل التعلمي  100 أحرف على الأكثر'),
 });
 
-export default SignUpValidation;
+const getSignUpValidationSchema = (type) => {
+  return type === 'student'
+    ? SignUpBaseValidation.concat(studentSpecificValidation)
+    : SignUpBaseValidation.concat(teacherSpecificValidation);
+};
+
+export default getSignUpValidationSchema;
