@@ -107,9 +107,9 @@ const CreateCourseList = ({ initialData }) => {
       price: +data.price,
       discountedPrice: +data.discountedPrice,
       levelId: data.levelId,
-      sections: data.sections.map((section, sectionIndex) => ({
+      sections: data.sections.map((section) => ({
         title: section.title,
-        lessons: lessons[sectionIndex].map((lesson, lessonIndex) => ({
+        lessons: section.lessons.map((lesson) => ({
           title: lesson.title,
           description: lesson.description,
           pdfUrl: lesson.pdfUrl,

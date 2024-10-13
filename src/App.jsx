@@ -4,59 +4,59 @@ import {
   Route,
   Navigate,
   Outlet,
-} from 'react-router-dom';
-import SignUp from './features/auth/pages/SignUp';
-import Login from './features/auth/pages/Login';
-import VerifyEmail from './features/auth/pages/VerifyEmail';
-import CodeVerify from './features/auth/pages/CodeVerify';
-import ForgetPassword from './features/auth/pages/ForgetPassword';
-import Home from './pages/Home';
-import CourseCatalog from './features/courses/pages/CourseCatalog';
-import CourseDetail from './features/courses/pages/CourseDetail';
-import Contact from './pages/Contact';
-import About from './pages/About';
-import LessonDetails from './features/courses/pages/LessonDetails';
-import MainLayout from './layouts/mainlayout';
-import DashboardLayout from './layout/DashboardLayout';
-import AdminPage from './features/dashboard/pages/admin/AdminPage';
-import TeacherPage from './features/dashboard/pages/teacher/TeacherPage';
-import StudentPage from './features/dashboard/pages/student/StudentPage';
-import ParentPage from './features/dashboard/pages/parent/ParentPage';
-import TeachersList from './features/dashboard/lists/TeachersList';
-import StudentsList from './features/dashboard/lists/StudentsList';
-import ParentsList from './features/dashboard/lists/ParentsList';
-import SubjectsList from './features/dashboard/lists/SubjectsList';
-import AnnouncementList from './features/dashboard/lists/AnnouncementList';
-import ClassesList from './features/dashboard/lists/ClassesList';
-import ResultsList from './features/dashboard/lists/ResultsList';
-import TeacherDetails from './features/dashboard/components/TeacherDetails';
-import StudentsDetails from './features/dashboard/components/StudentsDetails';
-import MessagesList from './features/dashboard/lists/MessagesList';
-import ProfileList from './features/dashboard/components/ProfileDetails';
-import CreateCourseList from './features/dashboard/lists/CreateCourseList';
-import ExamsList from './features/dashboard/lists/ExamsList';
-import { transformedClasses } from './lib/data';
-import Exam from './features/courses/pages/Exam';
-import ReviewAns from './features/courses/pages/ReviewAns';
-import Error from './pages/Error';
-import ProfileDetails from './pages/ProfileDetails';
-import Features from './pages/Features';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Wallet from './features/payment/pages/Wallet';
-import Checkout from './features/payment/pages/checkout';
-import PlatformRequestsList from './features/dashboard/lists/PlatformRequestsList';
-import AuthLayout from './layout/AuthLayout';
-import { useSelector } from 'react-redux';
-import ProtectedRoute from './ui/ProtectedRoute';
-import { useState } from 'react';
-import SignUpContext from './features/store/signup-context';
+} from "react-router-dom";
+import SignUp from "./features/auth/pages/SignUp";
+import Login from "./features/auth/pages/Login";
+import VerifyEmail from "./features/auth/pages/VerifyEmail";
+import CodeVerify from "./features/auth/pages/CodeVerify";
+import ForgetPassword from "./features/auth/pages/ForgetPassword";
+import Home from "./pages/Home";
+import CourseCatalog from "./features/courses/pages/CourseCatalog";
+import CourseDetail from "./features/courses/pages/CourseDetail";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import LessonDetails from "./features/courses/pages/LessonDetails";
+import MainLayout from "./layouts/mainlayout";
+import DashboardLayout from "./layout/DashboardLayout";
+import AdminPage from "./features/dashboard/pages/admin/AdminPage";
+import TeacherPage from "./features/dashboard/pages/teacher/TeacherPage";
+import StudentPage from "./features/dashboard/pages/student/StudentPage";
+import ParentPage from "./features/dashboard/pages/parent/ParentPage";
+import TeachersList from "./features/dashboard/lists/TeachersList";
+import StudentsList from "./features/dashboard/lists/StudentsList";
+import ParentsList from "./features/dashboard/lists/ParentsList";
+import SubjectsList from "./features/dashboard/lists/SubjectsList";
+import AnnouncementList from "./features/dashboard/lists/AnnouncementList";
+import ClassesList from "./features/dashboard/lists/ClassesList";
+import ResultsList from "./features/dashboard/lists/ResultsList";
+import TeacherDetails from "./features/dashboard/components/TeacherDetails";
+import StudentsDetails from "./features/dashboard/components/StudentsDetails";
+import MessagesList from "./features/dashboard/lists/MessagesList";
+import ProfileList from "./features/dashboard/components/ProfileDetails";
+import CreateCourseList from "./features/dashboard/lists/CreateCourseList";
+import ExamsList from "./features/dashboard/lists/ExamsList";
+import { transformedClasses } from "./lib/data";
+import Exam from "./features/courses/pages/Exam";
+import ReviewAns from "./features/courses/pages/ReviewAns";
+import Error from "./pages/Error";
+import ProfileDetails from "./pages/ProfileDetails";
+import Features from "./pages/Features";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Wallet from "./features/payment/pages/Wallet";
+import Checkout from "./features/payment/pages/checkout";
+import PlatformRequestsList from "./features/dashboard/lists/PlatformRequestsList";
+import AuthLayout from "./layout/AuthLayout";
+import { useSelector } from "react-redux";
+import ProtectedRoute from "./ui/ProtectedRoute";
+import { useState } from "react";
+import SignUpContext from "./features/store/signup-context";
 
 // Initialize QueryClient
 function App() {
   const role = useSelector((state) => state.auth.role);
-  const [type, setType] = useState('student');
+  const [type, setType] = useState("student");
   const handleTypeChange = (newType) => {
     setType(newType);
   };
@@ -99,15 +99,15 @@ function App() {
               element={
                 <ProtectedRoute
                   role={role}
-                  allowedRoles={['admin', 'teacher', 'student', 'parent']}
+                  allowedRoles={["admin", "teacher", "student", "parent"]}
                 >
-                  {role === 'admin' ? (
+                  {role === "admin" ? (
                     <Navigate to="/dashboard/admin" />
-                  ) : role === 'teacher' ? (
+                  ) : role === "teacher" ? (
                     <Navigate to="/dashboard/teacher" />
-                  ) : role === 'student' ? (
+                  ) : role === "student" ? (
                     <Navigate to="/dashboard/student" />
-                  ) : role === 'parent' ? (
+                  ) : role === "parent" ? (
                     <Navigate to="/dashboard/parent" />
                   ) : (
                     <Navigate to="/dashboard/profile" />
@@ -122,7 +122,7 @@ function App() {
               <Route
                 path="admin"
                 element={
-                  <ProtectedRoute role={role} allowedRoles={['admin']}>
+                  <ProtectedRoute role={role} allowedRoles={["admin"]}>
                     <AdminPage />
                   </ProtectedRoute>
                 }
@@ -131,7 +131,7 @@ function App() {
               <Route
                 path="teacher"
                 element={
-                  <ProtectedRoute role={role} allowedRoles={['teacher']}>
+                  <ProtectedRoute role={role} allowedRoles={["teacher"]}>
                     <TeacherPage />
                   </ProtectedRoute>
                 }
@@ -140,7 +140,7 @@ function App() {
               <Route
                 path="student"
                 element={
-                  <ProtectedRoute role={role} allowedRoles={['student']}>
+                  <ProtectedRoute role={role} allowedRoles={["student"]}>
                     <StudentPage />
                   </ProtectedRoute>
                 }
@@ -149,7 +149,7 @@ function App() {
               <Route
                 path="parent"
                 element={
-                  <ProtectedRoute role={role} allowedRoles={['parent']}>
+                  <ProtectedRoute role={role} allowedRoles={["parent"]}>
                     <ParentPage />
                   </ProtectedRoute>
                 }
