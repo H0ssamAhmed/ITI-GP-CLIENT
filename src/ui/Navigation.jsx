@@ -17,8 +17,6 @@ function Navigation() {
   const { scrollY } = useScroll();
   const navOpacity = useTransform(scrollY, [0, 50], [1, 0.9]); // Shrinks opacity as user scrolls
   const navY = useTransform(scrollY, [0, 50], [0, -10]); // Animates Y position on scroll
-  const { handleChangeType } = useContext(SignUpContext);
-  // console.log(isOpen);
   function toggleIsOpen() {
     setIsOpen(!isOpen);
   }
