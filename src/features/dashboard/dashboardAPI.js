@@ -175,13 +175,14 @@ export const createAnnouncements = async (newData) => {
 // 1 - Fetch All Requests
 export const fetchAllPendingRequests = async () => {
   try {
-    const token = getCookie("accessToken");
+    // const token = getCookie("accessToken");
     const response = await axios.get(
       "http://localhost:3000/admin/pending-teachers-courses",
       {
         headers: {
-          Authorization: `Bearer ${token}`, // Add Bearer token here
+          // Authorization: `Bearer ${token}`, // Add Bearer token here
         },
+        withCredentials: true,
       }
     );
     return response.data;
@@ -230,23 +231,25 @@ export const verifyTeacherById = async (teacherId) => {
     {}, // The request body can be empty or contain data as needed
     {
       headers: {
-        Authorization: `Bearer ${token}`, // Include the token in the header
+        // Authorization: `Bearer ${token}`, // Include the token in the header
       },
+      withCredentials: true,
     }
   );
 };
 
 // VERIFY Course Request
 export const verifyCourseById = async (courseId) => {
-  const token = getCookie("accessToken");
+  // const token = getCookie("accessToken");
 
   return axios.patch(
     `http://localhost:3000/admin/verify-course/${courseId}`,
     {}, // The request body can be empty or contain data as needed
     {
       headers: {
-        Authorization: `Bearer ${token}`, // Include the token in the header
+        // Authorization: `Bearer ${token}`, // Include the token in the header
       },
+      withCredentials: true,
     }
   );
 };
@@ -274,15 +277,17 @@ export const deleteCourseId = async (courseId) => {
 // Create Courses
 export const createCourse = async (courseData) => {
   try {
-    const token = getCookie("accessToken");
+    // const token = getCookie("accessToken");
+    // console.log(token);
     const response = await axios.post(
       "http://localhost:3000/teacher/course",
       courseData,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        withCredentials: true, // Add this line
       }
     );
     return response.data;

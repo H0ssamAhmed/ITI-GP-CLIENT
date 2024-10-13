@@ -87,6 +87,7 @@ const CreateCourseList = ({ initialData }) => {
     const getLevels = async () => {
       try {
         const fetchedLevels = await fetchAllLevels();
+        console.log("All level ya hossam:", fetchAllLevels);
         // Check if fetchedLevels is an array, otherwise set it as an empty array
         setLevels(Array.isArray(fetchedLevels.data) ? fetchedLevels.data : []);
       } catch (error) {
