@@ -38,6 +38,11 @@ const columns = [
     accessor: "phone",
     className: "hidden lg:table-cell",
   },
+  {
+    header: "رقم هاتف الوالد",
+    accessor: "parentPhone",
+    className: "hidden lg:table-cell",
+  },
 
   {
     header: "المزيد",
@@ -62,8 +67,10 @@ const StudentsList = () => {
     queryFn: fetchStudents,
   });
 
+  console.log(students);
+
   if (isLoading) return <Spinner />;
-  if (error) return <ErrorMessage message="Error loading students" />;
+  if (error) return <ErrorMessage message="خطأ اثناء تحميل بيانات الطلاب" />;
 
   let filteredStudents = students?.filter((student) => {
     const studentName = student.firstName?.normalize("NFC") || "";
@@ -105,7 +112,10 @@ const StudentsList = () => {
     }
   };
 
-  const rednderRow = (item) => (
+  // Check if there are no pending requests
+  const noStudents = students.length === 0 || students.length === undefined;
+
+  const renderRow = (item, index) => (
     <tr
       className="text-[1rem] hover:bg-brand-50 cursor-default even:bg-gray-50 border-b border-gray-200"
       key={item.id}
@@ -132,9 +142,10 @@ const StudentsList = () => {
       <td className="hidden md:table-cell">
         {item.id.slice(0, 8).toUpperCase()}
       </td>
-      <td className="hidden md:table-cell">{item.Level.title}</td>
+      <td className="hidden md:table-cell">{item.level.title}</td>
       <td className="hidden md:table-cell">{item.nationalID}</td>
       <td className="hidden md:table-cell">{item.phoneNumber}</td>
+      <td className="hidden md:table-cell">{item.parentPhoneNumber}</td>
       <td>
         <div className="flex items-center gap-2">
           <Link to={`/dashboard/list/students/${item.id}`}>
@@ -173,13 +184,23 @@ const StudentsList = () => {
         </div>
       </div>
       {/* Middle */}
-      <div>
-        <DashboardTable
-          columns={columns}
-          rednderRow={rednderRow}
-          data={filteredStudents}
-        />
-      </div>
+
+      {noStudents ? (
+        <div className="text-center flex flex-col gap-4 py-10 text-gray-500 text-[2rem]">
+          <span className="text-3xl">
+            {/* Add any additional styles here */}⛔
+          </span>
+          لايوجد طلاب للعرض
+        </div>
+      ) : (
+        <div>
+          <DashboardTable
+            columns={columns}
+            renderRow={renderRow}
+            data={filteredStudents}
+          />
+        </div>
+      )}
       {/* Pagiantion */}
       <div>
         <DashbooardPagination />

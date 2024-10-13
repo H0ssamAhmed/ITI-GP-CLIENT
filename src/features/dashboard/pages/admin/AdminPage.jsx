@@ -13,7 +13,7 @@ const AdminPage = () => {
         <div className="flex flex-row flex-wrap items-center justify-center gap-5">
           <UserCard type="تلميذ" />
           <UserCard type="معلم" />
-          <UserCard type="ولي أمر" />
+          {/* <UserCard type="ولي أمر" /> */}
           <UserCard type="موظف" />
         </div>
         {/* Middle Charts */}

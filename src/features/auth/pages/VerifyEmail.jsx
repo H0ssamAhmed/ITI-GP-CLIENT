@@ -4,6 +4,8 @@ import LoginValidation from "../validations/LoginValidation"; // Import validati
 import InputForm from "../components/InputForm"; // Import input component
 import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
+import { useVerifyEmailForgetPassword} from "../apis/authAPI";
+
 export default function VerifyEmail() {
   const {
     register,
@@ -13,9 +15,17 @@ export default function VerifyEmail() {
     resolver: yupResolver(LoginValidation),
   });
 
+  const { mutate: verifyEmailForgetPassword } = useVerifyEmailForgetPassword();
+
   const onSubmit = (data) => {
-    console.log(data);
-  };
+    try{
+      verifyEmailForgetPassword(data);
+    }
+    catch(error){
+      console.log(error);
+    }
+
+ };
 
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
