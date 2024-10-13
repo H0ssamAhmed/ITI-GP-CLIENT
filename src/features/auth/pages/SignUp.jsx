@@ -3,16 +3,19 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import InputForm from '../components/InputForm';
 import signup from '../../../assets/Online learning-amico.svg';
 import Logo from '../../../ui/Logo';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSignup } from '../apis/authAPI';
 import { useContext, useEffect, useState } from 'react';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import SignUpContext from '../../store/signup-context';
 import getSignUpValidationSchema from '../validations/SignUpValidation';
 import { apiGetAllLevels } from '../../../services/apiGetAllLevels';
+import { useMutation } from '@tanstack/react-query';
+import { apiCreateUser } from '../../../services/apiCreateUser';
 export default function SignUp() {
   const [levels, setLevel] = useState([]);
   const { type } = useContext(SignUpContext);
+  const navigate = useNavigate();
   console.log(getSignUpValidationSchema(type));
   const {
     register,
@@ -23,23 +26,40 @@ export default function SignUp() {
     resolver: yupResolver(getSignUpValidationSchema(type)),
   });
 
-  const { mutate: signupUser, isLoading } = useSignup();
+  //const { mutate: signupUser, isLoading } = useSignup();
 
-  const onSubmit = async (data) => {
-    try {
-      await signupUser(data);
-    } catch (err) {
-      console.error('Signup error:', err);
-    }
+  const onSubmit = (data) => {
+    console.log(data);
+
+    mutate(data);
   };
+  const { mutate } = useMutation({
+    mutationFn: (data) => apiCreateUser(data, type),
+    onSuccess: (message) => {
+      toast.success(message || 'تم تسجيل حسابك بنجاح');
+      setTimeout(() => {
+        navigate('/verify-otp');
+      }, 2000);
+      reset();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  // const onSubmit = async (data) => {
+  //   try {
+  //     await signupUser(data);
+  //   } catch (err) {
+  //     console.error('Signup error:', err);
+  //   }
+  // };
   useEffect(() => {
     const getAllLevels = async () => {
       const levelsData = await apiGetAllLevels();
       console.log('levelsData:', levelsData);
-      const levelsArray = levelsData.map((level) => {
-        return { label: level.title, value: level.id };
-      });
-      setLevel(levelsArray);
+
+      setLevel(levelsData);
     };
     getAllLevels();
   }, []);
@@ -90,7 +110,7 @@ export default function SignUp() {
   const handleLevelChange = (e) => {
     const selected = e.target.value;
     setSelectedLevel(selected);
-    setSelectedSubLevel('');
+    setSelectedSubLevel(''); // Reset sub-level when level changes
   };
 
   return (
@@ -161,7 +181,7 @@ export default function SignUp() {
                 type="select"
                 placeholder="اختر المرحلة"
                 error={errors.levelId}
-                register={register('levelId', { onChange: handleLevelChange })} // Handle level change
+                register={register('levelId', { onChange: handleLevelChange })} // Use unique register name
                 options={levels.map((level) => ({
                   label: level.title,
                   value: level.id,
@@ -174,14 +194,16 @@ export default function SignUp() {
                   label="اختر الصف"
                   type="select"
                   placeholder="اختر الصف"
-                  error={errors.levelId}
-                  register={register('levelId')}
-                  options={levels
-                    .find((level) => level.id === selectedLevel)
-                    ?.subLevels.map((sub) => ({
-                      label: sub.title,
-                      value: sub.id,
-                    }))}
+                  error={errors.subLevelId} // Use a different error reference
+                  register={register('subLevelId')} // Use unique register name for sub-level
+                  options={
+                    levels
+                      .find((level) => level.id === selectedLevel)
+                      ?.subLevels?.map((sub) => ({
+                        label: sub.title,
+                        value: sub.id,
+                      })) || []
+                  } // Provide fallback if no subLevels found
                 />
               )}
             </>
