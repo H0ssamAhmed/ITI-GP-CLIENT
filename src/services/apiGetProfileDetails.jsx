@@ -1,28 +1,23 @@
+import axios from 'axios';
+
 const API_URL = "http://localhost:3000";
-//localhost:3000/api/user/current-user
+
 export const getProfileData = async () => {
   try {
-    const response = await fetch(`${API_URL}/api/user/current-user`, {
-      credentials: "include", // This allows cookies to be sent with the request
+    const response = await axios.get(`${API_URL}/user/current`, {
+      withCredentials: true, 
       headers: {
-        "Content-Type": "application/json", // Set the content type
-        // No Authorization header needed; the cookie will be sent automatically
+        "Content-Type": "application/json", 
+      
       },
     });
 
-    if (!response.ok) {
-      throw new Error(
-        `Error ${response.status}: ${
-          response.statusText || "Something went wrong"
-        }`
-      );
-    }
-
-    const { data } = await response.json(); // Extract the data from the response
-    console.log(data); // Log the data for debugging
-    return data; // Return the profile data
+    const {data} = response.data; 
+    console.log(data);
+    
+    return data; 
   } catch (error) {
     console.error("Error fetching Profile data:", error);
-    throw error; // Rethrow the error for further handling
+    throw error; 
   }
 };

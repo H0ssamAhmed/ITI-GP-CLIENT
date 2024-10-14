@@ -33,7 +33,7 @@ export default function SignUp() {
   const [selectedLevel, setSelectedLevel] = useState("");
   const [selectedSubLevel, setSelectedSubLevel] = useState("");
 
-  // const levelsData = [
+  
   //   {
   //     id: "17fcf78b-aeb1-48ac-8044-555c5a413fb9",
   //     title: "المرحله الثانوية",
