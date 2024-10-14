@@ -1,7 +1,6 @@
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material"
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PlayLessonIcon from '@mui/icons-material/PlayLesson';
-import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 

@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
 import testImg from "../../../assets/HomePageImages/teacher.png";
-// import testImg from "../assets/HomePageImages/english.png";
-// import testImg from "../assets/HomePageImages/heroImg.png";
 import { FaStar } from "react-icons/fa6";
 
 function CourseCard({ course }) {

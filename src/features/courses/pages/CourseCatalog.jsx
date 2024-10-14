@@ -5,54 +5,30 @@ import { FaX } from 'react-icons/fa6';
 import { VscSettings } from "react-icons/vsc";
 import { useQuery } from '@tanstack/react-query';
 import CourseCard from '../components/CourseCard';
-import subjects from './subjects.json';
 import { getAllCourses, getAllLevels } from '../apis/coursesApi';
 import { LevelsAndCourses, SmallLevelsAndCourses } from '../components/Levels';
-// Fetch all courses
-const fetchCourses = async () => {
-  try {
-    const respones = await getAllCourses('all-courses');
-    // if (respones.status == 404) {
-    //   return respones.data.error
-    // } else {
-    return respones.data;
-    // }
-  } catch (err) {
-    console.error(err);
-    return err;
-  } finally {
-    console.log(false);
-  }
-};
 
-// Fetch all levels
-export const getLevels = async () => {
-  try {
-    const levels = await getAllLevels();
-    return levels;
-  } catch (error) {
-    console.error(error);
-    return error;
-  }
-};
 const CourseCatalog = () => {
   const [showFiltreDiv, setShowFiltreDiv] = useState(false);
-  const [currentDisplayed, setCurrentDisplayed] = useState(subjects);
+  const [currentDisplayed, setCurrentDisplayed] = useState([]);
   const [level, setLevel] = useState("");
+  const [fetchLevel, setFetchLevels] = useState([]);
   const [subject, setSubject] = useState("");
-  const { data, isLoading, error } = useQuery({ queryKey: ['courses'], queryFn: fetchCourses })
+  const { data, isLoading, error } = useQuery({ queryKey: ['courses'], queryFn: () => getAllCourses('all-courses') })
+  const { data: AllLevel, isLoading: isLoadingLevel, error: errorLevels } = useQuery({ queryKey: ['levels'], queryFn: () => getAllLevels() })
+
 
   useEffect(() => {
-    if (data) setCurrentDisplayed(data.data);
-  }, [data]);
+    if (AllLevel) setFetchLevels(AllLevel.data.data);
+    if (data) setCurrentDisplayed(data.data.data);
+  }, [AllLevel, data]);
 
   const handleFiltrationbyLevel = (e) => {
     const filterBy = e.target?.innerText;
-    if (data?.data) {
-      const filteredCourses = data.data.filter(course => course.levelTitle === filterBy);
-      setCurrentDisplayed(filteredCourses);
-      setLevel(filteredCourses);
-    }
+    const filteredCourses = data?.data?.data?.filter(course => course.levelTitle === filterBy);
+    setCurrentDisplayed(filteredCourses);
+    setLevel(filteredCourses);
+
     activateLevel(e.target);
     resetAllSubjects();
   };
@@ -79,7 +55,7 @@ const CourseCatalog = () => {
   };
 
   const resetAllLevels = () => {
-    setCurrentDisplayed(data?.data);
+    setCurrentDisplayed(data?.data.data);
     const allLevels = document.querySelectorAll(".levels p");
     allLevels.forEach(level => level.classList.remove("bg-brand-500", "text-white"));
     setLevel('');
@@ -98,7 +74,13 @@ const CourseCatalog = () => {
 
   return (
     <div className='relative bg-brand-600/10 min-h-[80vh]' style={{ backgroundImage: 'url("../../../assets/backgroundcover.png")' }}>
-      {error && <p className='h-80 bg-red-400'>{"error"}</p>}
+
+      {!isLoading && error &&
+        <Stack direction="column" textAlign="center">
+          <h1 className='p-16 w-full text-center text-6xl' >لا يوجد كورسات متاحة</h1>
+
+        </Stack>
+      }
       {!error && <div className='container mx-auto pt-4'>
         <div onClick={() => setShowFiltreDiv(!showFiltreDiv)} className='px-4 py-2 start-0 absolute -mt-48 top-[12rem] md:hidden mx-auto transition-all z-10 cursor-pointer'>
           <AnimatePresence>
@@ -117,7 +99,7 @@ const CourseCatalog = () => {
           {showFiltreDiv && (
             <SmallLevelsAndCourses
               subject={subject}
-              levels={data?.data}
+              fetchLevel={fetchLevel}
               resetAllLevels={resetAllLevels}
               handleRemoveFiltration={handleRemoveFiltration}
               handleFiltrationbyLevel={handleFiltrationbyLevel}
@@ -134,6 +116,7 @@ const CourseCatalog = () => {
             <motion.div initial={{ x: 2000, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.3 }} className='max-h-[600px] w-full hidden ms-8 sticky top-40 overflow-y-scroll md:block col-span-4 lg:col-span-3 mx-auto bg-white'>
               <LevelsAndCourses
                 level={level}
+                fetchLevel={fetchLevel}
                 resetAllLevels={resetAllLevels}
                 handleRemoveFiltration={handleRemoveFiltration}
                 handleFiltrationbyLevel={handleFiltrationbyLevel}
@@ -143,12 +126,11 @@ const CourseCatalog = () => {
           )}
           <section className='col-span-12 md:col-span-8 lg:col-span-9'>
             <div className='flex items-center flex-wrap justify-center gap-y-56 mt-20'>
-              {error || currentDisplayed?.length == 0 &&
+              {currentDisplayed?.length == 0 && !isLoading && !error &&
                 <Stack direction="column" textAlign="center">
                   <h1 className='p-16 w-full text-center text-6xl' >لا يوجد كورسات متاح لهذا الصف في الوقت الحالي</h1>
-                  <Button variant='outlined' sx={{ fontSize: '2rem', margin: "0 auto", }} className='bg-brand-500 w-fit px-4 py-2 rounded-md'>اظهار الكل</Button>
+                  <Button onClick={handleRemoveFiltration} variant='outlined' sx={{ fontSize: '2rem', margin: "0 auto", }} className='bg-brand-500 w-fit px-4 py-2 rounded-md'>اظهار الكل</Button>
                 </Stack>
-
               }
               {isLoading ? (
                 <div className='flex items-center justify-center gap-4 flex-wrap '>
