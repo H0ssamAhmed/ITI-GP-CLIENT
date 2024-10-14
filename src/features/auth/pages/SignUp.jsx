@@ -35,10 +35,10 @@ export default function SignUp() {
   };
   const { mutate } = useMutation({
     mutationFn: (data) => apiCreateUser(data, type),
-    onSuccess: (message) => {
-      toast.success(message || 'تم تسجيل حسابك بنجاح');
+    onSuccess: (data) => {
+      toast.success(data.message || 'تم تسجيل حسابك بنجاح');
       setTimeout(() => {
-        navigate('/verify-otp');
+        navigate('/verify-otp', { state: { email: data.email } });
       }, 2000);
       reset();
     },
@@ -267,7 +267,7 @@ export default function SignUp() {
         alt="signup"
         className="w-[30%] object-contain   hidden lg:block"
       />
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </div>
   );
 }

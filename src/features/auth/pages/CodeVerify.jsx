@@ -1,32 +1,39 @@
-import { useState } from "react";
+import { useState } from 'react';
 // import signup from "../../../assets/Online learning-amico.svg";
-import logo from "../../../assets/Group 3.svg";
-import { Input } from "@material-tailwind/react";
-import { useLocation } from "react-router-dom";
-import { useVerifyOTP, useResendOTP } from "../apis/authAPI";
-import { ToastContainer } from "react-toastify";
+import logo from '../../../assets/Group 3.svg';
+import { Input } from '@material-tailwind/react';
+import { useLocation } from 'react-router-dom';
+import { useVerifyOTP, useResendOTP } from '../apis/authAPI';
+import { ToastContainer } from 'react-toastify';
 
 export default function CodeVerify() {
   const location = useLocation();
-  const email = location.state?.email || "";
+  const email = location.state?.email || '';
   const { mutate: verifyOTP, isLoading: verifyLoading } = useVerifyOTP();
   const { mutate: resendOTP, isLoading: resendLoading } = useResendOTP();
-  const [otp, setOtp] = useState(Array(6).fill(""));
+  const [otp, setOtp] = useState('');
 
   const handleSubmit = async () => {
     try {
-      await verifyOTP({ otp });
+      await verifyOTP({ otp, email }); // Include email here
     } catch (e) {
-      console.log("Error verifying OTP", e);
+      console.log('Error verifying OTP', e);
     }
   };
   const handleResend = async () => {
     try {
       await resendOTP();
     } catch (e) {
-      console.log("Error resending OTP", e);
+      console.log('Error resending OTP', e);
     }
   };
+  const handleChange = (e) => {
+    const value = e.target.value;
+    if (value.length <= 6) {
+      setOtp(value); // Store as a string
+    }
+  };
+
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200">
       <div className="flex flex-col text-right lg:w-[30%] w-[90%] h-[60%]">
@@ -43,15 +50,11 @@ export default function CodeVerify() {
           </h2>
 
           <div className="mt-[40px] mb-[40px] flex items-center justify-center gap-4 w-[100%]">
-            <Input
-              type="text"
-              maxLength={6}
-              onChange={(e) => setOtp(e.target.value)}
-            />
+            <Input type="text" maxLength={6} onChange={handleChange} />
           </div>
 
           <h2 className="text-center text-blue-gray-500 font-medium ">
-            هل لم يستلم الكود؟{" "}
+            هل لم يستلم الكود؟{' '}
             <span
               className="font-bold cursor-pointer text-indigo-600"
               onClick={handleResend}

@@ -30,8 +30,8 @@ export const apiCreateUser = async (data, type) => {
         }`
       );
     }
-    const { message } = await response.json();
-    return message;
+    const responseData = await response.json();
+    return responseData;
   } catch (error) {
     console.error('API call failed:', error);
     throw new Error(`Failed to create user: ${error.message}`);
