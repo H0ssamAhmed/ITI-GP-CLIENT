@@ -6,11 +6,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Skeleton, Stack, Typography } from "@mui/material";
+import { Description, Note } from "@mui/icons-material";
 
 const fetchCoourseDetails = async (courseId) => {
   try {
     const fetchedDetails = await getCourseDetails(courseId)
-    // console.log(fetchedDetails);
     return fetchedDetails
   } catch (err) {
     console.log(err);
@@ -26,12 +26,13 @@ const fetchCoourseDetails = async (courseId) => {
 
 const CourseDetail = () => {
   const { courseId } = useParams()
+  // console.log(courseId)
   const [course, setCourse] = useState()
   const { data, isLoading, error } = useQuery({ queryKey: ['courseDetaials'], queryFn: () => fetchCoourseDetails(courseId) })
   useEffect(() => {
     if (data) {
-      data?.data.Sections.reverse()
-      console.log(data?.data)
+      // data?.data.sections.reverse()
+      console.log(data)
       setCourse(data.data)
     }
   }, [data])
@@ -82,26 +83,25 @@ const CourseDetail = () => {
           }
           {!isLoading &&
             <motion.section className="">
-              {course?.Sections?.map((section, index) => {
-                return (<Stack direction="column" key={section?.id} className="my-auto h-full">
+              {course?.sections?.map((section, index) => {
+                return (<Stack direction="column" key={section?.id} className="my-auto container mx-auto h-full">
                   <Typography variant="h2" margin="1rem 2rem">
                     {section?.title}
                   </Typography>
-                  {section?.Lessons?.map((lesson) =>
+                  {section?.lessons?.map((lesson) =>
                     <motion.div key={lesson?.id}
-
                       initial={{ xOrY: -2000, opacity: 0 }}
                       animate={{ x: 0, y: 0, opacity: 1 }}
                       transition={{ duration: 0.3, delay: 0.1 * (index + 1) }}
-                      className='container mx-auto'>
+                      className='container  mx-auto'>
                       <div className='grid grid-cols-12 gap-8 border-gray-300 border my-4 p-4 rounded-lg'>
                         <div className=' col-span-6 flex items-center justify-start gap-8 '>
                           <p className='bg-brand-500 w-10 h-10 rounded-full text-white'><FaPlay className='w-full h-full p-2 ' /></p>
                           <Link to={`/courses/${courseId}/${lesson?.id}`}> {lesson?.title}</Link>
                         </div>
                         <div className='col-span-6 flex items-center justify-start gap-8'>
-                          <FaClock />
-                          <p>ساعتين</p>
+                          <Description />
+                          <p>{lesson.description}</p>
                         </div>
                       </div>
                     </motion.div>

@@ -14,6 +14,7 @@ const ReviewAns = () => {
   const [totalMark, setTotalMarks] = useState(0)
   const [marks, setMarks] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [quizTitle, setQuizTitle] = useState("")
   const navigate = useNavigate();
 
 
@@ -22,21 +23,24 @@ const ReviewAns = () => {
     const stored = sessionStorage.getItem("quizData");
     if (stored) {
       const parsedQuestions = JSON.parse(stored);
-      setReveiwQuestions(parsedQuestions);
+      console.log(parsedQuestions);
+      setReveiwQuestions(parsedQuestions.questions);
+      setQuizTitle(parsedQuestions.title);
+
 
       let totalMarksTemp = 0;   // Temporary variables to store values
       let marksTemp = 0;
 
-      parsedQuestions.forEach((qu) => {
+      parsedQuestions?.questions?.forEach((qu) => {
         totalMarksTemp += qu.mark;  // Assuming each question has a 'mark' property for total marks
 
-        const correctAns = qu.answers.find((ans) => ans.isCorrect).title;
+        const correctAns = qu.Answers.find((ans) => ans.isCorrect).title;
         if (correctAns === qu.selectedAnswer) {
           marksTemp += qu.mark;   // Add to the score if the answer is correct
         }
       });
 
-      // Set state after the loop is done
+      // // Set state after the loop is done
       setTimeout(() => {
         setTotalMarks(totalMarksTemp);
         setMarks(marksTemp);
@@ -87,7 +91,16 @@ const ReviewAns = () => {
                     marginBottom: "1rem",
                   }}
                 >
-                  نتيجة اختبار الرياضيات{" "}
+                  {quizTitle}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: 30,
+                    display: "block",
+                    paddingInlineStart: "3rem",
+                    marginBottom: "1rem",
+                  }}
+                >
                   <span className="bg-brand-500 px-4 py-2 text-white rounded-lg">
                     {marks + "/" + totalMark}
                   </span>
@@ -116,13 +129,13 @@ const ReviewAns = () => {
 
                   <div key={question.id} className="mx-0 md:mx-10 lg:mx-20  px-20 mb-6 bg-white text-black rounded-lg py-14 " >
                     <FormLabel grid-cols-2 sx={{ fontSize: 26, display: "block", paddingInlineStart: "3rem", marginBottom: "1rem", color: "black" }}>
-                      {question.id} - {question.questionTitle}
+                      {index + 1} - {question.title}
                     </FormLabel>
                     <RadioGroup
                       value={question.selectedAnswer}
                       name={`q-${question.id}`}
                     >
-                      {question.answers.map((ans, idx) => (
+                      {question.Answers.map((ans, idx) => (
                         <div
                           className={`ps-12 p-5 my-4 w-full rounded-2xl grid grid-cols-1 md:grid-cols-2
                       ${ans.isCorrect && "bg-green-700/90 text-white"}

@@ -82,7 +82,7 @@ export const fetchUserById = async (userId) => {
 //!SECTION Level Related Requests
 export const fetchAllLevels = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/user/levels/");
+    const response = await axios.get("http://localhost:3000/user/levels");
     return response.data || [];
   } catch (error) {
     console.error("Error fetching levels:", error);
@@ -278,6 +278,7 @@ export const createCourse = async (courseData) => {
     const response = await axios.post(
       "http://localhost:3000/teacher/course",
       courseData,
+      { withCredentials: true },
       {
         headers: {
           Authorization: `Bearer ${token}`,

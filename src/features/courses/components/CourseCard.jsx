@@ -6,9 +6,10 @@ import { FaStar } from "react-icons/fa6";
 
 function CourseCard({ course }) {
   const { id, title, description, price, image, teacherId, teacherName, levelTitle } = { ...course }
+  // console.log(course);
   const shortTitle = title?.split(" ").length > 2 ? title?.split(" ")[0] + " " + title?.split(" ")[1] : title
   return (
-    <div className="relative rounded-[1.6rem] mx-auto bg-brand-200 text-brand-900 w-[25.5rem] flex flex-col items-center justify-center">
+    <div className="relative rounded-[1.6rem] h-[375px] mx-auto bg-brand-200 text-brand-900 w-[25.5rem] flex flex-col items-center justify-center">
       {/* Teacher Image with border */}
       <div className="absolute rounded-4xl overflow-hidden border-4 w-60 h-60 border-yellow-300 p-0 top-[-5rem]">
         <img src={image || testImg} alt="Teacher" className="object-cover h-full w-full" />

@@ -37,18 +37,15 @@ function LessonDetails() {
   const navigate = useNavigate();
   const { data, isLoading, error } = useQuery({ queryKey: ['courseDetaials'], queryFn: () => getFullDetails(courseId) })
   useEffect(() => {
-    console.log(data?.data);
-
     if (data) {
-      data?.data.Sections.reverse()
       setCourseData(data?.data)
     }
-    courseData?.Sections.map((unit) => {
-      unit?.Lessons.map((lesson) => {
+    courseData?.sections.map((unit) => {
+      unit?.lessons.map((lesson) => {
         if (lesson.id == lessonId) {
           setLessonTitle(lesson?.title);
-          setVideoUrl(lesson?.Videos?.[0].url);
-          setPdfUrl(lesson?.Pdfs?.[0].url);
+          setVideoUrl(lesson?.videoUrl);
+          setPdfUrl(lesson?.pdfUrl);
         }
       })
     })
@@ -57,8 +54,8 @@ function LessonDetails() {
 
   const goToLesson = (e, where) => {
     let currentLessonIndex, currentUnitIndex;
-    courseData?.Sections.forEach((unit, unitIndex) => {
-      unit.Lessons.forEach((lesson, lessonIndex) => {
+    courseData?.sections.forEach((unit, unitIndex) => {
+      unit.lessons.forEach((lesson, lessonIndex) => {
         if (lesson.id === lessonId) {
           currentLessonIndex = lessonIndex;
           currentUnitIndex = unitIndex;
@@ -67,11 +64,11 @@ function LessonDetails() {
     });
 
     if (currentLessonIndex !== undefined && currentUnitIndex !== undefined) {
-      const currentUnit = courseData.Sections[currentUnitIndex];
+      const currentUnit = courseData.sections[currentUnitIndex];
 
       if (where === "next") {
-        if (currentLessonIndex < currentUnit.Lessons.length - 1) {
-          const nextLesson = currentUnit.Lessons[currentLessonIndex + 1];
+        if (currentLessonIndex < currentUnit.lessons.length - 1) {
+          const nextLesson = currentUnit.lessons[currentLessonIndex + 1];
           navigate(`/courses/${courseId}/${nextLesson.id}`);
         } else {
           console.log("You're at the last lesson.");
@@ -80,7 +77,7 @@ function LessonDetails() {
 
       if (where === "prev") {
         if (currentLessonIndex > 0) {
-          const prevLesson = currentUnit.Lessons[currentLessonIndex - 1];
+          const prevLesson = currentUnit.lessons[currentLessonIndex - 1];
           navigate(`/courses/${courseId}/${prevLesson.id}`);
         } else {
           console.log("You're at the first lesson.");
@@ -121,14 +118,12 @@ function LessonDetails() {
             </div>
           </section>
           <nav className="taegetNav col-span-12 md:col-span-3 bg-brand-100 h-fit max-h-[300px] md:max-h-[550px] overflow-y-scroll py-2 align-middle  my-4 border border-brand-500 rounded-lg">
-            <div className="h-full">
-              {courseData?.Sections?.map((unit = "unit", index) => (
+            <div className="h-full ">
+              {courseData?.sections?.map((section, index) => (
                 <AccrdionModule
                   key={index}
                   index={index + 1}
-                  unit={unit}
-                  lessons={5}
-                  exam={1}
+                  section={section}
                 />)
               )}
             </div>

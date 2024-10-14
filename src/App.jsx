@@ -74,8 +74,8 @@ function App() {
               <Route index element={<CourseCatalog />} />
               <Route path=":courseId" element={<CourseDetail />} />
               <Route path=":courseId/:lessonId" element={<LessonDetails />} />
-              <Route path="review/:examId" element={<ReviewAns />} />
-              <Route path=":courseId/:lessonId/:examId" element={<Exam />} />
+              <Route path="quiz/:courseId/:quizId" element={<Exam />} />
+              <Route path="quiz/quizReview/:quizTitle" element={<ReviewAns />} />
             </Route>
           </Route>
 

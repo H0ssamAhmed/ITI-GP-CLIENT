@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
-import { Skeleton } from '@mui/material';
+import { Button, Skeleton, Stack } from '@mui/material';
 import { FaX } from 'react-icons/fa6';
 import { VscSettings } from "react-icons/vsc";
 import { useQuery } from '@tanstack/react-query';
@@ -11,8 +11,12 @@ import { LevelsAndCourses, SmallLevelsAndCourses } from '../components/Levels';
 // Fetch all courses
 const fetchCourses = async () => {
   try {
-    const fetchedCourses = await getAllCourses('all-courses');
-    return fetchedCourses;
+    const respones = await getAllCourses('all-courses');
+    // if (respones.status == 404) {
+    //   return respones.data.error
+    // } else {
+    return respones.data;
+    // }
   } catch (err) {
     console.error(err);
     return err;
@@ -94,7 +98,8 @@ const CourseCatalog = () => {
 
   return (
     <div className='relative bg-brand-600/10 min-h-[80vh]' style={{ backgroundImage: 'url("../../../assets/backgroundcover.png")' }}>
-      <div className='container mx-auto pt-4'>
+      {error && <p className='h-80 bg-red-400'>{"error"}</p>}
+      {!error && <div className='container mx-auto pt-4'>
         <div onClick={() => setShowFiltreDiv(!showFiltreDiv)} className='px-4 py-2 start-0 absolute -mt-48 top-[12rem] md:hidden mx-auto transition-all z-10 cursor-pointer'>
           <AnimatePresence>
             {!showFiltreDiv ?
@@ -138,7 +143,13 @@ const CourseCatalog = () => {
           )}
           <section className='col-span-12 md:col-span-8 lg:col-span-9'>
             <div className='flex items-center flex-wrap justify-center gap-y-56 mt-20'>
-              {error || currentDisplayed?.length == 0 && <h1>Error Courses not found</h1>}
+              {error || currentDisplayed?.length == 0 &&
+                <Stack direction="column" textAlign="center">
+                  <h1 className='p-16 w-full text-center text-6xl' >لا يوجد كورسات متاح لهذا الصف في الوقت الحالي</h1>
+                  <Button variant='outlined' sx={{ fontSize: '2rem', margin: "0 auto", }} className='bg-brand-500 w-fit px-4 py-2 rounded-md'>اظهار الكل</Button>
+                </Stack>
+
+              }
               {isLoading ? (
                 <div className='flex items-center justify-center gap-4 flex-wrap '>
                   <Skeleton animation="wave" width={400} height={400} />
@@ -149,13 +160,12 @@ const CourseCatalog = () => {
                 currentDisplayed?.map((course, index) => (
                   <motion.div key={index} className='p-4 cursor-pointer' initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3 }}>
                     <CourseCard course={course} />
-                  </motion.div>
-                ))
+                  </motion.div>))
               )}
             </div>
           </section>
         </div>
-      </div>
+      </div>}
     </div>
   );
 };
