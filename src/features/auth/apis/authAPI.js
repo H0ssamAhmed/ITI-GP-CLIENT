@@ -13,6 +13,7 @@ import {
 } from '../slices/authSlice';
 import { useContext } from 'react';
 import SignUpContext from '../../store/signup-context';
+import { set } from 'react-hook-form';
 const verifyEmailForgetPassword = async (userData) => {
   try {
     const response = await AxiosInstance.post('user/forget-password', userData);
@@ -40,8 +41,16 @@ const loginUser = async (userData) => {
 };
 
 const signupUser = async (userData) => {
+  let endpoint;
   try {
-    const response = await AxiosInstance.post('student/auth/signup', userData, {
+    if (userData.type === 'student') {
+      endpoint = `student/auth/signup`;
+    } else if (userData.type === 'teacher') {
+      endpoint = `teacher/auth/signup`;
+    } else {
+      throw new Error('Invalid user type');
+    }
+    const response = await AxiosInstance.post(endpoint, userData, {
       withCredentials: true,
     });
     return response.data;
@@ -56,7 +65,7 @@ const verifyOTP = async (userData) => {
       'student/auth/verify-otp',
       userData,
       {
-        withCredentials: true,
+        withCredentials: true, 
       }
     );
     return response.data;
@@ -166,18 +175,28 @@ export const useLogin = () => {
   });
 };
 
-export const useSignup = () => {
+export const useSignup = (type) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // const { type } = useContext(SignUpContext);
   return useMutation({
-    mutationFn: signupUser,
+    mutationFn: signupUser, 
     onMutate: () => {
       dispatch(startLoading());
     },
     onSuccess: (data) => {
       dispatch(authSuccess(data));
-      navigate('/verify-otp', { state: { email: data.email } });
+      toast.success(data.message || 'تم التسجيل بنجاح');
+      if (type === 'student') {
+      setTimeout(() => {
+        navigate('/verify-otp', { state: { email: data.email } });
+      },2000)
+    } else {
+      setTimeout(() => {
+        navigate('/');
+      },2000)
+    }
+      // navigate('/verify-otp', { state: { email: data.email } });
     },
     onError: (error) => {
       dispatch(

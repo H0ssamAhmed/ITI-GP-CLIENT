@@ -13,7 +13,7 @@ export default function CodeVerify() {
   const { mutate: resendOTP, isLoading: resendLoading } = useResendOTP();
   const [otp, setOtp] = useState('');
 
-  const handleSubmit = async () => {
+  const handleSubmit = async () => { 
     try {
       await verifyOTP({ otp, email }); // Include email here
     } catch (e) {
