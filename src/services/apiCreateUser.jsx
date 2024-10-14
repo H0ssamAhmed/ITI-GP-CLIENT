@@ -16,6 +16,7 @@ export const apiCreateUser = async (data, type) => {
 
     const response = await fetch(endpoint, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -30,8 +31,8 @@ export const apiCreateUser = async (data, type) => {
         }`
       );
     }
-    const { message } = await response.json();
-    return message;
+    const responseData = await response.json();
+    return responseData;
   } catch (error) {
     console.error('API call failed:', error);
     throw new Error(`Failed to create user: ${error.message}`);
