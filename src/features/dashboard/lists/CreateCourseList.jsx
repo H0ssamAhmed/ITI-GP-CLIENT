@@ -41,6 +41,7 @@ const CreateCourseList = ({ initialData }) => {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -87,6 +88,7 @@ const CreateCourseList = ({ initialData }) => {
     const getLevels = async () => {
       try {
         const fetchedLevels = await fetchAllLevels();
+        console.log("All level ya hossam:", fetchAllLevels);
         // Check if fetchedLevels is an array, otherwise set it as an empty array
         setLevels(Array.isArray(fetchedLevels.data) ? fetchedLevels.data : []);
       } catch (error) {
@@ -105,9 +107,9 @@ const CreateCourseList = ({ initialData }) => {
       price: +data.price,
       discountedPrice: +data.discountedPrice,
       levelId: data.levelId,
-      sections: data.sections.map((section, sectionIndex) => ({
+      sections: data.sections.map((section) => ({
         title: section.title,
-        lessons: lessons[sectionIndex].map((lesson, lessonIndex) => ({
+        lessons: section.lessons.map((lesson) => ({
           title: lesson.title,
           description: lesson.description,
           pdfUrl: lesson.pdfUrl,
@@ -118,6 +120,7 @@ const CreateCourseList = ({ initialData }) => {
 
     console.log(courseData);
     createCourseMutate(courseData);
+    reset();
   };
 
   return (

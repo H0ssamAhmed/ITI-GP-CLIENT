@@ -63,3 +63,55 @@ export const sendQuizAns = async (quizData) => {
   }
 }
 
+export const getCurrentUserCourses = async () => {
+  try {
+    const currentUserCourses = await axios.get(`${base_url}/student/course/enrolled/courses`, { withCredentials: true })
+    return currentUserCourses
+  } catch (error) {
+    if (error.response.status === 404) {
+      throw new Error(error);
+    }
+    throw new Error(error.response || "Failed to fetch current Courses");  // Other errors
+  }
+}
+
+export const buyACourse = async (courseId, studentId,) => {
+  try {
+    // Define the request body with the required parameters
+    const requestBody = {
+      courseId: courseId,
+      studentId: studentId,
+    };
+
+    // Make the POST request with the requestBody
+    const response = await axios.post(`${base_url}/student/course/buy-course`, requestBody, {
+      withCredentials: true,
+    });
+
+    // Handle the response if needed
+    return response.data;
+  } catch (error) {
+    // Handle error
+    console.error("Error buying course:", error);
+    throw error; // Re-throw the error for further handling
+  }
+};
+
+export const giveRate = async (value, courseId, studentId) => {
+  try {
+    const requestBody = {
+      rate: value,
+      comment: "comment",
+      courseId: courseId,
+      studentId: studentId,
+    }
+    const response = await axios.post(`${base_url}/student/review`, requestBody, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    // Handle error
+    console.error("Error rating course:", error);
+    throw error; // Re-throw the error for further handling
+  }
+}

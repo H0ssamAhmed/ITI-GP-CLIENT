@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useQuery } from "@tanstack/react-query";
-import { fetchAllTeacherCourses } from "../dashboardAPI";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createQuiz, FetchTeacherSections } from "../dashboardAPI";
+import { MdOutlineQuiz } from "react-icons/md";
+import { toast } from "react-toastify";
+import { CircularProgress } from "@mui/material";
 
 // Define Yup schema for validation
 const schema = yup.object().shape({
-  examTitle: yup.string().required("عنوان الإمتحان مطلوب"),
+  title: yup.string().required("عنوان الإمتحان مطلوب"),
   section: yup.string().required("يجب اختيار القسم"),
   duration: yup
     .number()
@@ -25,13 +28,16 @@ const schema = yup.object().shape({
           .required("الدرجة مطلوبة"),
         answers: yup
           .array()
-          .of(yup.string().required("الحقل يجب ان يحتوي على إجابة"))
+          .of(
+            yup.object().shape({
+              title: yup.string().required("الحقل يجب ان يحتوي على إجابة"),
+              isCorrect: yup
+                .boolean()
+                .required("يجب تحديد ما إذا كانت الإجابة صحيحة"),
+            })
+          )
           .min(4, "يجب على الأقل ان يتواجد اربع إجابات")
           .required("الإجابات مطلوبة"),
-        correctAnswer: yup
-          .number()
-          .integer()
-          .required("يجب إختبار اجابة صحيحة"),
       })
     )
     .min(1, "الأختبار يجب على الأقل ان يحتوي على سؤال واحد"),
@@ -42,33 +48,55 @@ const ExamsList = () => {
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors },
     setValue,
   } = useForm({
     resolver: yupResolver(schema), // Use yupResolver with the schema
     defaultValues: {
-      examTitle: "",
-      section: "", // Default value for the section
-      duration: 1,
+      title: "",
+      sectionId: "", // Default value for the section
+      duration: 30,
       questions: [],
+    },
+  });
+
+  const {
+    mutate: createQuizMutate,
+    isLoading: isCreatingQuiz,
+    isError: isErrorQuiz,
+  } = useMutation({
+    mutationFn: createQuiz,
+    onSuccess: () => {
+      toast.success("تم إنشاء الأمتحان بنجاح");
+    },
+    onError: (error) => {
+      if (error.response) {
+        const statusCode = error.response.status;
+
+        if (statusCode === 409) {
+          // Handle duplicate course error (conflict)
+          toast.error("هذا الأمتحان موجود بالفعل");
+        } else if (error.response.data) {
+          // Specific backend error message
+          const backendErrorMessage = error.response.data.error;
+          toast.error(backendErrorMessage);
+        } else {
+          // General error message
+          toast.error("حدث خطأ أثناء إنشاء الأمتحان");
+        }
+      } else {
+        toast.error("حدث خطأ غير متوقع");
+      }
     },
   });
 
   const [questions, setQuestions] = useState([]);
 
-  // Dummy data for sections coming from the backend
-  const sections = [
-    { id: "1", name: "Mathematics" },
-    { id: "2", name: "Science" },
-    { id: "3", name: "History" },
-  ];
-
-  const { data: teachersCourses } = useQuery({
-    queryKey: ["teacherCourses"],
-    queryFn: fetchAllTeacherCourses,
+  const { data: teachersSections } = useQuery({
+    queryKey: ["teachersSections"],
+    queryFn: FetchTeacherSections,
   });
-
-  console.log(teachersCourses);
 
   const addQuestion = () => {
     setQuestions((prev) => [
@@ -88,7 +116,7 @@ const ExamsList = () => {
 
   const handleAddQuestion = () => {
     addQuestion();
-    setValue("questions", [...questions]);
+    setValue("questions", [...questions, ...questions]);
   };
 
   const removeQuestion = (index) => {
@@ -99,13 +127,30 @@ const ExamsList = () => {
 
   const onSubmit = (data) => {
     // Prepare data to match backend structure
-    console.log("Submitted Exam:", data);
-    alert("Exam Submitted Successfully!");
+    const structuredData = {
+      title: data.title,
+      sectionId: data.section,
+      Duration: +data.duration,
+      questions: data.questions.map((q) => ({
+        questionTitle: q.questionTitle,
+        mark: q.mark,
+        answers: q.answers.map((answer, index) => ({
+          title: answer.title,
+          isCorrect: answer.isCorrect,
+        })),
+      })),
+    };
+
+    createQuizMutate(structuredData);
+    reset();
+    // Send 'structuredData' to backend via an API call
   };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">إنشاء امتحان</h2>
+      <h2 className="text-[2.5rem] flex items-center justify-center gap-6 font-bold mb-4">
+        إنشاء إمتحان <MdOutlineQuiz className="text-brand-500" />
+      </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* عنوان الامتحان */}
@@ -113,26 +158,26 @@ const ExamsList = () => {
           <label className="font-semibold mb-2">عنوان الامتحان:</label>
           <input
             type="text"
-            {...register("examTitle")}
+            {...register("title")}
             className="p-2 border border-gray-300 rounded-md"
             placeholder="أدخل عنوان الامتحان"
           />
-          {errors.examTitle && (
-            <p className="text-red-500">{errors.examTitle.message}</p>
+          {errors.title && (
+            <p className="text-red-500">{errors.title.message}</p>
           )}
         </div>
 
         {/* اختيار القسم */}
         <div className="flex flex-col">
-          <label className="font-semibold mb-2">القسم:</label>
+          <label className="font-semibold mb-2">الوحدة:</label>
           <select
             {...register("section")}
             className="p-2 border border-gray-300 rounded-md"
           >
-            <option value="">اختر القسم</option>
-            {sections.map((section) => (
-              <option key={section.id} value={section.name}>
-                {section.name}
+            <option value="">اختر الوحدة</option>
+            {teachersSections?.map((section) => (
+              <option key={section.id} value={section.id}>
+                {section.title}
               </option>
             ))}
           </select>
@@ -192,10 +237,18 @@ const ExamsList = () => {
 
           {/* زر إرسال الامتحان */}
           <button
+            disabled={isCreatingQuiz}
             type="submit"
-            className="bg-green-500 text-white px-4 ml-4 py-2 rounded-md"
+            className="bg-green-500 flex items-center gap-4 justify-between text-white px-4 ml-4 py-2 rounded-md"
           >
-            إرسال الامتحان
+            {isCreatingQuiz ? (
+              <>
+                <CircularProgress size="15px" />
+                <span> جارِ الإرسال : إنشاء امتحان</span>
+              </>
+            ) : (
+              "إنشاء امتحان"
+            )}
           </button>
         </div>
       </form>
@@ -252,11 +305,11 @@ const QuestionComponent = ({ index, register, control, question, errors }) => {
                 {...register(
                   `questions[${index}].answers[${answerIndex}].title`
                 )}
-                className="p-2 border border-gray-300 rounded-md w-full"
+                className="p-2 border border-gray-300 rounded-md"
                 placeholder={`الإجابة ${answerIndex + 1}`}
               />
               {errors?.questions?.[index]?.answers?.[answerIndex]?.title && (
-                <p className="text-red-500 text-[1.3rem]">
+                <p className="text-red-500">
                   {errors.questions[index].answers[answerIndex].title.message}
                 </p>
               )}
@@ -266,7 +319,7 @@ const QuestionComponent = ({ index, register, control, question, errors }) => {
               {...register(
                 `questions[${index}].answers[${answerIndex}].isCorrect`
               )}
-              className="ml-4"
+              className="ml-2"
             />
           </div>
         ))}

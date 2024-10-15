@@ -21,16 +21,19 @@ const CourseCatalog = () => {
   useEffect(() => {
     if (AllLevel) setFetchLevels(AllLevel.data.data);
     if (data) setCurrentDisplayed(data.data.data);
+    // console.log(data?.data?.data);
   }, [AllLevel, data]);
 
   const handleFiltrationbyLevel = (e) => {
-    const filterBy = e.target?.innerText;
-    const filteredCourses = data?.data?.data?.filter(course => course.levelTitle === filterBy);
-    setCurrentDisplayed(filteredCourses);
-    setLevel(filteredCourses);
+    if (e?.target.tagName == "P") {
+      const filterBy = e.target?.innerText;
+      const filteredCourses = data?.data?.data?.filter(course => course.levelTitle === filterBy);
+      setCurrentDisplayed(filteredCourses);
+      setLevel(filteredCourses);
+      activateLevel(e.target);
+      resetAllSubjects();
+    }
 
-    activateLevel(e.target);
-    resetAllSubjects();
   };
 
   const activateLevel = (targetElement) => {
@@ -125,7 +128,7 @@ const CourseCatalog = () => {
             </motion.div>
           )}
           <section className='col-span-12 md:col-span-8 lg:col-span-9'>
-            <div className='flex items-center flex-wrap justify-center gap-y-56 mt-20'>
+            <div className='flex items-center flex-wrap justify-center gap-y-8 mt-20'>
               {currentDisplayed?.length == 0 && !isLoading && !error &&
                 <Stack direction="column" textAlign="center">
                   <h1 className='p-16 w-full text-center text-6xl' >لا يوجد كورسات متاح لهذا الصف في الوقت الحالي</h1>

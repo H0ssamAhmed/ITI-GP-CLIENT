@@ -1,31 +1,25 @@
+import axios from 'axios';
+
 const API_URL = 'http://localhost:3000';
 
 export const resetPasswordApi = async (data) => {
-  console.log(data);
 
   try {
-    const token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYjUzZTgxLWIyZmMtNDNkZC04NGEyLWU4N2U4ODRmYWZjMSIsInJvbGUiOiJ0ZWFjaGVyIiwiaWF0IjoxNzI4MzAyNjc2LCJleHAiOjE3MjgzMDYyNzZ9.uCEt3mwaxuK7gxtdKX3UJFNb_nmYyEP6WjlG1vpKv5c';
-    const response = await fetch(`${API_URL}/api/user/reset-password`, {
-      method: 'PATCH',
+    const response = await axios.post(`${API_URL}/user/reset-password`, data, {
+      withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
-      throw new Error(
-        `Error ${response.status}: ${
-          response.message || 'Something went wrong'
-        }`
-      );
-    }
-    const { message } = await response.json();
-    return message;
+    return response.data.message; 
   } catch (error) {
-    console.error('Error resetting password:', error);
-    throw error;
+    if (error.response) {
+      console.error('Error resetting password:', error.response.data.message || error.message);
+      throw new Error(`Error ${error.response.status}: ${error.response.data.message || 'Something went wrong'}`);
+    } else {
+      console.error('Error resetting password:', error.message);
+      throw error;
+    }
   }
 };

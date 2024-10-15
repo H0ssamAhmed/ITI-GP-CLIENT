@@ -5,25 +5,46 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa6"
 import { Skeleton } from "@mui/material"
 import AccrdionModule from "../components/AccrdionModule";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getCourseDetails } from "../apis/coursesApi";
+import { getCourseDetails, getCurrentUserCourses } from "../apis/coursesApi";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { getCurrentUser } from "../../../services/currentUser";
+
 
 
 function LessonDetails() {
   const { courseId, lessonId } = useParams()
   const [courseData, setCourseData] = useState()
+  const [isUserEnroled, setIsUserEnroled] = useState(false)
   const [videoUrl, setVideoUrl] = useState("")
   const [pdfUrl, setPdfUrl] = useState("")
   const [lessonTitle, setLessonTitle] = useState("")
+  const [currentUser, setCurrentUser] = useState()
   const navigate = useNavigate();
   const { data, isLoading, error } = useQuery({
     queryKey: ['courseDetaials'],
     queryFn: () => getCourseDetails(courseId)
-
+  })
+  const { data: user, isLoading: userLoading, error: userError } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => getCurrentUser()
+  });
+  const { data: userCourses, isLoading: coursesLaoding, error: CoursesError } = useQuery({
+    queryKey: ['userCourses'],
+    queryFn: () => getCurrentUserCourses(data.data.id)
   })
 
+  useEffect(() => {
+    if (user) {
+      setCurrentUser(user?.data)
+    }
+    userCourses?.data?.courses.map((course) => {
+      if (course?.id == courseId) {
+        setIsUserEnroled(true)
+      }
+    })
 
+  }, [user, userCourses])
   useEffect(() => {
     if (data) {
       setCourseData(data?.data)
@@ -37,8 +58,14 @@ function LessonDetails() {
         }
       })
     })
-
   }, [data, lessonId])
+
+
+  if (coursesLaoding || userLoading) {
+    return (
+      <Skeleton width={'80vw'} height={"80vh"} sx={{ margin: "0 auto" }} />
+    )
+  }
 
 
   if (isLoading) {
@@ -103,6 +130,30 @@ function LessonDetails() {
 
   return (
     <main className='my-8'>
+
+
+      {!isUserEnroled &&
+        <>
+          <div className="flex flex-col gap-48">
+            <main className="flex flex-col items-center justify-center">
+              <img className="w-[96rem] h-full" src="/src/assets/404.svg" />
+              <h1 className="font-bold text-center text-[3rem] lg:text-[6rem]">
+                انت غير مشترك في الدورة
+              </h1>
+              <p className="font-semibold text-[2rem]">
+                لا يمكنك الوصول لهذ الصفحة
+              </p>
+              <Link
+                to={`/courses/${courseId}`}
+                className="rounded-full px-6 py-4 font-bold mt-10 outline-none ring-1 ring-white bg-yellow-400"
+              >
+                اشترك في الدورة الان
+              </Link>
+            </main>
+          </div>
+        </>
+      }
+
       <div className='container mx-auto'>
         <div className=" grid grid-cols-12 gap-4">
           <section className="col-span-12 md:col-span-9 grid-cols-subgrid">
