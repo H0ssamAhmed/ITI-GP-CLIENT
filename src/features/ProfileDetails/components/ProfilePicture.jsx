@@ -16,6 +16,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { updateUserPicture } from '../../../services/apiUpdateUserPicture';
 import {Spinner} from '@material-tailwind/react';
+import { useEffect } from 'react';
 const ProfileCard = styled(Card)({
   backgroundColor: '#f5f5f5',
   borderRadius: '10px',
@@ -34,11 +35,13 @@ export default function ProfilePicture({ getProfileData }) {
     onSuccess: (data) => {
       toast.success("Profile picture updated successfully.", {
         type: "success",
-        toastId: "update-profile-success",
+        toastId: `update-profile-success-${Date.now()}`,
       });
-      
-      getProfileData.profileData.image = data.data.picture;
       queryClient.invalidateQueries(["profileData"]);
+      getProfileData.profileData.image = data.data.picture;
+
+     
+      
     },
     onError: (error) => {
       const errorMessage = error.message || "Failed to update profile. Please try again.";
@@ -54,7 +57,7 @@ export default function ProfilePicture({ getProfileData }) {
       uploadPictureMutation(file);
     }
   };
-
+ 
   return (
     <Grid2 size={{ xs: 12, sm: 12, md: 3 }}>
       <ProfileCard
