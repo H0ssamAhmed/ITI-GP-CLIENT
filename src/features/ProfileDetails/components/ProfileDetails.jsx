@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Button,
@@ -13,12 +13,14 @@ import {
   InputAdornment,
   IconButton,
   LinearProgress,
+  FormControl,
+  Select,
 } from "@mui/material";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
-import { amber, grey, indigo } from "@mui/material/colors";
+import { amber } from "@mui/material/colors";
 import { v4 as uuidv4 } from "uuid";
 import {
   BadgeRounded,
@@ -34,16 +36,29 @@ import {
 import { updateProfileData } from "../../../services/apiUpdateProfileDetails";
 import SpinnerOverlay from "./SpinnerOverlay";
 import { resetPasswordApi } from "../../../services/resetPasswordApi";
+import { apiGetAllLevels } from "../../../services/apiGetAllLevels";
 const ProfileCard = styled(Card)({
   backgroundColor: "#f5f5f5",
   borderRadius: "10px",
   padding: "20px",
 });
 
-export default function ProfileDetails({getProfileData}) {
+export default function ProfileDetails({ getProfileData }) {
   const [passwordModalOpen, setPasswordModalOpen] = React.useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [levels, setLevels] = useState([]);
+
+  useEffect(() => {
+    const getAllLevels = async () => {
+      const levelsData = await apiGetAllLevels();
+     
+
+      setLevels(levelsData);
+    };
+    getAllLevels();
+  }, []);
+
 
   const handleClickShowPassword = () => {
     setShowPassword((prev) => !prev);
@@ -52,7 +67,8 @@ export default function ProfileDetails({getProfileData}) {
     register,
     handleSubmit,
     formState: { errors, dirtyFields },
-  } = useForm();
+    control,
+  } = useForm({});
   const {
     register: registerResetPassowrd,
     handleSubmit: handleSubmitResetPassowrd,
@@ -60,11 +76,10 @@ export default function ProfileDetails({getProfileData}) {
     reset,
   } = useForm();
   const queryClient = useQueryClient();
- 
+
   const { mutate, isPending: isSavingProfileData } = useMutation({
     mutationFn: updateProfileData,
     onSuccess: () => {
-      console.log("Profile updated successfully");
       queryClient.invalidateQueries(["profileData"]);
       toast.success("Profile updated successfully", {
         type: "success",
@@ -79,7 +94,6 @@ export default function ProfileDetails({getProfileData}) {
       });
     },
   });
- 
 
   const onSubmit = (data) => {
     mutate(data);
@@ -89,8 +103,7 @@ export default function ProfileDetails({getProfileData}) {
     {
       mutationFn: resetPasswordApi,
       onSuccess: () => {
-        console.log("Password updated successfully");
-        
+
         toast.success("Password updated successfully", {
           type: "success",
           toastId: "reset-password-success",
@@ -106,10 +119,9 @@ export default function ProfileDetails({getProfileData}) {
     }
   );
   const onSubmitResetPassword = (data) => {
-
     mutateResetPassword(data);
   };
-  if (getProfileData.isFetchingProfileData  ) {
+  if (getProfileData.isFetchingProfileData) {
     return <SpinnerOverlay />;
   }
 
@@ -122,7 +134,6 @@ export default function ProfileDetails({getProfileData}) {
   }
 
   let profileFields = [];
-  console.log(getProfileData.profileData.data);
 
   if (getProfileData.profileData) {
     profileFields.push(
@@ -211,16 +222,7 @@ export default function ProfileDetails({getProfileData}) {
         field: "nationalID",
         value: getProfileData.profileData.nationalId,
         icon: <BadgeRounded sx={{ fontSize: "1.9rem" }} />,
-        validation: {
-          // required: {
-          //   value: true,
-          //   message: "يجب عليك ادخال الرقم القومي",
-          // },
-          // pattern: {
-          //   value: /^\d{14}$/,
-          //   message: "الرقم القومي غير صالح",
-          // },
-        },
+        validation: {},
       }
     );
   }
@@ -250,19 +252,10 @@ export default function ProfileDetails({getProfileData}) {
       },
       {
         label: "الصف الدراسي",
-        field: "level",
-        value: getProfileData.profileData.level,
+        field: "levelTitle",
+        value: getProfileData.profileData.levelTitle,
         icon: <MenuBook sx={{ fontSize: "2rem" }} />,
-        validation: {
-          // required: {
-          //   value: true,
-          //   message: "يجب عليك ادخال الصف الدراسي",
-          // },
-          // pattern: {
-          //   value: /^[A-Za-z]+$/,
-          //   message: "الصف الدراسي يجب ان يحتوي على حروف فقط",
-          // },
-        },
+        validation: {},
       }
     );
   }
@@ -351,66 +344,105 @@ export default function ProfileDetails({getProfileData}) {
             <Grid2 container spacing={2}>
               {profileFields.map((detail) => (
                 <Grid2 key={uuidv4()} size={{ xs: 12, sm: 6 }}>
-                  {detail.icon}
-                  <FormLabel
-                    sx={{
-                      fontFamily: "cairo",
-                      fontSize: "1.6rem",
-                      color: "#fff",
-                      mb: 2,
-                    }}
-                  >
-                    {" "}
-                    {detail.label}
-                  </FormLabel>
-                  {/* {isSavingProfileData && <LinearProgress />} */}
-                  <TextField
-                    fullWidth
-                    {...register(detail.field, {
-                      ...detail.validation,
-                    })}
-                    disabled={
-                      (!isEditing && isEmptyField) ||
-                      detail.field === "wallet" ||
-                      detail.field === "nationalID" ||
-                      detail.field === 'level'
-                    }
-                    defaultValue={detail.value}
-                    slotProps={{
-                      input: {
-                        sx: {
-                          fontFamily: "cairo",
-                          fontSize: "1.6rem",
-                          color: "#000",
-                          backgroundColor: "#fff",
-                          borderRadius: "11px",
-                          mt: 1,
-                          ".MuiInputBase-input": {
-                            borderRadius: "11px",
-                          },
-                          "&.Mui-disabled .MuiOutlinedInput-input": {
-                            bgcolor: "#bcbaba",
-                          },
-                        },
-                      },
-                    }}
-                  />
-                  {errors[detail.field] && (
-                    <Typography
-                      variant="h6"
-                      color="error"
+                  <>
+                    {detail.icon}
+                    <FormLabel
                       sx={{
                         fontFamily: "cairo",
-                        fontSize: "1.4rem",
-                        mt: 1,
+                        fontSize: "1.6rem",
+                        color: "#fff",
+                        mb: 2,
                       }}
                     >
-                      {errors[detail.field].message}
-                    </Typography>
-                    
-                  )}
-                  {isSavingProfileData && dirtyFields[detail.field] && <LinearProgress sx={{ mt: 1 }} />}
+                      {detail.label}
+                    </FormLabel>
+                    {detail.field !== "levelTitle" ? (
+                      <TextField
+                        fullWidth
+                        {...register(detail.field, {
+                          ...detail.validation,
+                        })}
+                        disabled={
+                          (!isEditing && isEmptyField) ||
+                          detail.field === "wallet" ||
+                          detail.field === "nationalID"
+                        }
+                        defaultValue={detail.value}
+                        slotProps={{
+                          input: {
+                            sx: {
+                              fontFamily: "cairo",
+                              fontSize: "1.6rem",
+                              color: "#000",
+                              backgroundColor: "#fff",
+                              borderRadius: "11px",
+                              mt: 1,
+                              ".MuiInputBase-input": {
+                                borderRadius: "11px",
+                              },
+                              "&.Mui-disabled .MuiOutlinedInput-input": {
+                                bgcolor: "#bcbaba",
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    ) : (
+                      <>
+                        <FormControl fullWidth margin="normal">
+                          <Select
+                            disabled={!isEditing && isEmptyField}
+                            sx={{
+                              fontFamily: "cairo",
+                              fontSize: "1.6rem",
+                              color: "#000",
+                              backgroundColor: "#fff",
+                              borderRadius: "11px",
+                              mt: -1,
+                              ".MuiInputBase-input": {
+                                borderRadius: "11px",
+                              },
+                              "&.Mui-disabled .MuiOutlinedInput-input": {
+                                bgcolor: "#bcbaba",
+                              },
+                            }}
+                            native
+                            defaultValue={detail.value}
+                            id="grouped-native-select"
+                            label="Grouping"
+                          >
+                            {levels.map((level) => (
+                              <optgroup label={level.title} key={level.id}>
+                                {level.subLevels.map((subLevel) => (
+                                  <option value={subLevel.id} key={subLevel.id}>
+                                    {subLevel.title}
+                                  </option>
+                                ))}
+                              </optgroup>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </>
+                    )}
 
+                    {errors[detail.field] && (
+                      <Typography
+                        variant="h6"
+                        color="error"
+                        sx={{
+                          fontFamily: "cairo",
+                          fontSize: "1.4rem",
+                          mt: 1,
+                        }}
+                      >
+                        {errors[detail.field].message}
+                      </Typography>
+                    )}
+
+                    {isSavingProfileData && dirtyFields[detail.field] && (
+                      <LinearProgress sx={{ mt: 1 }} />
+                    )}
+                  </>
                 </Grid2>
               ))}
               <Button
@@ -481,13 +513,11 @@ export default function ProfileDetails({getProfileData}) {
                   <TextField
                     fullWidth
                     placeholder="ادخل كلمة المرور الحالية"
-                  
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     sx={{
                       borderRadius: "11px",
                       backgroundColor: "#ffffff",
                       mt: 1,
-
                       "& .MuiInputBase-input": {
                         color: "black",
                         fontSize: "1.6rem",
@@ -504,13 +534,16 @@ export default function ProfileDetails({getProfileData}) {
                               onClick={handleClickShowPassword}
                               edge="end"
                             >
-                              {showPassword ?  <Visibility /> : <VisibilityOff /> }
+                              {showPassword ? (
+                                <Visibility />
+                              ) : (
+                                <VisibilityOff />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         ),
-                      }}
-                      }
-                     
+                      },
+                    }}
                     {...registerResetPassowrd("oldPassword", {
                       required: {
                         value: true,
@@ -519,19 +552,18 @@ export default function ProfileDetails({getProfileData}) {
                     })}
                   />
                   <FormHelperText
-                    error={!!errorsReset.oldPassword} 
+                    error={!!errorsReset.oldPassword}
                     sx={{
-                      color: errorsReset.oldPassword ? "red" : "inherit", 
-                      fontSize: "1.2rem", 
+                      color: errorsReset.oldPassword ? "red" : "inherit",
+                      fontSize: "1.2rem",
                       mt: 0.5,
-                      textAlign: "right", 
+                      textAlign: "right",
                     }}
                   >
                     {errorsReset.oldPassword
                       ? errorsReset.oldPassword.message
                       : ""}
                   </FormHelperText>
-                 
                 </Grid2>
                 <Grid2 size={{ xs: 12 }}>
                   <FormLabel
@@ -543,11 +575,10 @@ export default function ProfileDetails({getProfileData}) {
                   >
                     كلمة المرور الجديدة
                   </FormLabel>
-
                   <TextField
                     placeholder="ادخل كلمة المرور الجديدة"
                     fullWidth
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     sx={{
                       borderRadius: "11px",
                       backgroundColor: "#ffffff",
@@ -568,12 +599,16 @@ export default function ProfileDetails({getProfileData}) {
                               onClick={handleClickShowPassword}
                               edge="end"
                             >
-                              {showPassword ?  <Visibility /> : <VisibilityOff /> }
+                              {showPassword ? (
+                                <Visibility />
+                              ) : (
+                                <VisibilityOff />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         ),
-                      }}
-                      }
+                      },
+                    }}
                     {...registerResetPassowrd("newPassword", {
                       required: {
                         value: true,
@@ -585,22 +620,20 @@ export default function ProfileDetails({getProfileData}) {
                       },
                     })}
                   />
-                   <FormHelperText
-                    error={!!errorsReset.oldPassword} 
+                  <FormHelperText
+                    error={!!errorsReset.newPassword}
                     sx={{
-                      color: errorsReset.oldPassword ? "red" : "inherit", 
-                      fontSize: "1.2rem", 
+                      color: errorsReset.newPassword ? "red" : "inherit",
+                      fontSize: "1.2rem",
                       mt: 0.5,
-                      textAlign: "right", 
+                      textAlign: "right",
                     }}
                   >
-                    {errorsReset.oldPassword
-                      ? errorsReset.oldPassword.message
+                    {errorsReset.newPassword
+                      ? errorsReset.newPassword.message
                       : ""}
                   </FormHelperText>
-                  {isSavingReset && (
-                    <LinearProgress sx={{ mt: 1 }} />
-                  )}
+                  {isSavingReset && <LinearProgress sx={{ mt: 1 }} />}
                 </Grid2>
                 <Grid2 size={{ xs: 12 }}>
                   <Button
