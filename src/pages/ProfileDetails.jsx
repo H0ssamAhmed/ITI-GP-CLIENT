@@ -12,7 +12,7 @@ export default function ProfilePage() {
   } = useQuery({
     queryKey: ["profileData"],
     queryFn: getProfileData,
-  });
+  }); 
   
   return (
     <Box

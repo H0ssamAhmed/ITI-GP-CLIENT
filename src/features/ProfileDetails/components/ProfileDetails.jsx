@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {  useForm } from "react-hook-form";
+import {  get, useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import { amber } from "@mui/material/colors";
 import { v4 as uuidv4 } from "uuid";
@@ -329,6 +329,7 @@ export default function ProfileDetails({ getProfileData }) {
     );
   }
   const isEmptyField = Object.keys(errors).length === 0;
+  
   return (
     <Grid2 size={{ xs: 12, sm: 12, md: 9 }}>
       <ProfileCard sx={{ bgcolor: "rgb(67 56 202)", color: "#fff" }}>
@@ -360,14 +361,20 @@ export default function ProfileDetails({ getProfileData }) {
                       <TextField
                         fullWidth
                         {...register(detail.field, {
-                          ...detail.validation,
+                          ...((getProfileData.profileData.role === "admin" && 
+                               (detail.field === 'firstName' || detail.field === 'lastName' || detail.field === 'phone')) || 
+                               (!isEditing && isEmptyField) || 
+                               (detail.field === "wallet" || detail.field === "nationalID") 
+                              ? {} 
+                              : detail.validation),
                         })}
                         disabled={
-                          (!isEditing && isEmptyField) ||
+                          (getProfileData.profileData.role === "admin" && detail.field === 'firstName' || detail.field === 'lastName' || detail.field === 'phone')
+                          || (!isEditing && isEmptyField) ||
                           detail.field === "wallet" ||
-                          detail.field === "nationalID"
+                          detail.field === "nationalID" 
                         }
-                        defaultValue={detail.value}
+                        defaultValue={detail.value === 'undefined' ? '' : detail.value}
                         slotProps={{
                           input: {
                             sx: {

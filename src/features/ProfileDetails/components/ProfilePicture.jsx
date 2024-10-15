@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { amber, grey, indigo } from '@mui/material/colors';
 import defaultAvatar from '../../../assets/dashboard/profileDefualt.jpg';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { updateUserPicture } from '../../../services/apiUpdateUserPicture';
 import {Spinner} from '@material-tailwind/react';
@@ -28,6 +28,7 @@ const AvatarStyled = styled(Avatar)({
   margin: '0 auto',
 });
 export default function ProfilePicture({ getProfileData }) {
+  const queryClient = useQueryClient();
   const { mutate: uploadPictureMutation, isPending: isUploading } = useMutation({
     mutationFn: updateUserPicture,
     onSuccess: (data) => {
@@ -37,6 +38,7 @@ export default function ProfilePicture({ getProfileData }) {
       });
       
       getProfileData.profileData.image = data.data.picture;
+      queryClient.invalidateQueries(["profileData"]);
     },
     onError: (error) => {
       const errorMessage = error.message || "Failed to update profile. Please try again.";

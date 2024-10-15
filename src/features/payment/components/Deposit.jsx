@@ -17,7 +17,7 @@ const Deposit = () => {
   }
 
   if (!transactions?.length) {
-    return <div>No Deposits found</div>;
+    return <div className="flex items-center justify-center mt-24 text-4xl">لا يوجد معاملات</div>;
   }
   const validTransactions = transactions.filter(
     (transaction) => transaction.type === "completed"
