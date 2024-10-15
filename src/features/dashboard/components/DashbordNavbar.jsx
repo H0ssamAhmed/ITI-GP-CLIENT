@@ -1,8 +1,25 @@
 import { useState } from "react";
+import { getCurrentUser } from "../../../services/currentUser";
+import { useQuery } from "@tanstack/react-query";
 
 const DashbordNavbar = () => {
   const [isOpenMessages, setIsOpenMessages] = useState(false);
   const [isOpenAnnouncment, setIsOpenAnnouncment] = useState(false);
+
+  const {
+    data: currentUser,
+    isLoading: isLoadingCurrentUser,
+    isError: isErrorCurrentUser,
+  } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: getCurrentUser,
+  });
+
+  const userData = currentUser?.data;
+
+  if (isLoadingCurrentUser) return "";
+
+  console.log(currentUser);
 
   return (
     <div className="flex items-center justify-between p-5">
@@ -47,15 +64,34 @@ const DashbordNavbar = () => {
 
         <div className="flex flex-col gap-2">
           <span className="text-[1.2rem] font-medium leading-3">
-            عبدالله شاهين
+            {userData?.firstName
+              ? `${userData.firstName} ${userData.lastName}`
+              : ""}
           </span>
-          <span className="text-[1rem] font-bold text-gray-400">أدمن</span>
+          <span className="text-[1rem] font-bold text-gray-400">
+            {userData?.role && userData.role === "teacher"
+              ? "مدرس"
+              : userData.role === "admin"
+              ? "أدمن"
+              : userData.role === "student"
+              ? "طالب"
+              : "ولي أمر"}
+          </span>
         </div>
-        <img
-          src="/src/assets/dashboard/avatar.png"
-          alt="avatar-logo"
-          className="w-10 h-10 rounded-full cursor-pointer"
-        />
+
+        {userData?.picture ? (
+          <img
+            src={userData.picture}
+            alt="avatar-picture"
+            className="w-10 h-10 rounded-full cursor-pointer"
+          />
+        ) : (
+          <img
+            src="/src/assets/dashboard/avatar.png"
+            alt="avatar-logo"
+            className="w-10 h-10 rounded-full cursor-pointer"
+          />
+        )}
       </div>
     </div>
   );

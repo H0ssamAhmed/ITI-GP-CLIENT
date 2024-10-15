@@ -1,39 +1,98 @@
 import { Link } from "react-router-dom";
 import testImg from "../../../assets/HomePageImages/teacher.png";
-// import testImg from "../assets/HomePageImages/english.png";
-// import testImg from "../assets/HomePageImages/heroImg.png";
 import { FaStar } from "react-icons/fa6";
+import { useQuery } from "@tanstack/react-query";
+import { getCurrentUser } from "../../../services/currentUser";
+import { getCurrentUserCourses } from "../apis/coursesApi";
+import { useEffect, useState } from "react";
 
 function CourseCard({ course }) {
+  const [isUserEnroled, setIsUserEnroled] = useState(false)
+  const { data: userCourses, isLoading: coursesLaoding, error: CoursesError } = useQuery({
+    queryKey: ['userCourses'],
+    queryFn: () => getCurrentUserCourses()
+  })
+
+  useEffect(() => {
+    userCourses?.data.courses.map(thecourse => {
+      if (thecourse.id === course.id) {
+        setIsUserEnroled(true)
+      }
+    })
+
+  }, [course])
+
+  function convertToArabicNumerals(num) {
+    const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    return num.toString().split('').map(digit => arabicNumerals[digit]).join('');
+  }
   const { id, title, description, price, image, teacherId, teacherName, levelTitle } = { ...course }
+  // console.log(course);
   const shortTitle = title?.split(" ").length > 2 ? title?.split(" ")[0] + " " + title?.split(" ")[1] : title
   return (
-    <div className="relative rounded-[1.6rem] mx-auto bg-brand-200 text-brand-900 w-[25.5rem] flex flex-col items-center justify-center">
-      {/* Teacher Image with border */}
-      <div className="absolute rounded-4xl overflow-hidden border-4 w-60 h-60 border-yellow-300 p-0 top-[-5rem]">
-        <img src={image || testImg} alt="Teacher" className="object-cover h-full w-full" />
+    <div className="relative rounded-lg mx-auto bg-white shadow-lg text-gray-900 w-[24rem] flex flex-col overflow-hidden">
+      {/* Course Image */}
+      <div className="w-full h-[140px]">
+        <img
+          src={image || testImg}
+          alt="Course"
+          className="object-cover h-full w-full"
+        />
       </div>
 
-      {/* Spacing adjustment between image and name */}
-      <div className="flex items-start justify-between flex-col w-full px-8 mt-[12rem]">
-        <p className="font-bold text-[2rem]">{teacherName}</p>
-        <div className="flex items-center gap-2">
-          <FaStar className="text-yellow-500 text-[2.5rem]" />
-          <p className="font-bold  text-[2.5rem]">5.0</p>
+      {/* Course Details */}
+      <div className="flex flex-col justify-between flex-1 p-4">
+        <div className="mb-2">
+          {/* Course Title */}
+          <p className="font-bold leading-tight mb-1 text-2xl line-clamp-2">
+            {shortTitle}
+          </p>
+          {/* Instructor Name */}
+          <p className=" text-xl  text-gray-500">{teacherName}</p>
+        </div>
+
+        {/* Rating and Price */}
+        <div className="flex justify-between items-center mb-4">
+          {/* Rating */}
+          <div className="flex items-center text-yellow-500">
+            <FaStar className="text-[1.2rem]" />
+            <span className="ml-1 text-lg font-bold">5.0</span>
+          </div>
+          {/* Price */}
+          <p className={`font-bold text-lg ${isUserEnroled && 'opacity-0'}`}>
+            {convertToArabicNumerals(price)} جنية
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-between items-center">
+          {/* View More Button */}
+          <Link
+            to={`/courses/${id}`}
+            className="bg-blue-500 hover:bg-blue-600 transition-all rounded-md text-white px-4 py-2 text-center capitalize text-sm"
+          >
+            المزيد
+          </Link>
+          {/* Subscribe or Continue Button */}
+          {isUserEnroled ? (
+            <Link
+              to={`/courses/${course.id}`}
+              className="bg-green-500 hover:bg-green-600 transition-all rounded-md text-white px-4 py-2 text-center capitalize text-sm"
+            >
+              اكمل الدورة
+            </Link>
+          ) : (
+            <Link
+              to={`/courses/${id}`}
+              className="bg-yellow-500 hover:bg-yellow-600 transition-all rounded-md text-black px-4 py-2 text-center capitalize text-sm"
+            >
+              اشترك الان
+            </Link>
+          )}
         </div>
       </div>
-
-      <div className=" w-full px-8 mt-4">
-        {/* Subject and Level */}
-        <p className="font-bold text-[2.5rem] mb-4">{shortTitle}</p>
-        <p className="font-bold text-[2rem]">{levelTitle}</p>
-      </div>
-      <div className="flex items-center justify-between w-full px-8 py-4 mt-4">
-        <Link to={`/courses/${id}`} className="bg-brand-400 hover:bg-brand-900 transition-all rounded-lg text-white px-4 py-2 text-center capitalize text-2xl" >المزيد</Link>
-        <Link to={`/courses/${id}`} className="bg-yellow-500 hover:bg-yellow-700 transition-all rounded-lg text-black hover:text-white px-4 py-2 text-center capitalize text-2xl" >اشترك الان</Link>
-
-      </div>
     </div>
+
   );
 }
 

@@ -7,6 +7,7 @@ import CircularSize from "../../../ui/CircularSize";
 
 const CreateCourseList = ({ initialData }) => {
   const [levels, setLevels] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
   const {
     mutate: createCourseMutate,
     isLoading: isCreatingCourse,
@@ -41,13 +42,14 @@ const CreateCourseList = ({ initialData }) => {
     register,
     handleSubmit,
     control,
-    reset,
+
     formState: { errors },
   } = useForm({
     defaultValues: {
       title: initialData?.title || "",
       description: initialData?.description || "",
       price: initialData?.price || "",
+      image: initialData?.image || "",
       discountedPrice: initialData?.discountedPrice || "",
       levelId: initialData?.levelId || "",
       sections: initialData?.sections || [],
@@ -84,16 +86,21 @@ const CreateCourseList = ({ initialData }) => {
     }));
   };
 
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file);
+    }
+  };
+
   useEffect(() => {
     const getLevels = async () => {
       try {
         const fetchedLevels = await fetchAllLevels();
-        console.log("All level ya hossam:", fetchAllLevels);
-        // Check if fetchedLevels is an array, otherwise set it as an empty array
         setLevels(Array.isArray(fetchedLevels.data) ? fetchedLevels.data : []);
       } catch (error) {
         console.error("Failed to fetch levels:", error);
-        setLevels([]); // Set to an empty array if there's an error
+        setLevels([]);
       }
     };
 
@@ -107,6 +114,7 @@ const CreateCourseList = ({ initialData }) => {
       price: +data.price,
       discountedPrice: +data.discountedPrice,
       levelId: data.levelId,
+      image: imageFile,
       sections: data.sections.map((section) => ({
         title: section.title,
         lessons: section.lessons.map((lesson) => ({
@@ -118,9 +126,10 @@ const CreateCourseList = ({ initialData }) => {
       })),
     };
 
-    console.log(courseData);
+    console.log("Course Data:", courseData);
+    console.log("Image File:", imageFile); // Log to confirm it's correctly set
     createCourseMutate(courseData);
-    reset();
+    // reset();
   };
 
   return (
@@ -198,6 +207,19 @@ const CreateCourseList = ({ initialData }) => {
               {errors.discountedPrice.message}
             </span>
           )}
+        </div>
+
+        <div>
+          <label className="block mb-2 text-[1.9rem] text-sm font-semibold text-right">
+            صورة الكورس
+          </label>
+          <input
+            {...register("image")}
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="w-full p-3 text-right border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-brand-200"
+          />
         </div>
 
         {/* Course Level */}
