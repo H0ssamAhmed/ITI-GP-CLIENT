@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "../index.css";
 import { Provider } from "react-redux";
 import store from "../store.js";
+import { ToastContainer } from "react-toastify";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -17,6 +18,7 @@ createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
       <App />
+      <ToastContainer />
     </QueryClientProvider>
   </Provider>
 );

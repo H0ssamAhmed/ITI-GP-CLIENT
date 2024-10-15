@@ -1,15 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   user: null,
   isLoading: false,
   error: null,
-  role: null,
-
+  role: localStorage.getItem("userRole") || null,
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     startLoading: (state) => {
@@ -27,15 +26,25 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.error = null;
+      localStorage.removeItem("userRole");
     },
     setUserRole: (state, action) => {
       state.role = action.payload;
+      localStorage.setItem("userRole", action.payload);
     },
     clearUserRole: (state) => {
       state.role = null;
+      localStorage.removeItem("userRole");
     },
   },
 });
 
-export const { startLoading, authSuccess, authFailure, logout,setUserRole, clearUserRole } = authSlice.actions;
+export const {
+  startLoading,
+  authSuccess,
+  authFailure,
+  logout,
+  setUserRole,
+  clearUserRole,
+} = authSlice.actions;
 export default authSlice.reducer;

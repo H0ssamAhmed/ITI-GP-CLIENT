@@ -3,7 +3,7 @@ import TableSearch from "../components/TableSearch";
 import { GiConfirmed } from "react-icons/gi";
 import { AiOutlineDelete } from "react-icons/ai";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deleteCourseById,
   deleteTeacherById,
@@ -41,12 +41,10 @@ const columns = [
 const PlatformRequestsList = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
-
-  console.log(itemToDelete);
+  const queryClient = useQueryClient();
 
   const {
     data: pendingRequests,
-    refetch: refetchRequests,
     isLoading: isLoadingRequests,
     error: isErrorRequest,
   } = useQuery({
@@ -66,9 +64,9 @@ const PlatformRequestsList = () => {
       } else if (itemToDelete.requestType === "course") {
         await deleteCourseById(itemToDelete.id);
       }
-      setOpenDeleteModal(false);
       toast.success("تم حذف الطلب بنجاح");
-      refetchRequests();
+      setOpenDeleteModal(false);
+      queryClient.invalidateQueries(["pendingRequests"]);
     } catch (error) {
       console.error(error);
       if (error.response?.status === 404) {
@@ -88,7 +86,8 @@ const PlatformRequestsList = () => {
       }
 
       toast.success("تم التحقق من الطلب بنجاح");
-      refetchRequests(); // Refresh the requests after verification
+      // Invalidate the query to refresh data
+      queryClient.invalidateQueries(["pendingRequests"]);
     } catch (error) {
       console.error(error);
       toast.error("حدث خطأ أثناء التحقق");
@@ -118,10 +117,10 @@ const PlatformRequestsList = () => {
         {type === "teacher" ? item.specialization : item.level?.title}
       </td>
       <td className="p-2">
-        <div className="flex items-center gap-2 justify-start">
+        <div className="flex items-center justify-start gap-2">
           {/* Confirm Button */}
           <button
-            className="h-10 w-10 flex items-center justify-center text-green-400 hover:text-green-200 text:bg-green-300 rounded-full transition-all duration-300"
+            className="flex items-center justify-center w-10 h-10 text-green-400 transition-all duration-300 rounded-full hover:text-green-200 text:bg-green-300"
             title="Confirm"
             onClick={() => handleVerifyClick(item)}
           >
@@ -130,7 +129,7 @@ const PlatformRequestsList = () => {
 
           {/* Delete Button */}
           <button
-            className="h-10 w-10 flex items-center justify-center "
+            className="flex items-center justify-center w-10 h-10 "
             title="Delete"
             onClick={() => {
               setItemToDelete(item); // Store the item to delete
@@ -210,7 +209,7 @@ const PlatformRequestsList = () => {
           <div className="bg-white p-10 rounded-xl shadow-lg w-[100%] md:w-[60%] lg:w-[30%]">
             {/* Warning Icon */}
             <div className="flex justify-center mb-5">
-              <div className="bg-yellow-100 p-4 rounded-full">
+              <div className="p-4 bg-yellow-100 rounded-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="w-16 h-16 text-yellow-500"
@@ -231,19 +230,19 @@ const PlatformRequestsList = () => {
             <h2 className="text-[2rem] font-bold text-center text-black">
               تأكيد الحذف
             </h2>
-            <p className="text-center mt-4 text-gray-500">
+            <p className="mt-4 text-center text-gray-500">
               هل تريد حذف هذا الطلب؟ عند حذف هذا الطلب لا يمكن العودة إليه.
             </p>
 
             <div className="flex justify-center gap-4 mt-8">
               <button
-                className="px-6 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 transition-all duration-300"
+                className="px-6 py-2 text-white transition-all duration-300 bg-red-600 rounded-lg shadow hover:bg-red-500"
                 onClick={handleConfirmDelete}
               >
                 حذف
               </button>
               <button
-                className="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg shadow hover:bg-gray-400 transition-all duration-300"
+                className="px-6 py-2 text-gray-800 transition-all duration-300 bg-gray-300 rounded-lg shadow hover:bg-gray-400"
                 onClick={() => setOpenDeleteModal(false)}
               >
                 إلغاء
