@@ -84,7 +84,7 @@ function App() {
               <Route path="contact" element={<Contact />} />
               <Route path="about-us" element={<About />} />
               <Route path="/wallet" element={<Wallet />} />
-              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/wallet/checkout" element={<Checkout />} />
               <Route path="/ProfileDetails" element={<ProfileDetails />} />
               <Route path="/features" element={<Features />} />
               <Route path="courses" element={<Outlet />}>
