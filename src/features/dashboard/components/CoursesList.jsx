@@ -66,7 +66,7 @@ const CoursesList = () => {
   return (
     <>
       <div className="flex items-center justify-between mt-8 mb-8">
-        <h1 className="font-bold text-[2rem]">الدروس</h1>
+        <h1 className="font-bold text-[2rem]">الكورسات 👨‍🎓</h1>
         <span className="text-[1.3rem] text-gray-500 cursor-pointer">
           شاهد المزيد
         </span>
