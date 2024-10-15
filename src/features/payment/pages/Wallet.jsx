@@ -55,9 +55,9 @@ const Wallet = () => {
   const { data: balance, isPending: isFetchingBalance } = useQuery({
     queryKey: ['balance'],
     queryFn: getStudentBalance,
-    enabled: true,
-    staleTime: Infinity,
-    cacheTime: Infinity,
+    // enabled: true,
+    // staleTime: Infinity,
+    // cacheTime: Infinity,
   });
 
   return (

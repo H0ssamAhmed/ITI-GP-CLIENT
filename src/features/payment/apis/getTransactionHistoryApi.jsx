@@ -10,8 +10,8 @@ export const getTransactionHistoryApi = async () => {
         'Content-Type': 'application/json',
       },
     });
-
-    return response.data.transactions; 
+    
+    return response.data.transactions || []; 
   } catch (error) {
     console.error('Error fetching transaction history:', error.response ? error.response.data : error.message);
     throw error;
