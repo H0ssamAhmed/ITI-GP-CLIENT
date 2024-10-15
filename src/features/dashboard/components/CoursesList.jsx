@@ -1,3 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
+import EnrolledStudents from "../lists/EnrolledStudents";
+
 // Temp Data For Courses
 const courses = [
   {
@@ -63,6 +66,11 @@ const courses = [
 ];
 
 const CoursesList = () => {
+  const { data } = useQuery({
+    queryKey: ["enrollCourses"],
+    queryFn: EnrolledStudents,
+  });
+
   return (
     <>
       <div className="flex items-center justify-between mt-8 mb-8">
