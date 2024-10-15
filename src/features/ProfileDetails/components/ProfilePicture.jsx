@@ -2,7 +2,7 @@ import { PhotoCamera } from '@mui/icons-material';
 import {
   Avatar,
   Box,
-  Button,
+ 
   Card,
   CardContent,
   Grid2,
@@ -11,11 +11,11 @@ import {
   Typography,
 } from '@mui/material';
 import { amber, grey, indigo } from '@mui/material/colors';
-
-// colors
-const amberBgColor = amber[300];
-const indigoColor = indigo[500];
-// Styled components for the profile card
+import defaultAvatar from '../../../assets/dashboard/profileDefualt.jpg';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
+import { updateUserPicture } from '../../../services/apiUpdateUserPicture';
+import {Spinner} from '@material-tailwind/react';
 const ProfileCard = styled(Card)({
   backgroundColor: '#f5f5f5',
   borderRadius: '10px',
@@ -27,13 +27,37 @@ const AvatarStyled = styled(Avatar)({
   height: '100px',
   margin: '0 auto',
 });
-export default function ProfilePicture() {
-  function handleImageUpload() {}
+export default function ProfilePicture({ getProfileData }) {
+  const { mutate: uploadPictureMutation, isPending: isUploading } = useMutation({
+    mutationFn: updateUserPicture,
+    onSuccess: (data) => {
+      toast.success("Profile picture updated successfully.", {
+        type: "success",
+        toastId: "update-profile-success",
+      });
+      
+      getProfileData.profileData.image = data.data.picture;
+    },
+    onError: (error) => {
+      const errorMessage = error.message || "Failed to update profile. Please try again.";
+      console.error("Error updating Profile data:", error);
+      toast.error(errorMessage, {
+        toastId: "update-profile-error",
+      });
+    }
+  })
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      uploadPictureMutation(file);
+    }
+  };
+
   return (
     <Grid2 size={{ xs: 12, sm: 12, md: 3 }}>
       <ProfileCard
         sx={{
-          bgcolor: grey[900],
+          bgcolor: 'rgb(67 56 202)',
           color: '#fff',
           height: '230px',
           pt: 0,
@@ -42,16 +66,22 @@ export default function ProfilePicture() {
         }}
       >
         <CardContent sx={{ position: 'relative' }}>
-          <AvatarStyled src="https://randomuser.me/api/portraits/men/1.jpg" />
+          { isUploading ? (
+            <Spinner />
+          ) : (
+            <AvatarStyled src={getProfileData.profileData?.picture ? getProfileData.profileData?.picture : defaultAvatar} />
+
+          )
+          }
           <Typography
             variant="h4"
             align="center"
             sx={{ marginY: 2, fontFamily: 'cairo' }}
           >
-            احمد رخا
+            {`${getProfileData.profileData?.firstName ? getProfileData.profileData?.firstName : 'user'} ${getProfileData.profileData?.lastName ? getProfileData.profileData?.lastName : 'user'} `}
           </Typography>
           <Typography variant="h5" align="center" sx={{ fontFamily: 'cairo' }}>
-            مشرف
+            {getProfileData.profileData?.role ? getProfileData.profileData?.role : 'Student'}
           </Typography>
           <Typography
             variant="h5"
@@ -62,12 +92,12 @@ export default function ProfilePicture() {
               fontSize: { sx: '1.5rem', sm: '1.5rem', md: '1.5rem' },
             }}
           >
-            ahmed@example.com
+            {getProfileData.profileData?.email ? getProfileData.profileData?.email : 'email'}
           </Typography>
           <Box
             sx={{
               position: 'absolute',
-              right: 80,
+              right: {xs: 195, sm: 80, md: 70},
               top: 90,
             }}
           >
@@ -97,29 +127,6 @@ export default function ProfilePicture() {
           </Box>
         </CardContent>
       </ProfileCard>
-
-      {/* <Button
-        variant="contained"
-        sx={{
-          fontFamily: 'cairo',
-          fontSize: '1.8rem',
-          bgcolor: amber[500],
-          color: '#000',
-          fontWeight: 'bold',
-          mt: 0.8,
-          display: 'block',
-          width: { xs: '100%', sm: '40%', md: '100%' },
-          border: '1px solid #000',
-          mx: 'auto',
-          '&:hover': {
-            bgcolor: amber[600],
-            color: '#000',
-          },
-        }}
-        fullWidth
-      >
-        تغيير الصورة
-      </Button> */}
     </Grid2>
   );
 }
