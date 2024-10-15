@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Question from '../components/Question'
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Stack from '@mui/material/Stack';
 import { Box, Button, Container, Skeleton, Typography } from '@mui/material';
@@ -14,54 +12,76 @@ const ReviewAns = () => {
   const [totalMark, setTotalMarks] = useState(0)
   const [marks, setMarks] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [quizTitle, setQuizTitle] = useState("")
+  const [isHaveQuiz, setIsHaveQuiz] = useState(false)
   const navigate = useNavigate();
 
 
   const [reveiwQuestions, setReveiwQuestions] = useState([])
   useEffect(() => {
+
     const stored = sessionStorage.getItem("quizData");
     if (stored) {
+      setIsHaveQuiz(true)
       const parsedQuestions = JSON.parse(stored);
-      setReveiwQuestions(parsedQuestions);
-
+      console.log(parsedQuestions);
+      setReveiwQuestions(parsedQuestions.questions);
+      setQuizTitle(parsedQuestions.title);
       let totalMarksTemp = 0;   // Temporary variables to store values
       let marksTemp = 0;
-
-      parsedQuestions.forEach((qu) => {
+      parsedQuestions?.questions?.forEach((qu) => {
         totalMarksTemp += qu.mark;  // Assuming each question has a 'mark' property for total marks
 
-        const correctAns = qu.answers.find((ans) => ans.isCorrect).title;
+        const correctAns = qu.Answers.find((ans) => ans.isCorrect).title;
         if (correctAns === qu.selectedAnswer) {
           marksTemp += qu.mark;   // Add to the score if the answer is correct
         }
       });
 
-      // Set state after the loop is done
+      // // Set state after the loop is done
       setTimeout(() => {
         setTotalMarks(totalMarksTemp);
         setMarks(marksTemp);
-        setLoading(false)
       }, 1000);
     }
+    else {
+      setIsHaveQuiz(false)
+    }
+    setLoading(false)
 
   }, [])
+
+  const handleNavigate = () => {
+    sessionStorage.removeItem("quizData")
+    navigate("/courses", { replace: false });
+  }
   return (
     <Container maxWidth="xl" className='bg-brand-200'>
       {loading &&
         <Skeleton sx={{ height: "96vh", width: "100%" }} />
       }
 
+      {!isHaveQuiz &&
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className='h-[80vh] bg-brand-100 flex items-center flex-col gap-8 justify-center'
+        >
+          <h1 className='text-6xl '>لا يوجد امتحانات لمرجعتها</h1>
+          <Button variant='contained' sx={{ fontSize: "26px" }} onClick={handleNavigate}>
+            العودة للصفحة الرئيسية
+          </Button>
+        </motion.div>
+      }
+
       <AnimatePresence>
-        {!loading &&
-
+        {!loading && isHaveQuiz &&
           <>
-
             <motion.div
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-
+              transition={{ duration: 0.5 }}>
               <Stack
                 spacing={4} // Use a reasonable number for spacing between items
                 direction="row"
@@ -87,7 +107,16 @@ const ReviewAns = () => {
                     marginBottom: "1rem",
                   }}
                 >
-                  نتيجة اختبار الرياضيات{" "}
+                  {quizTitle}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: 30,
+                    display: "block",
+                    paddingInlineStart: "3rem",
+                    marginBottom: "1rem",
+                  }}
+                >
                   <span className="bg-brand-500 px-4 py-2 text-white rounded-lg">
                     {marks + "/" + totalMark}
                   </span>
@@ -97,32 +126,24 @@ const ReviewAns = () => {
                   color="red"
                   // size="large"
                   sx={{ margin: "0 2rem !important", display: "block", backgroundColor: "red", fontSize: "16px" }}
-                  onClick={() => {
-                    navigate("/courses", { replace: false });
-                  }}
+                  onClick={handleNavigate}
                 >
                   انهاء
                 </Button>
               </Stack>
             </motion.div>
-
-
-
-
             <Box className=''>
               {reveiwQuestions?.map((question, index) => {
-
                 return (
-
                   <div key={question.id} className="mx-0 md:mx-10 lg:mx-20  px-20 mb-6 bg-white text-black rounded-lg py-14 " >
                     <FormLabel grid-cols-2 sx={{ fontSize: 26, display: "block", paddingInlineStart: "3rem", marginBottom: "1rem", color: "black" }}>
-                      {question.id} - {question.questionTitle}
+                      {index + 1} - {question.title}
                     </FormLabel>
                     <RadioGroup
                       value={question.selectedAnswer}
                       name={`q-${question.id}`}
                     >
-                      {question.answers.map((ans, idx) => (
+                      {question.Answers.map((ans, idx) => (
                         <div
                           className={`ps-12 p-5 my-4 w-full rounded-2xl grid grid-cols-1 md:grid-cols-2
                       ${ans.isCorrect && "bg-green-700/90 text-white"}

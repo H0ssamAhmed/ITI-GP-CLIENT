@@ -60,7 +60,7 @@ export const fetchUserById = async (userId) => {
 
 export const fetchAllLevels = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/user/levels/");
+    const response = await axios.get("http://localhost:3000/user/levels");
     return response.data || [];
   } catch (error) {
     console.error("Error fetching levels:", error);
@@ -271,10 +271,8 @@ export const createCourse = async (courseData) => {
 
     const response = await axios.post(
       "http://localhost:3000/teacher/course",
-      formData,
-      {
-        withCredentials: true,
-      }
+      courseData,
+      { withCredentials: true },
     );
 
     return response.data;

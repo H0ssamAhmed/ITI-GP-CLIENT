@@ -45,6 +45,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Wallet from "./features/payment/pages/Wallet";
 import Checkout from "./features/payment/pages/checkout";
+import store from "../store";
+import { Provider } from "react-redux";
 import PlatformRequestsList from "./features/dashboard/lists/PlatformRequestsList";
 import AuthLayout from "./layout/AuthLayout";
 import { useSelector } from "react-redux";
@@ -89,8 +91,8 @@ function App() {
                 <Route index element={<CourseCatalog />} />
                 <Route path=":courseId" element={<CourseDetail />} />
                 <Route path=":courseId/:lessonId" element={<LessonDetails />} />
-                <Route path="review/:examId" element={<ReviewAns />} />
-                <Route path=":courseId/:lessonId/:examId" element={<Exam />} />
+                <Route path="quiz/:courseId/:quizId" element={<Exam />} />
+                <Route path="quiz/quizReview/:quizTitle" element={<ReviewAns />} />
               </Route>
             </Route>
 
@@ -197,6 +199,18 @@ function App() {
 
             <Route path="*" element={<Error />} />
           </Routes>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            closeOnClick={true}
+            pauseOnHover={true}
+            draggable={true}
+            progress={undefined}
+            theme="light"
+            icon={true}
+            draggablePercent={100}
+          />
         </Router>
       </SignUpContext.Provider>
     </>
