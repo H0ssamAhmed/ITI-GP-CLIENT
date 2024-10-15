@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { MdOutlineDashboard } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { CiLogout } from "react-icons/ci";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useDispatch } from "react-redux"; // Import useDispatch
 import {
   clearUserRole,
@@ -25,17 +25,25 @@ const LoggedUser = ({ role }) => {
 
   const handleLogout = async () => {
     try {
-      await logout(); // Assuming logout() clears cookies and does not return anything
+      await logout();
 
-      // Dispatch actions to clear user data in Redux
       dispatch(logoutAction());
       dispatch(clearUserRole());
 
-      // Show a success message
-      toast.success("تم تسجيل الخروج بنجاح");
+      console.log("Before toast"); // Check if this logs
+      toast.success("تم تسجيل الخروج بنجاح", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      console.log("After toast"); // Check if this logs
 
-      navigate("/login");
-      // Navigate to the login page
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
     } catch (error) {
       toast.error(error.message || "An error occurred during logout.");
     }
@@ -52,7 +60,18 @@ const LoggedUser = ({ role }) => {
   };
 
   return (
-    <div className="p-2 flex items-center gap-4">
+    <div className="flex items-center gap-4 p-2">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={true} // For right-to-left text alignment
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="flex items-center gap-2">
         <Avatar
           alt={user?.data.name}
@@ -60,13 +79,13 @@ const LoggedUser = ({ role }) => {
           onClick={handleClick}
           className="cursor-pointer"
         />
-        <span className="text-lg text-white font-semibold font-cairo">
+        <span className="text-lg font-semibold text-white font-cairo">
           مرحبًا, {user?.data.firstName || "الزائر"}
         </span>
       </div>
 
       <Link to="/wallet">
-        <div className="flex items-center gap-2 p-3 bg-yellow-400 rounded-full cursor-pointer transition-all duration-300 hover:bg-yellow-300 hover:shadow-lg hover:scale-105">
+        <div className="flex items-center gap-2 p-3 transition-all duration-300 bg-yellow-400 rounded-full cursor-pointer hover:bg-yellow-300 hover:shadow-lg hover:scale-105">
           <FaWallet className="text-2xl" />
           <span className="text-lg font-semibold font-cairo">
             {user?.walletBalance ? `${user.walletBalance} EGP` : "المحفظة"}

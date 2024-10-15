@@ -51,6 +51,12 @@ const menuItems = [
         visible: ["teacher"],
       },
       {
+        icon: "/src/assets/dashboard/subject.png",
+        label: "الدروس",
+        href: "list/teacherLessons",
+        visible: ["teacher"],
+      },
+      {
         icon: "/src/assets/dashboard/student.png",
         label: "التلاميذ المشتركين",
         href: "list/enrolledStudent",
