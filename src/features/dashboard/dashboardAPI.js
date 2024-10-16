@@ -384,16 +384,30 @@ export const getCourseDetails = async (courseId) => {
 // Update Course
 export const updateCourse = async (courseId, updatedCourse) => {
   const formData = new FormData();
+  console.log(updatedCourse);
+  console.log(courseId);
 
   // Append regular fields
   formData.append("title", updatedCourse.title);
   formData.append("description", updatedCourse.description);
-  formData.append("price", updatedCourse.price);
+  formData.append("price", +updatedCourse.price);
   formData.append("levelTitle", updatedCourse.levelTitle);
   formData.append("teacherName", updatedCourse.teacherName);
+  updatedCourse.sections.forEach((section, sectionIndex) => {
+    formData.append(`section[${sectionIndex}][title]`, section.title);
+    
+    if (section.id) {
+        formData.append(`section[${sectionIndex}][id]`, section.id);
+    }
 
-  // Append sections and nested lessons as JSON
-  formData.append("sections", JSON.stringify(updatedCourse.sections));
+    if (section.lessons) {
+        section.lessons.forEach((lesson, lessonIndex) => {
+            formData.append(`section[${sectionIndex}][lessons][${lessonIndex}][title]`, lesson.title);
+            formData.append(`section[${sectionIndex}][lessons][${lessonIndex}][description]`, lesson.description || "");
+        });
+    }
+});
+
 
   // Handle file attachments (image, pdf, video)
   if (updatedCourse.image) {
