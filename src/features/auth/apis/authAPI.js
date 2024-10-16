@@ -74,12 +74,37 @@ const verifyOTP = async (userData) => {
     throw error;
   }
 };
+// const resendOTP = async function () {
+//   try {
+//     const response = await AxiosInstance.post("student/auth/resend-otp", {
+//       withCredentials: true,
+//     });
+//     return response.data;
+//   } catch (error) {
+//     console.log(error);
+//     throw error;
+//   }
+// };
 const resendOTP = async function () {
   try {
-    const response = await AxiosInstance.post("student/auth/resend-otp", {
-      withCredentials: true,
-    });
-    return response.data;
+    const response = await fetch(
+      "http://localhost:3000/student/auth/resend-otp",
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to resend OTP");
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.log(error);
     throw error;
