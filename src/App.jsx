@@ -45,8 +45,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Wallet from "./features/payment/pages/Wallet";
 import Checkout from "./features/payment/pages/checkout";
-import store from "../store";
-import { Provider } from "react-redux";
 import PlatformRequestsList from "./features/dashboard/lists/PlatformRequestsList";
 import AuthLayout from "./layout/AuthLayout";
 import { useSelector } from "react-redux";
@@ -55,6 +53,9 @@ import { useState } from "react";
 import SignUpContext from "./features/store/signup-context";
 import TeacherSubjectsList from "./features/dashboard/lists/TeacherSubjectsList";
 import EnrolledStudents from "./features/dashboard/lists/EnrolledStudents";
+import TeacherLessons from "./features/dashboard/lists/TeacherLessons";
+import CreateLesson from "./features/dashboard/lists/CreateLesson";
+import ParentLogin from "./components/ParentLogin";
 
 function App() {
   const role = useSelector((state) => state.auth.role);
@@ -87,12 +88,16 @@ function App() {
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/ProfileDetails" element={<ProfileDetails />} />
               <Route path="/features" element={<Features />} />
+              <Route path="/parentLogin" element={<ParentLogin />} />
               <Route path="courses" element={<Outlet />}>
                 <Route index element={<CourseCatalog />} />
                 <Route path=":courseId" element={<CourseDetail />} />
                 <Route path=":courseId/:lessonId" element={<LessonDetails />} />
                 <Route path="quiz/:courseId/:quizId" element={<Exam />} />
-                <Route path="quiz/quizReview/:quizTitle" element={<ReviewAns />} />
+                <Route
+                  path="quiz/quizReview/:quizTitle"
+                  element={<ReviewAns />}
+                />
               </Route>
             </Route>
 
@@ -158,14 +163,7 @@ function App() {
                 }
               />
               {/* Parent routes */}
-              <Route
-                path="parent"
-                element={
-                  <ProtectedRoute role={role} allowedRoles={["parent"]}>
-                    <ParentPage />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="parent" element={<ParentPage />} />
               {/* Common routes accessible by all roles */}
               <Route path="profile" element={<ProfileList />} />
               <Route path="list/teachers" element={<TeachersList />} />
@@ -185,6 +183,8 @@ function App() {
               <Route path="list/messages" element={<MessagesList />} />
               <Route path="list/requests" element={<PlatformRequestsList />} />
               <Route path="list/lessons" element={<CreateCourseList />} />
+              <Route path="list/teacherLessons" element={<TeacherLessons />} />
+              <Route path="list/create-lesson" element={<CreateLesson />} />
               <Route path="list/exams" element={<ExamsList />} />
               <Route
                 path="list/announcements"
@@ -199,18 +199,6 @@ function App() {
 
             <Route path="*" element={<Error />} />
           </Routes>
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            closeOnClick={true}
-            pauseOnHover={true}
-            draggable={true}
-            progress={undefined}
-            theme="light"
-            icon={true}
-            draggablePercent={100}
-          />
         </Router>
       </SignUpContext.Provider>
     </>

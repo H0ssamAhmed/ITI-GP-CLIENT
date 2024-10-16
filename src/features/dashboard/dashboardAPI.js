@@ -249,28 +249,42 @@ export const createCourse = async (courseData) => {
     // Handle nested sections and lessons
     courseData.sections.forEach((section, sectionIndex) => {
       formData.append(`sections[${sectionIndex}][title]`, section.title);
-      section.lessons.forEach((lesson, lessonIndex) => {
-        formData.append(
-          `sections[${sectionIndex}][lessons][${lessonIndex}][title]`,
-          lesson.title
-        );
-        formData.append(
-          `sections[${sectionIndex}][lessons][${lessonIndex}][description]`,
-          lesson.description
-        );
-        formData.append(
-          `sections[${sectionIndex}][lessons][${lessonIndex}][pdfUrl]`,
-          lesson.pdfUrl
-        );
-        formData.append(
-          `sections[${sectionIndex}][lessons][${lessonIndex}][videoUrl]`,
-          lesson.videoUrl
-        );
-      });
     });
 
     const response = await axios.post(
       "http://localhost:3000/teacher/course/with-sections",
+      formData,
+      {
+        withCredentials: true,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw error;
+    } else {
+      console.error(error);
+      throw new Error("An error occurred");
+    }
+  }
+};
+
+export const createLesson = async (lessonData, sectionId) => {
+  try {
+    const formData = new FormData();
+
+    formData.append("title", lessonData.title);
+    formData.append("description", lessonData.description);
+    if (lessonData.pdfFile) {
+      formData.append("pdfFile", lessonData.pdfFile);
+    }
+    if (lessonData.videoFile) {
+      formData.append("videoFile", lessonData.videoFile);
+    }
+
+    const response = await axios.post(
+      `http://localhost:3000/teacher/course/section/lesson/${sectionId}`,
       formData,
       {
         withCredentials: true,
@@ -357,7 +371,7 @@ export const getTeacherCoursesById = async (teacherId) => {
 export const getTeacherCourses = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:3000/user/courses/teacher/courses`,
+      `http://localhost:3000/user/courses/teacher-courses`,
       { withCredentials: true }
     );
 
@@ -424,6 +438,22 @@ export const updateCourse = async (courseId, updatedCourse) => {
 };
 
 export const coursesErolledByStudents = async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:3000/student/course/enrolled/courses",
+      {
+        withCredentials: true,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating course:", error);
+    throw error;
+  }
+};
+
+export const courseEnrolledByStudent = async () => {
   try {
     const response = await axios.get(
       "http://localhost:3000/student/course/enrolled/courses",
