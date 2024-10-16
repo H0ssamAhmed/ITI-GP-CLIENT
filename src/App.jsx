@@ -41,7 +41,6 @@ import ReviewAns from "./features/courses/pages/ReviewAns";
 import Error from "./pages/Error";
 import ProfileDetails from "./pages/ProfileDetails";
 import Features from "./pages/Features";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Wallet from "./features/payment/pages/Wallet";
 import Checkout from "./features/payment/pages/checkout";
@@ -56,7 +55,7 @@ import EnrolledStudents from "./features/dashboard/lists/EnrolledStudents";
 import TeacherLessons from "./features/dashboard/lists/TeacherLessons";
 import CreateLesson from "./features/dashboard/lists/CreateLesson";
 import ParentLogin from "./components/ParentLogin";
-
+import Certificate from "./pages/Certificate";
 function App() {
   const role = useSelector((state) => state.auth.role);
   const [type, setType] = useState("student");
