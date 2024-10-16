@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 import { useLogin } from "../apis/authAPI";
 import { ToastContainer } from "react-toastify";
 // import { useSelector } from "react-redux";
+import Logo from "../../../ui/Logo";
+import { Spinner } from "@material-tailwind/react";
 
 export default function Login() {
   // const userRole = useSelector((state) => state.auth.role);
@@ -18,7 +20,7 @@ export default function Login() {
   } = useForm({
     resolver: yupResolver(LoginValidation),
   });
-  const { mutate: loginUser, isLoading } = useLogin();
+  const { mutate: loginUser, isPending:isLoginPending } = useLogin();
   const onSubmit = async (data) => {
     try {
       await loginUser(data);
@@ -30,12 +32,12 @@ export default function Login() {
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
       <div className="flex flex-col text-right  justify-items-center lg:w-[30%] w-[90%] h-[60%]">
-        <div className=" flex  items-center justify-end  mt-[0px] mb-[60px] w-[100%] ">
-          <h2 className="text-4xl text-brand-700 font-bold  ">
-            مرحبا بك مجددا في مجتمع ذاكرلي{" "}
-          </h2>
-          <img src={logo} alt="signup" className="w-[20%] object-contain" />
-        </div>
+        <div className=" flex  items-center justify-end  mt-[0px] mb-[30px] w-[100%] ">
+          
+                    <h2 className="text-4xl text-brand-700 font-bold">تسجيل الدخول</h2>
+
+          <Logo type="dark" />
+          </div>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -67,9 +69,11 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full p-3 my-10 font-bold text-white bg-indigo-500 rounded-lg hover:bg-indigo-700"
+            disabled={isLoginPending}
+            className={`bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-3 p-3 w-full rounded-lg ${isLoginPending ? "flex justify-center " : ""}  `}
+
           >
-            {isLoading ? "جاري التحقق..." : "تسجيل الدخول"}
+            {isLoginPending ? <Spinner  /> : "تسجيل الدخول"}
           </button>
         </form>
         <p className="text-center">

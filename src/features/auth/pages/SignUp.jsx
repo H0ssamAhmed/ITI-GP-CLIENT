@@ -9,6 +9,7 @@ import { useSignup } from "../apis/authAPI";
 import { useContext, useEffect, useState } from "react"; 
 import {apiGetAllLevels} from '../../../services/apiGetAllLevels'
 import SignUpContext from "../../store/signup-context";
+import { Spinner } from "@material-tailwind/react";
 export default function SignUp() {
   const [levels, setLevel] = useState([]);
   const { type } = useContext(SignUpContext);
@@ -20,7 +21,7 @@ export default function SignUp() {
     resolver: yupResolver(SignUpValidation(type)),
   });
 
-  const { mutate: signupUser, isLoading } = useSignup(type);
+  const { mutate: signupUser, isPending :isSignupPending } = useSignup(type);
 
   const onSubmit = async (data) => {
     try {
@@ -35,43 +36,6 @@ export default function SignUp() {
 
   
  
-  //     id: "17fcf78b-aeb1-48ac-8044-555c5a413fb9",
-  //     title: "المرحله الثانوية",
-  //     subLevels: [
-  //       {
-  //         id: "17fcf78b-aeb1-48ac-8044-555c5a413fb9",
-  //         title: "الصف الاول الثانوي",
-  //       },
-  //       {
-  //         id: "a8dea5b4-ca88-4884-be18-7748387f6cfb",
-  //         title: "الصف الثالث الثانوي",
-  //       },
-  //       {
-  //         id: "db311981-84e9-4877-96eb-8944ce59e2e1",
-  //         title: "الصف الثاني الثانوي",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: "dc0d414b-4327-4a33-a3f4-85d88878aa44",
-  //     title: "المرحله الاعدادية",
-  //     subLevels: [
-  //       {
-  //         id: "70c99a0a-d19a-4c1d-baff-581b01c83243",
-  //         title: "الصف الاول الأعدادي",
-  //       },
-  //       {
-  //         id: "eb773da2-30c6-43be-a8de-7e676ee58eb4",
-  //         title: "الصف الثاني الأعدادي",
-  //       },
-  //       {
-  //         id: "f569d4ce-30da-4250-ae86-5bf7b0aa6dd8",
-  //         title: "الصف الثالث الأعدادي",
-  //       },
-  //     ],
-  //   },
-  // ];
-
   useEffect(() => {
     const getAllLevels = async () => {
       const levelsData = await apiGetAllLevels();
@@ -219,9 +183,10 @@ export default function SignUp() {
           <div className="flex items-center justify-center">
             <button
               type="submit"
-              className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-3 p-3 w-full rounded-lg"
+              disabled={isSignupPending}
+              className={`bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-3 p-3 w-full rounded-lg ${isSignupPending ? "flex justify-center " : ""}  `}
             >
-              {isLoading ? "جاري التسجيل..." : "تسجيل"}
+              {isSignupPending ? <Spinner  /> : "تسجيل"}
             </button>
           </div>
         </form>

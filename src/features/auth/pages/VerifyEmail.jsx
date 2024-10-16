@@ -5,6 +5,8 @@ import InputForm from "../components/InputForm"; // Import input component
 import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
 import { useVerifyEmailForgetPassword} from "../apis/authAPI";
+import Logo from "../../../ui/Logo";
+import { Spinner } from "@material-tailwind/react";
 
 export default function VerifyEmail() {
   const {
@@ -15,7 +17,7 @@ export default function VerifyEmail() {
     // resolver: yupResolver(LoginValidation),
   });
 
-  const { mutate: verifyEmailForgetPassword } = useVerifyEmailForgetPassword();
+  const { mutate: verifyEmailForgetPassword , isPending:isForgetPending } = useVerifyEmailForgetPassword();
 
 
   const onSubmit = (data) => {
@@ -28,13 +30,13 @@ export default function VerifyEmail() {
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
 
       <div className="flex flex-col text-right  justify-items-center lg:w-[30%] w-[90%] h-[60%]">
-        <div className=" flex  items-center justify-end  mt-[30px] mb-[60px] w-[100%] ">
-          <h2 className="text-4xl text-brand-700 font-bold  ">
-            مرحبا بك مجددا في مجتمع ذاكرلي{" "}
-          </h2>
-          <img src={logo} alt="signup" className="w-[20%] object-contain" />
-        </div>
+        <div className=" flex  items-center justify-start  mt-[30px] mb-[30px] w-[100%] ">
+        <h2 className="text-4xl text-brand-700 font-bold">اعاده تعيين كلمه المرور</h2>
 
+
+          <Logo type="dark" />
+        </div>
+       
         <form
           onSubmit={handleSubmitForgetPassword(onSubmit)}
           
@@ -48,9 +50,11 @@ export default function VerifyEmail() {
           />
           <button
             type="submit"
-            className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-10 p-3  w-full rounded-lg"
+            disabled={isForgetPending}
+            className={`bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-3 p-3 w-full rounded-lg ${isForgetPending ? "flex justify-center " : ""}  `}
+
           >
-            ارسل كود التفعيل{" "}
+            {!isForgetPending ? "ارسال" : <Spinner  />}
           </button>
         </form>
       </div>

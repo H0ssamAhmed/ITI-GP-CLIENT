@@ -6,7 +6,7 @@ import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
 import Logo from "../../../ui/Logo";
 import { Link, useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { Spinner } from "@material-tailwind/react";
 
 const ForgetPassword = () => {
   const navigate = useNavigate();
@@ -27,10 +27,16 @@ const ForgetPassword = () => {
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200">
       <div className="flex flex-col text-right justify-center lg:w-[30%] w-[90%] h-[100%]">
         <div className="flex items-center justify-end  mb-[30px] w-[100%]">
-          <h2 className="text-4xl text-brand-700 font-bold">اعاده تعيين كلمه المرور</h2>
+          <h2 className="text-4xl text-brand-700 font-bold">
+            اعاده تعيين كلمه المرور
+          </h2>
           <Logo type="dark" />
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="text-right w-[100%]">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          className="text-right w-[100%]"
+        >
           <InputForm
             label="كلمة المرور"
             type="password"
@@ -55,7 +61,11 @@ const ForgetPassword = () => {
           </div>
         </form>
       </div>
-      <img src={signup} alt="signup" className="w-[30%] object-contain hidden lg:block" />
+      <img
+        src={signup}
+        alt="signup"
+        className="w-[30%] object-contain hidden lg:block"
+      />
     </div>
   );
 };
