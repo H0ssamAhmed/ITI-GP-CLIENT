@@ -50,12 +50,7 @@ const menuItems = [
         href: "list/teacherSubjects",
         visible: ["teacher"],
       },
-      {
-        icon: "/src/assets/dashboard/subject.png",
-        label: "الدروس",
-        href: "list/teacherLessons",
-        visible: ["teacher"],
-      },
+
       {
         icon: "/src/assets/dashboard/student.png",
         label: "التلاميذ المشتركين",
@@ -73,6 +68,12 @@ const menuItems = [
         icon: "/src/assets/dashboard/lesson.png",
         label: "إنشاء كورس",
         href: "list/lessons",
+        visible: ["teacher"],
+      },
+      {
+        icon: "/src/assets/dashboard/createLesson.png",
+        label: "إنشاء درس",
+        href: "list/create-lesson",
         visible: ["teacher"],
       },
       {
@@ -110,7 +111,7 @@ const menuItems = [
         icon: "/src/assets/dashboard/profile.png",
         label: "الصفحة الشخصية",
         href: "/ProfileDetails",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["admin", "teacher", "student"],
       },
       {
         icon: "/src/assets/dashboard/setting.png",
@@ -130,7 +131,7 @@ const menuItems = [
 ];
 
 const DashboardMenu = () => {
-  const role = useSelector((state) => state.auth.role);
+  const role = useSelector((state) => state.auth.role) || "parent";
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

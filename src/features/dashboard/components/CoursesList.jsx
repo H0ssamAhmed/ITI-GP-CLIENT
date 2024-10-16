@@ -1,5 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import EnrolledStudents from "../lists/EnrolledStudents";
+import { courseEnrolledByStudent } from "../dashboardAPI";
+import Spinner from "../../../ui/Spinner";
+import ErrorMessage from "./ErrorMessage";
+import { Link } from "react-router-dom";
 
 // Temp Data For Courses
 const courses = [
@@ -66,27 +70,32 @@ const courses = [
 ];
 
 const CoursesList = () => {
-  const { data } = useQuery({
+  const {
+    data: enrolledCourses,
+    isLoading: isenrolledCourses,
+    isError: enrolledCoursesError,
+  } = useQuery({
     queryKey: ["enrollCourses"],
-    queryFn: EnrolledStudents,
+    queryFn: courseEnrolledByStudent,
   });
 
+  if (isenrolledCourses) return <Spinner />;
+  if (enrolledCoursesError)
+    return <ErrorMessage message="فشل تحميل بيانات الكورسات الخاصة " />;
+  console.log(enrolledCourses);
   return (
     <>
       <div className="flex items-center justify-between mt-8 mb-8">
         <h1 className="font-bold text-[2rem]">الكورسات 👨‍🎓</h1>
-        <span className="text-[1.3rem] text-gray-500 cursor-pointer">
-          شاهد المزيد
-        </span>
       </div>
-      {courses.map((course) => (
+      {enrolledCourses?.courses.map((course) => (
         <div
           key={course.id}
           className="flex gap-8 p-4 mb-4 bg-white cursor-pointer rounded-2xl"
         >
           <div>
             <img
-              src="/src/assets/videoalt.svg"
+              src={`${course.image}`}
               alt={course.courseName}
               className="w-24 h-24 rounded-lg"
             />
@@ -94,8 +103,18 @@ const CoursesList = () => {
 
           <div className="flex flex-col w-full gap-4">
             <div className="flex items-center justify-between">
-              <p className="text-[1.6rem] font-bold">{course.courseName}</p>
-              <p className="text-[1.2rem] text-gray-400">{`أ/ ${course.instructor} `}</p>
+              <div className="flex flex-col gap-2">
+                <p className="text-[1.6rem] font-bold">{course.title}</p>
+                <p className="text-[1rem] text-gray-400 font-bold">
+                  {course.description}
+                </p>
+              </div>
+
+              <Link to={`/courses/${course.id}`} key={course.id}>
+                <p className="text-[1.2rem] text-brand-400 underline">
+                  الذهاب إلى الكورس &larr;
+                </p>
+              </Link>
             </div>
             <span className="text-[1.3rem] text-gray-500">
               {course.lessonName}
