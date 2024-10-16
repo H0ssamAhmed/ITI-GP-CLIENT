@@ -25,7 +25,7 @@ export const fetchStudents = async () => {
 export const deleteUser = async (userId) => {
   try {
     const response = await axios.delete(
-      `http://localhost:3000/admin/user/${userId}`,
+      `http://localhost:3000/user/${userId}`,
       {
         withCredentials: true,
       }
@@ -164,7 +164,7 @@ export const fetchAllPendingRequests = async () => {
 // DELETE Teacher Request
 export const deleteTeacherById = async (teacherId) => {
   return axios.delete(
-    `http://localhost:3000/admin/delete-pending-teacher/${teacherId}`,
+    `http://localhost:3000/admin/pending-teacher/${teacherId}`,
     {
       withCredentials: true,
     }
@@ -409,19 +409,24 @@ export const updateCourse = async (courseId, updatedCourse) => {
   formData.append("teacherName", updatedCourse.teacherName);
   updatedCourse.sections.forEach((section, sectionIndex) => {
     formData.append(`section[${sectionIndex}][title]`, section.title);
-    
+
     if (section.id) {
-        formData.append(`section[${sectionIndex}][id]`, section.id);
+      formData.append(`section[${sectionIndex}][id]`, section.id);
     }
 
     if (section.lessons) {
-        section.lessons.forEach((lesson, lessonIndex) => {
-            formData.append(`section[${sectionIndex}][lessons][${lessonIndex}][title]`, lesson.title);
-            formData.append(`section[${sectionIndex}][lessons][${lessonIndex}][description]`, lesson.description || "");
-        });
+      section.lessons.forEach((lesson, lessonIndex) => {
+        formData.append(
+          `section[${sectionIndex}][lessons][${lessonIndex}][title]`,
+          lesson.title
+        );
+        formData.append(
+          `section[${sectionIndex}][lessons][${lessonIndex}][description]`,
+          lesson.description || ""
+        );
+      });
     }
-});
-
+  });
 
   // Handle file attachments (image, pdf, video)
   if (updatedCourse.image) {
@@ -460,7 +465,7 @@ export const coursesErolledByStudents = async () => {
       }
     );
 
-    return response.data;
+    return response.data || [];
   } catch (error) {
     console.error("Error updating course:", error);
     throw error;
@@ -476,9 +481,10 @@ export const courseEnrolledByStudent = async () => {
       }
     );
 
-    return response.data;
+    return response.data || [];
   } catch (error) {
-    console.error("Error updating course:", error);
-    throw error;
+    if (error.response && error.response.status === 404) {
+      throw new Error("لايوجد كورسات");
+    }
   }
 };

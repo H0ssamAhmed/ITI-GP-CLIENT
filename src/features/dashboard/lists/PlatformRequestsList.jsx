@@ -56,7 +56,6 @@ const PlatformRequestsList = () => {
   if (isErrorRequest)
     return <ErrorMessage message="فشل تحميل بيانات الطلبات" />;
 
-  // Handling Delete based on Req Type.
   const handleConfirmDelete = async () => {
     try {
       if (itemToDelete.requestType === "teacher") {
@@ -86,7 +85,6 @@ const PlatformRequestsList = () => {
       }
 
       toast.success("تم التحقق من الطلب بنجاح");
-      // Invalidate the query to refresh data
       queryClient.invalidateQueries(["pendingRequests"]);
     } catch (error) {
       console.error(error);
@@ -94,7 +92,6 @@ const PlatformRequestsList = () => {
     }
   };
 
-  // Check if there are no pending requests
   const noPendingRequests =
     pendingRequests.teacherData.length === 0 &&
     pendingRequests.courseData.length === 0;
@@ -118,7 +115,6 @@ const PlatformRequestsList = () => {
       </td>
       <td className="p-2">
         <div className="flex items-center justify-start gap-2">
-          {/* Confirm Button */}
           <button
             className="flex items-center justify-center w-10 h-10 text-green-400 transition-all duration-300 rounded-full hover:text-green-200 text:bg-green-300"
             title="Confirm"
@@ -127,7 +123,6 @@ const PlatformRequestsList = () => {
             <GiConfirmed className="text-[1.6rem]" />
           </button>
 
-          {/* Delete Button */}
           <button
             className="flex items-center justify-center w-10 h-10 "
             title="Delete"
