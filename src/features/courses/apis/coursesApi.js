@@ -97,15 +97,16 @@ export const buyACourse = async (courseId, studentId,) => {
   }
 };
 
-export const giveRate = async (value, courseId, studentId) => {
+export const giveRate = async (rate) => {
   try {
-    const requestBody = {
-      rate: value,
-      comment: "comment",
-      courseId: courseId,
-      studentId: studentId,
-    }
-    const response = await axios.post(`${base_url}/student/review`, requestBody, {
+    // const requestBody = {
+    //   rate: value,
+    //   comment: "comment",
+    //   courseId: _courseId,
+    //   studentId: _studentId,
+    // }
+
+    const response = await axios.post(`${base_url}/student/review`, rate, {
       withCredentials: true,
     });
     return response.data;

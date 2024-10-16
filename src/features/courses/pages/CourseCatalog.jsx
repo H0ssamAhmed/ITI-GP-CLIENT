@@ -128,7 +128,7 @@ const CourseCatalog = () => {
             </motion.div>
           )}
           <section className='col-span-12 md:col-span-8 lg:col-span-9'>
-            <div className='flex items-center flex-wrap justify-center gap-y-8 mt-20'>
+            <div className='flex items-center flex-wrap justify-center'>
               {currentDisplayed?.length == 0 && !isLoading && !error &&
                 <Stack direction="column" textAlign="center">
                   <h1 className='p-16 w-full text-center text-6xl' >لا يوجد كورسات متاح لهذا الصف في الوقت الحالي</h1>

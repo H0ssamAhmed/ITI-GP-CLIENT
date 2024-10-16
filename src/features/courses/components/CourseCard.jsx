@@ -14,7 +14,7 @@ function CourseCard({ course }) {
   })
 
   useEffect(() => {
-    userCourses?.data.courses.map(thecourse => {
+    userCourses?.data?.courses?.map(thecourse => {
       if (thecourse.id === course.id) {
         setIsUserEnroled(true)
       }
