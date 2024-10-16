@@ -75,6 +75,8 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
   });
 
   const onSubmit = (formData) => {
+
+   
     const structuredSections = formData.sections.map((section) => ({
       ...section,
       lessons: section.lessons || [], // Ensure lessons are inside their sections
