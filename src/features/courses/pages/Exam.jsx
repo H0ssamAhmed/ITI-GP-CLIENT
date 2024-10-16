@@ -152,11 +152,10 @@ const Exam = () => {
     })
     const postQuiz = {
       courseId: courseId,
-      quizId: quizId,
+      quizId: data?.data?.id,
       answers: studentAnswers
     }
-
-    // mutate(postQuiz)
+    mutate(postQuiz)
     // setQuizDataPost(postQuiz)
     console.log(postQuiz);
 

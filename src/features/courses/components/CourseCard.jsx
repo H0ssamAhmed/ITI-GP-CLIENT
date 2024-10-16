@@ -5,21 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { getCurrentUserCourses } from "../apis/coursesApi";
 import { useEffect, useState } from "react";
 
-function CourseCard({ course }) {
+function CourseCard({ course, userCourses }) {
   const [isUserEnroled, setIsUserEnroled] = useState(false)
-  const { data: userCourses, isLoading: coursesLaoding, error: CoursesError } = useQuery({
-    queryKey: ['userCourses'],
-    queryFn: () => getCurrentUserCourses()
-  })
 
   useEffect(() => {
-    userCourses?.data?.courses?.map(thecourse => {
-      if (thecourse.id === course.id) {
-        setIsUserEnroled(true)
-      }
-    })
-
-  }, [course])
+    userCourses?.find((theCourse) => theCourse.id === course.id) ? setIsUserEnroled(true) : setIsUserEnroled(false)
+  }, [userCourses, course])
 
   function convertToArabicNumerals(num) {
     const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];

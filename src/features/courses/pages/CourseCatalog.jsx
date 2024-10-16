@@ -18,7 +18,7 @@ const CourseCatalog = () => {
   const [fetchLevel, setFetchLevels] = useState([]);
   const [subject, setSubject] = useState("");
   const dispatch = useDispatch();
-  const alldata = useSelector(state => state)
+
   // Fetch current user
   const { data: currentUser, isLoading: isLoadingUser, error: errorUser } = useQuery(
     {
@@ -73,7 +73,13 @@ const CourseCatalog = () => {
     });
   useEffect(() => {
     dispatch(setLoading(isLoadingUser || isLoadingUserCourses || isLoadingCourses || isLoadingLevels));
-    setCurrentDisplayed(courses?.data?.data);
+    setTimeout(() => {
+      setCurrentDisplayed(courses?.data?.data);
+    }, 100);
+    console.log(courses?.data?.data);
+    console.log(levels?.data?.data);
+    console.log(JSON.stringify(userCourses?.data?.courses));
+    console.log(currentUser?.data);
     // console.log(userCourses?.data);
     // console.log(currentUser?.data);
     // console.log(alldata);
@@ -197,7 +203,7 @@ const CourseCatalog = () => {
                   <Button onClick={handleRemoveFiltration} variant='outlined' sx={{ fontSize: '2rem', margin: "0 auto", }} className='bg-brand-500 w-fit px-4 py-2 rounded-md'>اظهار الكل</Button>
                 </Stack>
               }
-              {isLoadingCourses &&
+              {isLoadingCourses && isLoadingUserCourses &&
                 <div className='flex items-center justify-center gap-4 flex-wrap '>
                   <Skeleton animation="wave" width={400} height={400} />
                   <Skeleton animation="wave" width={400} height={400} />
@@ -207,7 +213,7 @@ const CourseCatalog = () => {
               {!isLoadingCourses &&
                 currentDisplayed?.map((course, index) => (
                   <motion.div key={index} className='p-4 cursor-pointer' initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3 }}>
-                    <CourseCard course={course} />
+                    <CourseCard course={course} userCourses={userCourses?.data?.courses} />
                   </motion.div>))
               }
             </div>
