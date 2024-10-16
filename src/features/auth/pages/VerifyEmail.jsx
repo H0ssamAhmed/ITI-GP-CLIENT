@@ -30,7 +30,7 @@ export default function VerifyEmail() {
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
 
       <div className="flex flex-col text-right  justify-items-center lg:w-[30%] w-[90%] h-[60%]">
-        <div className=" flex  items-center justify-start  mt-[30px] mb-[30px] w-[100%] ">
+        <div className=" flex  items-center justify-center  mt-[30px] mb-[30px] w-[100%] ">
         <h2 className="text-4xl text-brand-700 font-bold">اعاده تعيين كلمه المرور</h2>
 
 

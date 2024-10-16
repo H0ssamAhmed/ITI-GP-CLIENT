@@ -14,11 +14,25 @@ import {
 import { useContext } from "react";
 import SignUpContext from "../../store/signup-context";
 import { set } from "react-hook-form";
+const BASE_URL = "http://localhost:3000";
 const verifyEmailForgetPassword = async (userData) => {
   try {
-    const response = await AxiosInstance.post("user/forget-password", userData);
-    console.log(response.data);
-    return response.data;
+    const response = await fetch(`${BASE_URL}/user/forget-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to send email");
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return data;
   } catch (error) {
     console.log(error);
     throw error;
@@ -27,13 +41,23 @@ const verifyEmailForgetPassword = async (userData) => {
 
 const loginUser = async (userData) => {
   try {
-    const response = await AxiosInstance.post(
-      "user/auth/login-user",
-      userData,
-      { withCredentials: true }
-    );
-    console.log(response.data);
-    return response.data;
+    const response = await fetch(`${BASE_URL}/user/auth/login-user`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Login failed");
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return data;
   } catch (error) {
     console.log(error);
     throw error;
@@ -44,59 +68,68 @@ const signupUser = async (userData) => {
   let endpoint;
   try {
     if (userData.type === "student") {
-      endpoint = `student/auth/signup`;
+      endpoint = `${BASE_URL}/student/auth/signup`;
     } else if (userData.type === "teacher") {
-      endpoint = `teacher/auth/signup`;
+      endpoint = "teacher/auth/signup";
     } else {
       throw new Error("Invalid user type");
     }
-    const response = await AxiosInstance.post(endpoint, userData, {
-      withCredentials: true,
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
     });
-    return response.data;
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Signup failed");
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.log(error);
     throw error;
   }
 };
+
 const verifyOTP = async (userData) => {
   try {
-    const response = await AxiosInstance.post(
-      "student/auth/verify-otp",
-      userData,
-      {
-        withCredentials: true,
-      }
-    );
-    return response.data;
+    const response = await fetch(`${BASE_URL}/student/auth/verify-otp`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "OTP verification failed");
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.log(error);
     throw error;
   }
 };
-// const resendOTP = async function () {
-//   try {
-//     const response = await AxiosInstance.post("student/auth/resend-otp", {
-//       withCredentials: true,
-//     });
-//     return response.data;
-//   } catch (error) {
-//     console.log(error);
-//     throw error;
-//   }
-// };
+
 const resendOTP = async function () {
   try {
-    const response = await fetch(
-      "http://localhost:3000/student/auth/resend-otp",
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`${BASE_URL}/student/auth/resend-otp`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
