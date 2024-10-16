@@ -11,16 +11,16 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
 
-const SubmitQuiz = async (payload) => {
-  try {
-    const response = await sendQuizAns(payload).then((res) => res)
-    console.log(response)
-    return response
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
+// const SubmitQuiz = async (payload) => {
+//   try {
+//     const response = await sendQuizAns(payload).then((res) => res)
+//     console.log(response)
+//     return response
+//   } catch (error) {
+//     console.error(error);
+//     throw error;
+//   }
+// }
 const Exam = () => {
   const { quizId, courseId } = useParams()
   const [questionsPerPage, setQuestionsPerPage] = useState(1); // Set the number of questions per page
@@ -34,29 +34,32 @@ const Exam = () => {
   const [isQuizEnd, setIsQuizEnd] = useState(false)
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['courseDetails', quizId],
+    queryKey: ['getSectinQuiz', quizId],
     queryFn: () => GetSectionQuiz(quizId),
     retry: false,  // Optionally disable retries if an error occurs
     onError: (err) => {
       console.log('Error fetching quiz:', err.message);
     },
+    onSuccess: (data) => {
+      console.log(data);
+    },
   })
+  // console.log(data);
+
 
   const { mutate, isLoading: LoadingMutation } = useMutation({
-    mutationFn: (data) => SubmitQuiz(data),
+    mutationFn: (data) => sendQuizAns(data),
     onSuccess: (response) => {
       console.log(response);
       toast.success("تم ارسال الاجابات بنجاح");
     },
-
     onError: (err) => {
       console.log(err);
-      toast.error(err.message)
+      toast.error(err.message);
     },
+  });
 
-  })
   const navigate = useNavigate();
-  // Initialize questions
   useEffect(() => {
     if (data) {
       setQuizTime(data.data.Duration);
@@ -67,6 +70,7 @@ const Exam = () => {
       }));
       setAllQuestions(initializedQuestions);
     }
+
   }, [data]);
 
 
@@ -147,11 +151,11 @@ const Exam = () => {
       })
     })
     const postQuiz = {
-      studentId: "b57efb20-97b8-4257-984c-26335f2fe844",
       courseId: courseId,
       quizId: quizId,
       answers: studentAnswers
     }
+
     // mutate(postQuiz)
     // setQuizDataPost(postQuiz)
     console.log(postQuiz);

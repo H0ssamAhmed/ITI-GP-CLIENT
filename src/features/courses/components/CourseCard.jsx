@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import testImg from "../../../assets/HomePageImages/teacher.png";
 import { FaStar } from "react-icons/fa6";
 import { useQuery } from "@tanstack/react-query";
-import { getCurrentUser } from "../../../services/currentUser";
 import { getCurrentUserCourses } from "../apis/coursesApi";
 import { useEffect, useState } from "react";
 
@@ -14,7 +13,7 @@ function CourseCard({ course }) {
   })
 
   useEffect(() => {
-    userCourses?.data.courses.map(thecourse => {
+    userCourses?.data?.courses?.map(thecourse => {
       if (thecourse.id === course.id) {
         setIsUserEnroled(true)
       }

@@ -9,30 +9,35 @@ import { Rating, Skeleton, Stack, Typography } from "@mui/material";
 import { ContentPasteSearchOutlined, Description } from "@mui/icons-material";
 import { getCurrentUser } from "../../../services/currentUser";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const CourseDetail = () => {
+  const { courseId } = useParams();
   const [value, setValue] = useState(0);
   const [loadingBuying, setLoadingBuying] = useState(false);
-  const queryClient = useQueryClient();
-  const { courseId } = useParams();
   const [course, setCourse] = useState();
   const [isUserEnroled, setIsUserEnroled] = useState(false);
   const [showConfirmBuying, setShowConfirmBuying] = useState(false);
+  const queryClient = useQueryClient();
+  const allUserCourses = useSelector((state) => state.userCcourses)
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['courseDetaials'],
-    queryFn: () => getCourseDetails(courseId)
-  });
+  console.log(allUserCourses);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => getCurrentUser()
   });
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['courseDetaials'],
+    queryFn: () => getCourseDetails(courseId)
+  });
+
 
   const { data: userCourses } = useQuery({
     queryKey: ['userCourses'],
     queryFn: () => getCurrentUserCourses()
   });
+  console.log(data?.data);
 
   const { mutate, isLoading: buyLoading } = useMutation({
     mutationFn: () => buyACourse(courseId, user?.data.id),
@@ -64,23 +69,30 @@ const CourseDetail = () => {
   });
   const handelRating = (e) => {
     setValue(e.target.value);
-    RatingCourse(e.target.value, courseId, user?.data.id,)
+    const data = {
+      rate: e.target.value,
+      comment: "comment",
+      courseId: courseId,
+      studentId: user?.data.id,
+    }
+    RatingCourse(data)
 
   }
-
   const { mutate: RatingCourse } = useMutation({
-    mutationFn: giveRate,
+    mutationFn: (rate) => giveRate(rate),
     onSuccess: (data, variables, context) => {
       toast.update(context.toastId, {
-        render: "data.message",
+        render: data.message,
         type: "success",
         isLoading: false,
         autoClose: 3000,
       });
+
       queryClient.invalidateQueries(['courseDetaials']);
     },
     onMutate: () => {
-      toast.loading("جاري تقييم الدورة...");
+      const toastId = toast.loading("جاري تقييم الدورة...");
+      return { toastId }
     },
     onError: (error, variables, context) => {
       toast.update(context.toastId, {
@@ -156,15 +168,17 @@ const CourseDetail = () => {
                       {isUserEnroled ? (
                         <>
                           <Link
-                            // to={`/courses/${course?.id}/${data?.data?.sections[0]?.lessons[0]?.id}`}
+                            to={`/courses/${course?.id}/${data?.data?.sections[0]?.lessons[0]?.id}`}
                             // onClick={() => setShowConfirmBuying(true)}
-                            className='px-4 py-1 bg-green-500 text-white w-fit rounded-[14px]'>اكمل الدورة</Link>
+                            className='px-4 py-1 bg-green-500 text-white w-fit rounded-[14px]'>اكمل الدورة
+                          </Link>
+
                           <Rating
                             className="rotate-180 text-2xl"
                             name="simple-controlled"
                             value={value}
                             readOnly={!isUserEnroled}
-                            onChange={handelRating}
+                            onChange={(e) => handelRating(e)}
                           />
 
 
@@ -188,8 +202,8 @@ const CourseDetail = () => {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0 }}
                             transition={{ duration: 0.3, delay: 0.2 }}
-                            className="px-8 py-2 absolute flex items-center justify-around w-[34rem] h-[14rem]  gap-4 flex-col bg-gray-300 text-white  rounded-[14px]">
-                            <p className="text-3xl">سوف يتم خصم <span className="font-bold text-brand-900">{convertToArabicNumerals(course?.price)}</span> جنيه من محفظتك</p>
+                            className="px-8 py-2 absolute flex items-center justify-around w-[34rem] h-[14rem]  gap-4 flex-col bg-gray-600 text-white  rounded-[14px]">
+                            <p className="text-3xl">سوف يتم خصم <span className="font-bold">{convertToArabicNumerals(course?.price)}</span> جنيه من محفظتك</p>
                             <Stack width={"100%"} justifyContent={"space-between"} direction="row" alignItems="center" spacing={5}>
                               <button onClick={handleBuyCourse} className="bg-green-400 px-8 py-2 rounded-md hover:bg-green-600 transition-all">تأكيد الشراء</button>
                               <button onClick={() => setShowConfirmBuying(false)} className="bg-red-400 px-8 py-2 rounded-md hover:bg-red-600 transition-all">
