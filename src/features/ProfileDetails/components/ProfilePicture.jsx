@@ -16,7 +16,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { updateUserPicture } from '../../../services/apiUpdateUserPicture';
 import {Spinner} from '@material-tailwind/react';
-import { useEffect } from 'react';
 const ProfileCard = styled(Card)({
   backgroundColor: '#f5f5f5',
   borderRadius: '10px',
@@ -28,19 +27,17 @@ const AvatarStyled = styled(Avatar)({
   height: '100px',
   margin: '0 auto',
 });
+
 export default function ProfilePicture({ getProfileData }) {
   const queryClient = useQueryClient();
   const { mutate: uploadPictureMutation, isPending: isUploading } = useMutation({
     mutationFn: updateUserPicture,
     onSuccess: (data) => {
-      toast.success("Profile picture updated successfully.", {
+      toast.success("تم تحديث الصورة الشخصية بنجاح", {
         type: "success",
         toastId: `update-profile-success-${Date.now()}`,
       });
       queryClient.invalidateQueries(["profileData"]);
-      getProfileData.profileData.image = data.data.picture;
-
-     
       
     },
     onError: (error) => {

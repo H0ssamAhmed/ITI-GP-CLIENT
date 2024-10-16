@@ -65,24 +65,14 @@ function App() {
   };
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={true} // For right-to-left text alignment
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+     
       <SignUpContext.Provider value={{ type, handleTypeChange }}>
         <Router>
           <Routes>
             {/* Main layout routes */}
             <Route path="/" element={<MainLayout />}>
               <Route index element={<Home />} />
-              <Route path="contact" element={<Contact />} />
+              <Route path="contact" element={<Contact />} /> 
               <Route path="about-us" element={<About />} />
               <Route path="/wallet" element={<Wallet />} />
               <Route path="/wallet/checkout" element={<Checkout />} />

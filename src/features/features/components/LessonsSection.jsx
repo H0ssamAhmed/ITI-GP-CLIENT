@@ -111,13 +111,13 @@ function LessonsSection() {
     },
   });
 
-  if (isFethcingLessons) {
-    return <div>Loading...</div>;
-  }
+  // if (isFethcingLessons) {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (isError) {
-    return <div>Error: {error.message}</div>;
-  }
+  // if (isError) {
+  //   return <div>Error: {error.message}</div>;
+  // }
   return (
     <motion.div
       ref={ref}

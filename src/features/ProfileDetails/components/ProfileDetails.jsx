@@ -18,8 +18,8 @@ import {
 } from "@mui/material";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {  get, useForm } from "react-hook-form";
-import { toast, ToastContainer } from "react-toastify";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { amber } from "@mui/material/colors";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -52,13 +52,11 @@ export default function ProfileDetails({ getProfileData }) {
   useEffect(() => {
     const getAllLevels = async () => {
       const levelsData = await apiGetAllLevels();
-     
 
       setLevels(levelsData);
     };
     getAllLevels();
   }, []);
-
 
   const handleClickShowPassword = () => {
     setShowPassword((prev) => !prev);
@@ -81,9 +79,9 @@ export default function ProfileDetails({ getProfileData }) {
     mutationFn: updateProfileData,
     onSuccess: () => {
       queryClient.invalidateQueries(["profileData"]);
-      toast.success("Profile updated successfully", {
+      toast.success("تم تحديث الملف الشخصي بنجاح", {
         type: "success",
-        toastId: "update-profile-success",
+        toastId: `update-profile-success ${Date.now()}`,
       });
     },
     onError: (error) => {
@@ -103,7 +101,6 @@ export default function ProfileDetails({ getProfileData }) {
     {
       mutationFn: resetPasswordApi,
       onSuccess: () => {
-
         toast.success("Password updated successfully", {
           type: "success",
           toastId: "reset-password-success",
@@ -329,7 +326,7 @@ export default function ProfileDetails({ getProfileData }) {
     );
   }
   const isEmptyField = Object.keys(errors).length === 0;
-  
+
   return (
     <Grid2 size={{ xs: 12, sm: 12, md: 9 }}>
       <ProfileCard sx={{ bgcolor: "rgb(67 56 202)", color: "#fff" }}>
@@ -361,20 +358,26 @@ export default function ProfileDetails({ getProfileData }) {
                       <TextField
                         fullWidth
                         {...register(detail.field, {
-                          ...((getProfileData.profileData.role === "admin" && 
-                               (detail.field === 'firstName' || detail.field === 'lastName' || detail.field === 'phone')) || 
-                               (!isEditing && isEmptyField) || 
-                               (detail.field === "wallet" || detail.field === "nationalID") 
-                              ? {} 
-                              : detail.validation),
+                          ...((getProfileData.profileData.role === "admin" &&
+                            (detail.field === "firstName" ||
+                              detail.field === "lastName" ||
+                              detail.field === "phone")) ||
+                          (!isEditing && isEmptyField) ||
+                          detail.field === "wallet" ||
+                          detail.field === "nationalID"
+                            ? {}
+                            : detail.validation),
                         })}
                         disabled={
-                          (getProfileData.profileData.role === "admin" && detail.field === 'firstName' || detail.field === 'lastName' || detail.field === 'phone')
-                          || (!isEditing && isEmptyField) ||
-                          detail.field === "wallet" ||
-                          detail.field === "nationalID" 
+                          // Allow editing for students and teachers
+                          (!isEditing && isEmptyField) ||
+                          ((detail.field === "nationalID" ||
+                            detail.field === "email" || detail.field === "wallet" )  && 
+                            getProfileData.profileData.role !== "admin")
                         }
-                        defaultValue={detail.value === 'undefined' ? '' : detail.value}
+                        defaultValue={
+                          detail.value === "undefined" ? "" : detail.value
+                        }
                         slotProps={{
                           input: {
                             sx: {
@@ -675,7 +678,6 @@ export default function ProfileDetails({ getProfileData }) {
           </Button>
         </CardContent>
       </ProfileCard>
-      <ToastContainer />
     </Grid2>
   );
 }
