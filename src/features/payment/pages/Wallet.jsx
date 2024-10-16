@@ -55,7 +55,6 @@ const Wallet = () => {
   const { data: balance, isPending: isFetchingBalance } = useQuery({
     queryKey: ['balance'],
     queryFn: getStudentBalance,
-    enabled: true,
     staleTime: Infinity,
     cacheTime: Infinity,
   });
@@ -120,7 +119,7 @@ const Wallet = () => {
       </div>
 
       <div className="bg-white mt-36 mb-44 flex flex-col gap-4">
-        <Withdraw />
+        {/* <Withdraw /> */}
         <Deposit />
       </div>
     </>

@@ -1,34 +1,118 @@
 import axios from "axios";
-const base_url = "http://localhost:3000/user/courses";
+const base_url = "http://localhost:3000";
 
 export const getAllCourses = async (requiredPath) => {
   try {
-    const response = await axios.get(`${base_url}/${requiredPath}`);
-    return response.data; // return only the data part
+    const response = await axios.get(`${base_url}/user/courses/${requiredPath}`);
+    return response// return only the data par
   } catch (error) {
-    console.error("Error fetching courses:", error);
-    throw error; // throw error to be handled later
+    if (error.response?.status === 404) {
+      throw new Error(error);  // Specific handling for 404
+    }
+    throw new Error(error || "Failed to fetch quiz data");  // Handle other errors
   }
+
 };
 
 export const getCourseDetails = async (courseId) => {
-
   try {
-    const details = await axios.get(`${base_url}/details/${courseId}`)
-
+    const details = await axios.get(`${base_url}/user/courses/details/${courseId}`)
     return details
   } catch (error) {
-    console.log(error);
-    return error
+    if (error.response?.status === 404) {
+      throw new Error(error.response);  // Specific handling for 404
+    }
+    throw new Error(error.response || "Failed to fetch quiz data");  // Handle other errors
   }
 }
 
 export const getAllLevels = async () => {
   try {
-    const levels = await axios.get(`${base_url}/level`)
+    const levels = await axios.get(`${base_url}/user/levels`)
     return levels
   } catch (error) {
-    console.log(error);
-    return error
+    if (error.response?.status === 404) {
+      throw new Error(error.response);  // Specific handling for 404
+    }
+    throw new Error(error.response || "Failed to fetch quiz data");  // Handle other errors
+
+  }
+}
+
+
+export const GetSectionQuiz = async (sectionId) => {
+  try {
+    const quiz = await axios.get(`${base_url}/student/quiz/questions/section/${sectionId}`, { withCredentials: true })
+    return quiz
+  } catch (error) {
+    if (error.response?.status === 404) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error(error.response || "Failed to fetch quiz data");  // Other errors
+  }
+}
+
+
+
+export const sendQuizAns = async (quizData) => {
+  try {
+    const postQuiz = await axios.post(`${base_url}/student/quiz/take-quiz`, quizData, { withCredentials: true });
+    return postQuiz;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Something went wrong');
+  }
+};
+
+export const getCurrentUserCourses = async () => {
+  try {
+    const currentUserCourses = await axios.get(`${base_url}/student/course/enrolled/courses`, { withCredentials: true })
+    return currentUserCourses
+  } catch (error) {
+    if (error.response.status === 404) {
+      throw new Error(error);
+    }
+    throw new Error(error.response || "Failed to fetch current Courses");  // Other errors
+  }
+}
+
+export const buyACourse = async (courseId, studentId,) => {
+  try {
+    // Define the request body with the required parameters
+    const requestBody = {
+      courseId: courseId,
+      studentId: studentId,
+    };
+
+    // Make the POST request with the requestBody
+    const response = await axios.post(`${base_url}/student/course/buy-course`, requestBody, {
+      withCredentials: true,
+    });
+
+    // Handle the response if needed
+    return response.data;
+  } catch (error) {
+    // Handle error
+    console.error("Error buying course:", error);
+    throw error; // Re-throw the error for further handling
+  }
+};
+
+export const giveRate = async (rate) => {
+  try {
+    // const requestBody = {
+    //   rate: value,
+    //   comment: "comment",
+    //   courseId: _courseId,
+    //   studentId: _studentId,
+    // }
+
+    const response = await axios.post(`${base_url}/student/review`, rate, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    // Handle error
+    console.error("Error rating course:", error);
+    throw error; // Re-throw the error for further handling
   }
 }

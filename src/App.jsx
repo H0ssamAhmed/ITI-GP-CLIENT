@@ -41,7 +41,6 @@ import ReviewAns from "./features/courses/pages/ReviewAns";
 import Error from "./pages/Error";
 import ProfileDetails from "./pages/ProfileDetails";
 import Features from "./pages/Features";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Wallet from "./features/payment/pages/Wallet";
@@ -52,8 +51,12 @@ import { useSelector } from "react-redux";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import { useState } from "react";
 import SignUpContext from "./features/store/signup-context";
+import TeacherSubjectsList from "./features/dashboard/lists/TeacherSubjectsList";
+import EnrolledStudents from "./features/dashboard/lists/EnrolledStudents";
+import TeacherLessons from "./features/dashboard/lists/TeacherLessons";
+import CreateLesson from "./features/dashboard/lists/CreateLesson";
+import ParentLogin from "./components/ParentLogin";
 
-// Initialize QueryClient
 function App() {
   const role = useSelector((state) => state.auth.role);
   const [type, setType] = useState("student");
@@ -62,25 +65,29 @@ function App() {
   };
   return (
     <>
+     
       <SignUpContext.Provider value={{ type, handleTypeChange }}>
-        <ReactQueryDevtools initialIsOpen={false} />
         <Router>
           <Routes>
             {/* Main layout routes */}
             <Route path="/" element={<MainLayout />}>
               <Route index element={<Home />} />
-              <Route path="contact" element={<Contact />} />
+              <Route path="contact" element={<Contact />} /> 
               <Route path="about-us" element={<About />} />
               <Route path="/wallet" element={<Wallet />} />
-              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/wallet/checkout" element={<Checkout />} />
               <Route path="/ProfileDetails" element={<ProfileDetails />} />
               <Route path="/features" element={<Features />} />
+              <Route path="/parentLogin" element={<ParentLogin />} />
               <Route path="courses" element={<Outlet />}>
                 <Route index element={<CourseCatalog />} />
                 <Route path=":courseId" element={<CourseDetail />} />
                 <Route path=":courseId/:lessonId" element={<LessonDetails />} />
-                <Route path="review/:examId" element={<ReviewAns />} />
-                <Route path=":courseId/:lessonId/:examId" element={<Exam />} />
+                <Route path="quiz/:courseId/:quizId" element={<Exam />} />
+                <Route
+                  path="quiz/quizReview/:quizTitle"
+                  element={<ReviewAns />}
+                />
               </Route>
             </Route>
 
@@ -146,25 +153,28 @@ function App() {
                 }
               />
               {/* Parent routes */}
-              <Route
-                path="parent"
-                element={
-                  <ProtectedRoute role={role} allowedRoles={["parent"]}>
-                    <ParentPage />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="parent" element={<ParentPage />} />
               {/* Common routes accessible by all roles */}
               <Route path="profile" element={<ProfileList />} />
               <Route path="list/teachers" element={<TeachersList />} />
               <Route path="list/teachers/:id" element={<TeacherDetails />} />
               <Route path="list/students" element={<StudentsList />} />
+              <Route
+                path="list/enrolledStudent"
+                element={<EnrolledStudents />}
+              />
               <Route path="list/students/:id" element={<StudentsDetails />} />
               <Route path="list/parents" element={<ParentsList />} />
               <Route path="list/subjects" element={<SubjectsList />} />
+              <Route
+                path="list/teacherSubjects"
+                element={<TeacherSubjectsList />}
+              />
               <Route path="list/messages" element={<MessagesList />} />
               <Route path="list/requests" element={<PlatformRequestsList />} />
               <Route path="list/lessons" element={<CreateCourseList />} />
+              <Route path="list/teacherLessons" element={<TeacherLessons />} />
+              <Route path="list/create-lesson" element={<CreateLesson />} />
               <Route path="list/exams" element={<ExamsList />} />
               <Route
                 path="list/announcements"
@@ -179,18 +189,6 @@ function App() {
 
             <Route path="*" element={<Error />} />
           </Routes>
-          <ToastContainer
-            position="bottom-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            closeOnClick={true}
-            pauseOnHover={true}
-            draggable={true}
-            progress={undefined}
-            theme="light"
-            icon={true}
-            draggablePercent={100}
-          />
         </Router>
       </SignUpContext.Provider>
     </>

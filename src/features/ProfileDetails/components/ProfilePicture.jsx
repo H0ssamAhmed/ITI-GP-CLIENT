@@ -2,7 +2,7 @@ import { PhotoCamera } from '@mui/icons-material';
 import {
   Avatar,
   Box,
-  Button,
+ 
   Card,
   CardContent,
   Grid2,
@@ -12,11 +12,10 @@ import {
 } from '@mui/material';
 import { amber, grey, indigo } from '@mui/material/colors';
 import defaultAvatar from '../../../assets/dashboard/profileDefualt.jpg';
-
-// colors
-const amberBgColor = amber[300];
-const indigoColor = indigo[500];
-// Styled components for the profile card
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
+import { updateUserPicture } from '../../../services/apiUpdateUserPicture';
+import {Spinner} from '@material-tailwind/react';
 const ProfileCard = styled(Card)({
   backgroundColor: '#f5f5f5',
   borderRadius: '10px',
@@ -28,9 +27,34 @@ const AvatarStyled = styled(Avatar)({
   height: '100px',
   margin: '0 auto',
 });
-export default function ProfilePicture({ getProfileData }) {
-  function handleImageUpload() {}
 
+export default function ProfilePicture({ getProfileData }) {
+  const queryClient = useQueryClient();
+  const { mutate: uploadPictureMutation, isPending: isUploading } = useMutation({
+    mutationFn: updateUserPicture,
+    onSuccess: (data) => {
+      toast.success("تم تحديث الصورة الشخصية بنجاح", {
+        type: "success",
+        toastId: `update-profile-success-${Date.now()}`,
+      });
+      queryClient.invalidateQueries(["profileData"]);
+      
+    },
+    onError: (error) => {
+      const errorMessage = error.message || "Failed to update profile. Please try again.";
+      console.error("Error updating Profile data:", error);
+      toast.error(errorMessage, {
+        toastId: "update-profile-error",
+      });
+    }
+  })
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      uploadPictureMutation(file);
+    }
+  };
+ 
   return (
     <Grid2 size={{ xs: 12, sm: 12, md: 3 }}>
       <ProfileCard
@@ -44,7 +68,13 @@ export default function ProfilePicture({ getProfileData }) {
         }}
       >
         <CardContent sx={{ position: 'relative' }}>
-          <AvatarStyled src={getProfileData.profileData?.image ? getProfileData.profileData?.image : defaultAvatar} />
+          { isUploading ? (
+            <Spinner />
+          ) : (
+            <AvatarStyled src={getProfileData.profileData?.picture ? getProfileData.profileData?.picture : defaultAvatar} />
+
+          )
+          }
           <Typography
             variant="h4"
             align="center"
@@ -69,7 +99,7 @@ export default function ProfilePicture({ getProfileData }) {
           <Box
             sx={{
               position: 'absolute',
-              right: 80,
+              right: {xs: 195, sm: 80, md: 70},
               top: 90,
             }}
           >

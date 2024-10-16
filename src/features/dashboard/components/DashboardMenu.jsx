@@ -34,7 +34,7 @@ const menuItems = [
         icon: "/src/assets/dashboard/student.png",
         label: "التلاميذ",
         href: "list/students",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
 
       {
@@ -42,6 +42,20 @@ const menuItems = [
         label: "الكورسات",
         href: "list/subjects",
         visible: ["admin"],
+      },
+
+      {
+        icon: "/src/assets/dashboard/subject.png",
+        label: "الكورسات الخاصة",
+        href: "list/teacherSubjects",
+        visible: ["teacher"],
+      },
+
+      {
+        icon: "/src/assets/dashboard/student.png",
+        label: "التلاميذ المشتركين",
+        href: "list/enrolledStudent",
+        visible: ["teacher"],
       },
 
       {
@@ -54,6 +68,12 @@ const menuItems = [
         icon: "/src/assets/dashboard/lesson.png",
         label: "إنشاء كورس",
         href: "list/lessons",
+        visible: ["teacher"],
+      },
+      {
+        icon: "/src/assets/dashboard/createLesson.png",
+        label: "إنشاء درس",
+        href: "list/create-lesson",
         visible: ["teacher"],
       },
       {
@@ -90,15 +110,15 @@ const menuItems = [
       {
         icon: "/src/assets/dashboard/profile.png",
         label: "الصفحة الشخصية",
-        href: "profile",
+        href: "/ProfileDetails",
+        visible: ["admin", "teacher", "student"],
+      },
+      {
+        icon: "/src/assets/dashboard/setting.png",
+        label: "المنصة",
+        href: "/",
         visible: ["admin", "teacher", "student", "parent"],
       },
-      // {
-      //   icon: "/src/assets/dashboard/setting.png",
-      //   label: "الإعدادات",
-      //   href: "settings",
-      //   visible: ["admin", "teacher", "student", "parent"],
-      // }, to add night mode feature
       {
         icon: "/src/assets/dashboard/logout.png",
         label: "الخروج",
@@ -111,7 +131,7 @@ const menuItems = [
 ];
 
 const DashboardMenu = () => {
-  const role = useSelector((state) => state.auth.role);
+  const role = useSelector((state) => state.auth.role) || "parent";
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -119,15 +139,12 @@ const DashboardMenu = () => {
     try {
       await logout();
 
-      // Dispatch actions to clear user data in Redux
       dispatch(logoutAction());
       dispatch(clearUserRole());
 
-      // Show a success message
       toast.success("تم تسجيل الخروج بنجاح");
 
       navigate("/login");
-      // Navigate to the login page
     } catch (error) {
       toast.error(error.message || "An error occurred during logout.");
     }

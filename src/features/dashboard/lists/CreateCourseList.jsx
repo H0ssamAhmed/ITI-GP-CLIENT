@@ -3,14 +3,18 @@ import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "react-toastify";
 import { createCourse, fetchAllLevels } from "../dashboardAPI";
-import CircularSize from "../../../ui/CircularSize";
+import { CircularProgress } from "@mui/material";
 
 const CreateCourseList = ({ initialData }) => {
   const [levels, setLevels] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
+  const [variant, setVariant] = useState("plain");
+
   const {
     mutate: createCourseMutate,
     isLoading: isCreatingCourse,
     isError: isErrorCourse,
+    isPending: isCoursePending,
   } = useMutation({
     mutationFn: createCourse,
     onSuccess: () => {
@@ -21,14 +25,11 @@ const CreateCourseList = ({ initialData }) => {
         const statusCode = error.response.status;
 
         if (statusCode === 409) {
-          // Handle duplicate course error (conflict)
           toast.error("هذا الكورس موجود بالفعل");
         } else if (error.response.data) {
-          // Specific backend error message
           const backendErrorMessage = error.response.data.error;
           toast.error(backendErrorMessage);
         } else {
-          // General error message
           toast.error("حدث خطأ أثناء إنشاء الكورس");
         }
       } else {
@@ -41,20 +42,19 @@ const CreateCourseList = ({ initialData }) => {
     register,
     handleSubmit,
     control,
-    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
       title: initialData?.title || "",
       description: initialData?.description || "",
       price: initialData?.price || "",
+      image: initialData?.image || "",
       discountedPrice: initialData?.discountedPrice || "",
       levelId: initialData?.levelId || "",
       sections: initialData?.sections || [],
     },
   });
 
-  // Field array for sections
   const {
     fields: sectionFields,
     append: appendSection,
@@ -63,37 +63,22 @@ const CreateCourseList = ({ initialData }) => {
     control,
     name: "sections",
   });
-  const [lessons, setLessons] = useState([[]]);
 
-  const appendLesson = (sectionIndex) => {
-    setLessons((prevLessons) => ({
-      ...prevLessons,
-      [sectionIndex]: [
-        ...(prevLessons[sectionIndex] || []),
-        { title: "", description: "", pdfUrl: "", videoUrl: "" },
-      ],
-    }));
-  };
-
-  const removeLesson = (sectionIndex, lessonIndex) => {
-    setLessons((prevLessons) => ({
-      ...prevLessons,
-      [sectionIndex]: prevLessons[sectionIndex].filter(
-        (_, index) => index !== lessonIndex
-      ),
-    }));
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file);
+    }
   };
 
   useEffect(() => {
     const getLevels = async () => {
       try {
         const fetchedLevels = await fetchAllLevels();
-        console.log("All level ya hossam:", fetchAllLevels);
-        // Check if fetchedLevels is an array, otherwise set it as an empty array
         setLevels(Array.isArray(fetchedLevels.data) ? fetchedLevels.data : []);
       } catch (error) {
         console.error("Failed to fetch levels:", error);
-        setLevels([]); // Set to an empty array if there's an error
+        setLevels([]);
       }
     };
 
@@ -107,20 +92,16 @@ const CreateCourseList = ({ initialData }) => {
       price: +data.price,
       discountedPrice: +data.discountedPrice,
       levelId: data.levelId,
+      image: imageFile,
       sections: data.sections.map((section) => ({
         title: section.title,
-        lessons: section.lessons.map((lesson) => ({
-          title: lesson.title,
-          description: lesson.description,
-          pdfUrl: lesson.pdfUrl,
-          videoUrl: lesson.videoUrl,
-        })),
+        description: section.description,
       })),
     };
 
-    console.log(courseData);
+    console.log("Course Data:", courseData);
+    console.log("Image File:", imageFile);
     createCourseMutate(courseData);
-    reset();
   };
 
   return (
@@ -200,6 +181,19 @@ const CreateCourseList = ({ initialData }) => {
           )}
         </div>
 
+        <div>
+          <label className="block mb-2 text-[1.9rem] text-sm font-semibold text-right">
+            صورة الكورس
+          </label>
+          <input
+            {...register("image")}
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="w-full p-3 text-right border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-brand-200"
+          />
+        </div>
+
         {/* Course Level */}
         <div>
           <label className="block text-[1.9rem] mb-2 text-sm font-semibold text-right">
@@ -230,7 +224,7 @@ const CreateCourseList = ({ initialData }) => {
           <h3 className="mb-4 text-xl font-bold text-right">الوحدة</h3>
           <button
             type="button"
-            onClick={() => appendSection({ title: "", lessons: [] })}
+            onClick={() => appendSection({ title: "", description: "" })}
             className="px-4 py-2 text-white rounded-md bg-brand-200 hover:bg-brand-500"
           >
             إضافة وحدة
@@ -262,111 +256,18 @@ const CreateCourseList = ({ initialData }) => {
                   {errors.sections?.[sectionIndex]?.title.message}
                 </span>
               )}
-
-              {/* Lessons */}
-              <div className="mt-4">
-                <h5 className="mb-2 text-right">الدروس</h5>
-                <button
-                  type="button"
-                  onClick={() => appendLesson(sectionIndex)}
-                  className="px-3 py-1 text-white rounded-md bg-brand-200 hover:bg-brand-500"
-                >
-                  إضافة درس
-                </button>
-                {(lessons[sectionIndex] || []).map((lesson, lessonIndex) => (
-                  <div
-                    key={lessonIndex}
-                    className="p-3 my-2 bg-gray-200 rounded-md"
-                  >
-                    <div className="flex justify-between">
-                      <h6 className="text-right">الدرس {lessonIndex + 1}</h6>
-                      <button
-                        type="button"
-                        onClick={() => removeLesson(sectionIndex, lessonIndex)}
-                        className="px-2 py-1 text-white bg-red-500 rounded-md hover:bg-red-700"
-                      >
-                        حذف الدرس
-                      </button>
-                    </div>
-                    <input
-                      {...register(
-                        `sections.${sectionIndex}.lessons.${lessonIndex}.title`,
-                        { required: "عنوان الدرس مطلوب" }
-                      )}
-                      type="text"
-                      placeholder="عنوان الدرس"
-                      className="w-full p-2 my-2 text-right border border-gray-300 rounded-md focus:outline-none focus:border-brand-200"
-                    />
-                    {errors.sections?.[sectionIndex]?.lessons?.[lessonIndex]
-                      ?.title && (
-                      <span className="text-[1rem] text-red-500">
-                        {
-                          errors.sections?.[sectionIndex]?.lessons?.[
-                            lessonIndex
-                          ]?.title.message
-                        }
-                      </span>
-                    )}
-                    <textarea
-                      {...register(
-                        `sections.${sectionIndex}.lessons.${lessonIndex}.description`,
-                        { required: "وصف الدرس مطلوب" }
-                      )}
-                      placeholder="وصف الدرس"
-                      className="w-full p-2 my-2 text-right border border-gray-300 rounded-md focus:outline-none focus:border-brand-200"
-                    ></textarea>
-                    {errors.sections?.[sectionIndex]?.lessons?.[lessonIndex]
-                      ?.description && (
-                      <span className="text-[1rem] text-red-500">
-                        {
-                          errors.sections?.[sectionIndex]?.lessons?.[
-                            lessonIndex
-                          ]?.description.message
-                        }
-                      </span>
-                    )}
-
-                    <input
-                      {...register(
-                        `sections.${sectionIndex}.lessons.${lessonIndex}.pdfUrl`,
-                        { required: "ملف PDF مطلوب" }
-                      )}
-                      type="text"
-                      className="w-full p-2 my-2 text-right border border-gray-300 rounded-md focus:outline-none focus:border-brand-200"
-                    />
-                    {errors.sections?.[sectionIndex]?.lessons?.[lessonIndex]
-                      ?.pdfUrl && (
-                      <span className="text-[1rem] text-red-500">
-                        {
-                          errors.sections?.[sectionIndex]?.lessons?.[
-                            lessonIndex
-                          ]?.pdfUrl.message
-                        }
-                      </span>
-                    )}
-
-                    <input
-                      {...register(
-                        `sections.${sectionIndex}.lessons.${lessonIndex}.videoUrl`,
-                        { required: "رابط الفيديو مطلوب" }
-                      )}
-                      type="text"
-                      placeholder="رابط الفيديو"
-                      className="w-full p-2 my-2 text-right border border-gray-300 rounded-md focus:outline-none focus:border-brand-200"
-                    />
-                    {errors.sections?.[sectionIndex]?.lessons?.[lessonIndex]
-                      ?.videoUrl && (
-                      <span className="text-[1rem] text-red-500">
-                        {
-                          errors.sections?.[sectionIndex]?.lessons?.[
-                            lessonIndex
-                          ]?.videoUrl.message
-                        }
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
+              <textarea
+                {...register(`sections.${sectionIndex}.description`, {
+                  required: "وصف الوحدة مطلوب",
+                })}
+                placeholder="وصف الوحدة"
+                className="w-full p-3 my-2 text-right border border-gray-300 rounded-md focus:outline-none focus:border-brand-200"
+              ></textarea>
+              {errors.sections?.[sectionIndex]?.description && (
+                <span className="text-[1rem] text-red-500">
+                  {errors.sections?.[sectionIndex]?.description.message}
+                </span>
+              )}
             </div>
           ))}
         </div>
@@ -375,10 +276,24 @@ const CreateCourseList = ({ initialData }) => {
         <div className="flex justify-center">
           <button
             type="submit"
-            disabled={isCreatingCourse}
-            className="px-4 py-2 text-white rounded-md w-full  bg-brand-600 hover:bg-brand-500"
+            disabled={isCoursePending}
+            className="flex items-center justify-center w-full h-20 px-6 py-3 text-white rounded-md bg-brand-500 hover:bg-brand-400"
           >
-            {isCreatingCourse ? <CircularSize /> : "إنشاء الكورس"}
+            {isCoursePending ? (
+              <span className="flex items-center gap-2">
+                جارٍ إنشاء الكورس...
+                <CircularProgress
+                  sx={{
+                    color: "gray",
+                    "--CircularProgress-size": "0.1rem",
+                    "--CircularProgress-trackThickness": "1px",
+                    "--CircularProgress-progressThickness": "1px",
+                  }}
+                />
+              </span>
+            ) : (
+              "إنشاء كورس"
+            )}
           </button>
         </div>
       </form>

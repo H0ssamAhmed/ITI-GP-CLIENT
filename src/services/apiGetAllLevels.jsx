@@ -8,7 +8,6 @@ export const apiGetAllLevels = async () => {
     }
 
     const { data } = await response.json();
-    console.log('dataaa', data);
 
     return data;
   } catch (error) {

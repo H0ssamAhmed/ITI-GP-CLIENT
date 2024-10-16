@@ -1,8 +1,5 @@
 import axios from "axios";
-import { getCookie } from "../../helper/helper";
 
-// NOTE - Teachers Related
-// Fetch All Teachers.
 export const fetchTeachers = async () => {
   const { data } = await axios.get("http://localhost:3000/admin/teachers");
   return data.data;
@@ -19,30 +16,23 @@ export const fetchTeacherLevel = async (teacherId) => {
   }
 };
 
-// NOTE - Students Related
-// Fetch All Student.
 export const fetchStudents = async () => {
   const { data } = await axios.get(`http://localhost:3000/admin/students`);
 
   return data.data;
 };
 
-// Function to delete a user By Admin
 export const deleteUser = async (userId) => {
-  // const accessToken = getCookie("accessToken");
-
   try {
     const response = await axios.delete(
-      `http://localhost:3000/admin/user/${userId}`,
+      `http://localhost:3000/user/${userId}`,
       {
-        // Passing the token with the request
         withCredentials: true,
       }
     );
 
-    return response.data; // Return response data
+    return response.data;
   } catch (error) {
-    // Handle error responses (e.g., 403 Forbidden, 401 Unauthorized)
     if (error.response && error.response.status === 401) {
       throw new Error("Unauthorized. Please log in again.");
     } else if (error.response && error.response.status === 403) {
@@ -68,10 +58,9 @@ export const fetchUserById = async (userId) => {
   }
 };
 
-//!SECTION Level Related Requests
 export const fetchAllLevels = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/user/levels/");
+    const response = await axios.get("http://localhost:3000/user/levels");
     return response.data || [];
   } catch (error) {
     console.error("Error fetching levels:", error);
@@ -93,14 +82,12 @@ export const fetchCoursesInLevel = async (levelId) => {
 };
 
 export const createLevel = async (newLevelData) => {
-  // const token = getCookie("accessToken");
   try {
     const response = await axios.post(
       `http://localhost:3000/admin/level`,
       newLevelData,
       {
         headers: {
-          // Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         withCredentials: true,
@@ -133,27 +120,23 @@ export const deleteLevel = async (levelId) => {
   }
 };
 
-//!SECTION Get all Anouncments
 export const fetchAllAnnouncements = async () => {
   try {
-    const response =
-      (await axios.get("http://localhost:3000/user/events/")) || [];
-    if (response.data.error) {
-      // Throwing an error with the message from the backend
-      throw new Error(response.data.error);
-    }
-    return response.data || [];
+    const response = await axios.get("http://localhost:3000/user/events/");
+    return response.data;
   } catch (error) {
     console.error("Error fetching announcements:", error);
-    throw new Error(error.message || "Failed to fetch announcements");
+    throw new Error("Failed to fetch announcements");
   }
 };
+
 export const createAnnouncements = async (newData) => {
   try {
     return axios.post("http://localhost:3000/admin/event/", newData, {
       headers: {
         "Content-Type": "application/json",
       },
+
       withCredentials: true,
     });
   } catch (error) {
@@ -162,18 +145,11 @@ export const createAnnouncements = async (newData) => {
   }
 };
 
-// Pending Requests by Admin
-
-// 1 - Fetch All Requests
 export const fetchAllPendingRequests = async () => {
   try {
-    // const token = getCookie("accessToken");
     const response = await axios.get(
       "http://localhost:3000/admin/pending-teachers-courses",
       {
-        headers: {
-          // Authorization: `Bearer ${token}`, // Add Bearer token here
-        },
         withCredentials: true,
       }
     );
@@ -187,36 +163,39 @@ export const fetchAllPendingRequests = async () => {
 // Delete Pending Requests
 // DELETE Teacher Request
 export const deleteTeacherById = async (teacherId) => {
-  // const token = getCookie("accessToken");
-
   return axios.delete(
-    `http://localhost:3000/admin/delete-pending-teacher/${teacherId}`,
+    `http://localhost:3000/admin/pending-teacher/${teacherId}`,
     {
       withCredentials: true,
     }
   );
 };
 
-// DELETE Course Request
 export const deleteCourseById = async (courseId) => {
-  // const token = getCookie("accessToken");
+  try {
+    const response = await axios.delete(
+      `http://localhost:3000/admin/pending-course/${courseId}`,
+      {
+        withCredentials: true,
+      }
+    );
 
-  return axios.delete(
-    `http://localhost:3000/admin/pending-course/${courseId}`,
-    {
-      withCredentials: true,
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error Response:", error.response.data);
+      throw new Error(error.response.data.message || "Error deleting course");
+    } else {
+      console.error("Error:", error.message);
+      throw new Error("An error occurred while deleting the course");
     }
-  );
+  }
 };
 
-// VERIFY Requests
-// VERIFY Teacher Request
 export const verifyTeacherById = async (teacherId) => {
-  // const token = getCookie("accessToken");
-
   return axios.patch(
     `http://localhost:3000/admin/verify-teacher/${teacherId}`,
-    {}, // The request body can be empty or contain data as needed
+    {},
     {
       withCredentials: true,
     }
@@ -225,15 +204,10 @@ export const verifyTeacherById = async (teacherId) => {
 
 // VERIFY Course Request
 export const verifyCourseById = async (courseId) => {
-  // const token = getCookie("accessToken");
-
   return axios.patch(
     `http://localhost:3000/admin/verify-course/${courseId}`,
     {}, // The request body can be empty or contain data as needed
     {
-      headers: {
-        // Authorization: `Bearer ${token}`, // Include the token in the header
-      },
       withCredentials: true,
     }
   );
@@ -250,38 +224,80 @@ export const fetchAllCourses = async () => {
 
 // Delete Course
 export const deleteCourseId = async (courseId) => {
-  const token = getCookie("accessToken");
-
   return axios.delete(`http://localhost:3000/teacher/course/${courseId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`, // Include the token in the header
-    },
+    withCredentials: true,
   });
 };
 
-// Create Courses
+// Create Course
 export const createCourse = async (courseData) => {
   try {
-    // const token = getCookie("accessToken");
-    // console.log(token);
+    const formData = new FormData();
+
+    // Append non-file fields
+    formData.append("title", courseData.title);
+    formData.append("description", courseData.description);
+    formData.append("price", courseData.price);
+    formData.append("discountedPrice", courseData.discountedPrice);
+    formData.append("levelId", courseData.levelId);
+
+    // Append the image file separately
+    if (courseData.image) {
+      formData.append("image", courseData.image);
+    }
+
+    // Handle nested sections and lessons
+    courseData.sections.forEach((section, sectionIndex) => {
+      formData.append(`sections[${sectionIndex}][title]`, section.title);
+    });
+
     const response = await axios.post(
-      "http://localhost:3000/teacher/course",
-      courseData,
+      "http://localhost:3000/teacher/course/with-sections",
+      formData,
       {
-        headers: {
-          // Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        withCredentials: true, // Add this line
+        withCredentials: true,
       }
     );
+
     return response.data;
   } catch (error) {
     if (error.response) {
       throw error;
     } else {
       console.error(error);
-      throw new Error("حدث خطأ");
+      throw new Error("An error occurred");
+    }
+  }
+};
+
+export const createLesson = async (lessonData, sectionId) => {
+  try {
+    const formData = new FormData();
+
+    formData.append("title", lessonData.title);
+    formData.append("description", lessonData.description);
+    if (lessonData.pdfFile) {
+      formData.append("pdfFile", lessonData.pdfFile);
+    }
+    if (lessonData.videoFile) {
+      formData.append("videoFile", lessonData.videoFile);
+    }
+
+    const response = await axios.post(
+      `http://localhost:3000/teacher/course/section/lesson/${sectionId}`,
+      formData,
+      {
+        withCredentials: true,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      throw error;
+    } else {
+      console.error(error);
+      throw new Error("An error occurred");
     }
   }
 };
@@ -336,5 +352,139 @@ export const createQuiz = async (quizData) => {
   } catch (error) {
     console.error(error);
     throw new Error(error);
+  }
+};
+
+export const getTeacherCoursesById = async (teacherId) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/user/courses/teacher-courses/${teacherId}`
+    );
+
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+};
+
+export const getTeacherCourses = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/user/courses/teacher-courses`,
+      { withCredentials: true }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+};
+
+export const getCourseDetails = async (courseId) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/user/courses/details/${courseId}`
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+};
+
+// Update Course
+export const updateCourse = async (courseId, updatedCourse) => {
+  const formData = new FormData();
+  console.log(updatedCourse);
+  console.log(courseId);
+
+  // Append regular fields
+  formData.append("title", updatedCourse.title);
+  formData.append("description", updatedCourse.description);
+  formData.append("price", +updatedCourse.price);
+  formData.append("levelTitle", updatedCourse.levelTitle);
+  formData.append("teacherName", updatedCourse.teacherName);
+  updatedCourse.sections.forEach((section, sectionIndex) => {
+    formData.append(`section[${sectionIndex}][title]`, section.title);
+
+    if (section.id) {
+      formData.append(`section[${sectionIndex}][id]`, section.id);
+    }
+
+    if (section.lessons) {
+      section.lessons.forEach((lesson, lessonIndex) => {
+        formData.append(
+          `section[${sectionIndex}][lessons][${lessonIndex}][title]`,
+          lesson.title
+        );
+        formData.append(
+          `section[${sectionIndex}][lessons][${lessonIndex}][description]`,
+          lesson.description || ""
+        );
+      });
+    }
+  });
+
+  // Handle file attachments (image, pdf, video)
+  if (updatedCourse.image) {
+    formData.append("image", updatedCourse.image);
+  }
+
+  // Log formData contents for debugging
+  for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
+
+  try {
+    const response = await axios.patch(
+      `http://localhost:3000/teacher/course/${courseId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating course:", error);
+    throw error;
+  }
+};
+
+export const coursesErolledByStudents = async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:3000/student/course/enrolled/courses",
+      {
+        withCredentials: true,
+      }
+    );
+
+    return response.data || [];
+  } catch (error) {
+    console.error("Error updating course:", error);
+    throw error;
+  }
+};
+
+export const courseEnrolledByStudent = async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:3000/student/course/enrolled/courses",
+      {
+        withCredentials: true,
+      }
+    );
+
+    return response.data || [];
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      throw new Error("لايوجد كورسات");
+    }
   }
 };
