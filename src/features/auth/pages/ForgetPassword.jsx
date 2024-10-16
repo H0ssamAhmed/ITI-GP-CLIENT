@@ -6,6 +6,7 @@ import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
 import Logo from "../../../ui/Logo";
 import { Link, useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
 const ForgetPassword = () => {
   const navigate = useNavigate();
