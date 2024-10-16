@@ -1,13 +1,13 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import SignUpValidation from "../validations/SignUpValidation"; 
+import SignUpValidation from "../validations/SignUpValidation";
 import InputForm from "../components/InputForm";
 import signup from "../../../assets/Online learning-amico.svg";
 import Logo from "../../../ui/Logo";
 import { Link } from "react-router-dom";
 import { useSignup } from "../apis/authAPI";
-import { useContext, useEffect, useState } from "react"; 
-import {apiGetAllLevels} from '../../../services/apiGetAllLevels'
+import { useContext, useEffect, useState } from "react";
+import { apiGetAllLevels } from "../../../services/apiGetAllLevels";
 import SignUpContext from "../../store/signup-context";
 import { Spinner } from "@material-tailwind/react";
 export default function SignUp() {
@@ -21,11 +21,11 @@ export default function SignUp() {
     resolver: yupResolver(SignUpValidation(type)),
   });
 
-  const { mutate: signupUser, isPending :isSignupPending } = useSignup(type);
+  const { mutate: signupUser, isPending: isSignupPending } = useSignup(type);
 
   const onSubmit = async (data) => {
     try {
-      await signupUser({...data, type});
+      await signupUser({ ...data, type });
     } catch (err) {
       console.error("Signup error:", err);
     }
@@ -34,12 +34,10 @@ export default function SignUp() {
   const [selectedLevel, setSelectedLevel] = useState("");
   const [selectedSubLevel, setSelectedSubLevel] = useState("");
 
-  
- 
   useEffect(() => {
     const getAllLevels = async () => {
       const levelsData = await apiGetAllLevels();
-      console.log('levelsData:', levelsData);
+      console.log("levelsData:", levelsData);
 
       setLevel(levelsData);
     };
@@ -100,47 +98,46 @@ export default function SignUp() {
             error={errors.nationalID}
             register={register("nationalID")}
           />
-          {type === 'student' ? (
+          {type === "student" ? (
+            <>
+              <InputForm
+                label="رقم الهاتف ولي الأمر"
+                type="text"
+                placeholder="رقم الهاتف ولي الأمر"
+                error={errors.parentPhoneNumber}
+                register={register("parentPhoneNumber")}
+              />
 
-          <>
-          <InputForm
-            label="رقم الهاتف ولي الأمر"
-            type="text"
-            placeholder="رقم الهاتف ولي الأمر"
-            error={errors.parentPhoneNumber}
-            register={register("parentPhoneNumber")}
-          />
-
-          {/* Level Selection */}
-          <InputForm
-            label="المرحلة"
-            type="select"
-            placeholder="اختر المرحلة"
-            error={errors.levelId}
-            register={register("levelId", { onChange: handleLevelChange })} // Handle level change
-            options={levels.map((level) => ({
-              label: level.title,
-              value: level.id,
-            }))}
-          />
-
-          {/* Sub-level Selection (Dynamic based on selected level) */}
-          {selectedLevel && (
-            <InputForm
-              label="اختر الصف"
-              type="select"
-              placeholder="اختر الصف"
-              error={errors.subLevelId}
-              register={register("subLevelId")}
-              options={levels
-                .find((level) => level.id === selectedLevel)
-                ?.subLevels.map((sub) => ({
-                  label: sub.title,
-                  value: sub.id,
+              {/* Level Selection */}
+              <InputForm
+                label="المرحلة"
+                type="select"
+                placeholder="اختر المرحلة"
+                error={errors.levelId}
+                register={register("levelId", { onChange: handleLevelChange })} // Handle level change
+                options={levels.map((level) => ({
+                  label: level.title,
+                  value: level.id,
                 }))}
-            />
-          )}
-          </>
+              />
+
+              {/* Sub-level Selection (Dynamic based on selected level) */}
+              {selectedLevel && (
+                <InputForm
+                  label="اختر الصف"
+                  type="select"
+                  placeholder="اختر الصف"
+                  error={errors.subLevelId}
+                  register={register("subLevelId")}
+                  options={levels
+                    .find((level) => level.id === selectedLevel)
+                    ?.subLevels.map((sub) => ({
+                      label: sub.title?.replace(/^\d+-\s*/, ""),
+                      value: sub.id,
+                    }))}
+                />
+              )}
+            </>
           ) : (
             <>
               <InputForm
@@ -148,17 +145,17 @@ export default function SignUp() {
                 type="text"
                 placeholder="التخصص"
                 error={errors.specialization}
-                register={register('specialization')}
+                register={register("specialization")}
               />
               <InputForm
                 label="سنة التخرج"
                 type="text"
                 placeholder="سنة التخرج"
                 error={errors.graduationYear}
-                register={register('graduationYear')}
+                register={register("graduationYear")}
               />
               <InputForm
-                register={register('educationalQualification')}
+                register={register("educationalQualification")}
                 label="المؤهل التعليمي"
                 type="text"
                 placeholder="المؤهل التعليمي"
@@ -184,9 +181,11 @@ export default function SignUp() {
             <button
               type="submit"
               disabled={isSignupPending}
-              className={`bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-3 p-3 w-full rounded-lg ${isSignupPending ? "flex justify-center " : ""}  `}
+              className={`bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-3 p-3 w-full rounded-lg ${
+                isSignupPending ? "flex justify-center " : ""
+              }  `}
             >
-              {isSignupPending ? <Spinner  /> : "تسجيل"}
+              {isSignupPending ? <Spinner /> : "تسجيل"}
             </button>
           </div>
         </form>
