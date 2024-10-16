@@ -119,7 +119,7 @@ const Wallet = () => {
       </div>
 
       <div className="bg-white mt-36 mb-44 flex flex-col gap-4">
-        <Withdraw />
+        {/* <Withdraw /> */}
         <Deposit />
       </div>
     </>

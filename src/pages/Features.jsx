@@ -15,7 +15,7 @@ import person_3 from '../assets/FeaturesPage/person_3.jpg';
 import person_4 from '../assets/FeaturesPage/person_4.jpg';
 import LessonsSection from '../features/features/components/LessonsSection';
 import SubscriptionsSection from '../features/features/components/subscriptionsSection';
-
+import {useNavigate} from 'react-router-dom';
 const featureItems = [
   {
     icon: (
@@ -112,6 +112,11 @@ const cardDescriptions = [
 ];
 
 export default function Features() {
+  const navigate = useNavigate();
+const handleSignup = () => {
+  
+  navigate('/signup');
+}
   return (
     <>
       <motion.div
@@ -119,7 +124,7 @@ export default function Features() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         viewport={{ once: true }}
-        className="mt-52"
+        className="mt-16 pr-8"
       >
         <Grid2 container spacing={2}>
           <Grid2 size={{ xs: 12, sm: 12, md: 6 }}>
@@ -138,7 +143,8 @@ export default function Features() {
               </Typography>
               <Button
                 variant="outlined"
-                color="primary"
+                color="primary" 
+                onClick={handleSignup}
                 sx={{
                   fontSize: '2rem',
                   fontWeight: 'bold',
