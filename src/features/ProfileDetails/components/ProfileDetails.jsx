@@ -78,17 +78,20 @@ export default function ProfileDetails({ getProfileData }) {
   const { mutate, isPending: isSavingProfileData } = useMutation({
     mutationFn: updateProfileData,
     onSuccess: () => {
-      queryClient.invalidateQueries(["profileData"]);
+     
       toast.success("تم تحديث الملف الشخصي بنجاح", {
         type: "success",
-        toastId: `update-profile-success ${Date.now()}`,
+        toastId: `update-profile-success 1`,
+        onClose: () => {
+          queryClient.invalidateQueries(["profileData"]);
+        }
       });
     },
     onError: (error) => {
       console.error("Error updating Profile data:", error);
       toast.error("Failed to update profile. Please try again.", {
         type: "error",
-        toastId: "update-profile-error",
+        toastId: `update-profile-error 1`,
       });
     },
   });
@@ -101,16 +104,16 @@ export default function ProfileDetails({ getProfileData }) {
     {
       mutationFn: resetPasswordApi,
       onSuccess: () => {
-        toast.success("Password updated successfully", {
+        toast.success("تم تغيير كلمة المرور بنجاح", {
           type: "success",
-          toastId: "reset-password-success",
+          toastId: "reset-password-success 1",
         });
       },
       onError: (error) => {
         console.error("Error updating profile:", error);
-        toast.error("Failed to update password. Please try again.", {
+        toast.error("حدث خطاء اثناء تغيير كلمة المرور. الرجاء المحاولة مرة اخرى", {
           type: "error",
-          toastId: "reset-password-error",
+          toastId: "reset-password-error 1",
         });
       },
     }
@@ -361,7 +364,7 @@ export default function ProfileDetails({ getProfileData }) {
                           ...((getProfileData.profileData.role === "admin" &&
                             (detail.field === "firstName" ||
                               detail.field === "lastName" ||
-                              detail.field === "phone")) ||
+                              detail.field === "phone") || detail.field === "email") ||
                           (!isEditing && isEmptyField) ||
                           detail.field === "wallet" ||
                           detail.field === "nationalID"
@@ -456,6 +459,7 @@ export default function ProfileDetails({ getProfileData }) {
                 </Grid2>
               ))}
               <Button
+                disabled={isSavingProfileData}
                 variant="contained"
                 fullWidth
                 type={!isEditing ? "submit" : "button"}
