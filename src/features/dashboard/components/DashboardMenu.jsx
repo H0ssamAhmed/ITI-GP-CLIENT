@@ -1,5 +1,11 @@
-import { Link } from "react-router-dom";
-import { role } from "../../../lib/data";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../auth/slices/authSlice";
+import { toast } from "react-toastify";
+import {
+  clearUserRole,
+  logout as logoutAction,
+} from "../../auth/slices/authSlice.js"; // Adjust the import path as necessary
 
 const menuItems = [
   {
@@ -12,51 +18,54 @@ const menuItems = [
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
+        icon: "/src/assets/dashboard/request.png",
+        label: "طلبات المنصة",
+        href: "list/requests",
+        visible: ["admin"],
+      },
+      {
         icon: "/src/assets/dashboard/teacher.png",
         label: "المعلمين",
         href: "list/teachers",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
+
       {
         icon: "/src/assets/dashboard/student.png",
         label: "التلاميذ",
         href: "list/students",
         visible: ["admin", "teacher"],
       },
-      {
-        icon: "/src/assets/dashboard/parent.png",
-        label: "الأباء",
-        href: "list/parents",
-        visible: ["admin", "teacher"],
-      },
+
       {
         icon: "/src/assets/dashboard/subject.png",
-        label: "المواد الدراسية",
+        label: "الكورسات",
         href: "list/subjects",
         visible: ["admin"],
       },
+
       {
         icon: "/src/assets/dashboard/class.png",
         label: "الصفوف الدراسية",
         href: "list/classes",
-        visible: ["admin", "teacher"],
+        visible: ["admin"],
       },
       {
         icon: "/src/assets/dashboard/lesson.png",
-        label: "الكورسات",
+        label: "إنشاء كورس",
         href: "list/lessons",
-        visible: ["admin", "teacher"],
+        visible: ["teacher"],
       },
       {
         icon: "/src/assets/dashboard/exam.png",
-        label: "الإختبارات",
+        label: "إنشاء أختبار",
         href: "list/exams",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["teacher"],
       },
 
       {
         icon: "/src/assets/dashboard/result.png",
-        label: "النتائج",
+        label: "نتائج الإختبارات",
         href: "list/results",
         visible: ["admin", "teacher", "student", "parent"],
       },
@@ -84,23 +93,46 @@ const menuItems = [
         href: "profile",
         visible: ["admin", "teacher", "student", "parent"],
       },
-      {
-        icon: "/src/assets/dashboard/setting.png",
-        label: "الإعدادات",
-        href: "settings",
-        visible: ["admin", "teacher", "student", "parent"],
-      },
+      // {
+      //   icon: "/src/assets/dashboard/setting.png",
+      //   label: "الإعدادات",
+      //   href: "settings",
+      //   visible: ["admin", "teacher", "student", "parent"],
+      // }, to add night mode feature
       {
         icon: "/src/assets/dashboard/logout.png",
         label: "الخروج",
         href: "logout",
         visible: ["admin", "teacher", "student", "parent"],
+        isLogout: true,
       },
     ],
   },
 ];
 
 const DashboardMenu = () => {
+  const role = useSelector((state) => state.auth.role);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+
+      // Dispatch actions to clear user data in Redux
+      dispatch(logoutAction());
+      dispatch(clearUserRole());
+
+      // Show a success message
+      toast.success("تم تسجيل الخروج بنجاح");
+
+      navigate("/login");
+      // Navigate to the login page
+    } catch (error) {
+      toast.error(error.message || "An error occurred during logout.");
+    }
+  };
+
   return (
     <div>
       {menuItems.map((item) => (
@@ -110,7 +142,16 @@ const DashboardMenu = () => {
           </span>
           {item.items.map((i) => {
             if (i.visible.includes(role)) {
-              return (
+              return i.isLogout ? (
+                <button
+                  key={i.label}
+                  onClick={handleLogout}
+                  className="flex items-center justify-center gap-4 py-3 text-gray-700 rounded-md md:px-2 hover:bg-brand-100 lg:justify-start"
+                >
+                  <img src={i.icon} alt="menu-icon" className="w-10 h-10" />
+                  <span className="hidden lg:block">{i.label}</span>
+                </button>
+              ) : (
                 <Link
                   to={i.href}
                   key={i.label}

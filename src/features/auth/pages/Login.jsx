@@ -67,7 +67,7 @@ export default function Login() {
 
           <button
             type="submit"
-            className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-10 p-3 w-full rounded-lg"
+            className="w-full p-3 my-10 font-bold text-white bg-indigo-500 rounded-lg hover:bg-indigo-700"
           >
             {isLoading ? "جاري التحقق..." : "تسجيل الدخول"}
           </button>

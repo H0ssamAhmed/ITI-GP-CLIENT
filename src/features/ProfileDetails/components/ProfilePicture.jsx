@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { amber, grey, indigo } from '@mui/material/colors';
+import defaultAvatar from '../../../assets/dashboard/profileDefualt.jpg';
 
 // colors
 const amberBgColor = amber[300];
@@ -27,13 +28,14 @@ const AvatarStyled = styled(Avatar)({
   height: '100px',
   margin: '0 auto',
 });
-export default function ProfilePicture() {
+export default function ProfilePicture({ getProfileData }) {
   function handleImageUpload() {}
+
   return (
     <Grid2 size={{ xs: 12, sm: 12, md: 3 }}>
       <ProfileCard
         sx={{
-          bgcolor: grey[900],
+          bgcolor: 'rgb(67 56 202)',
           color: '#fff',
           height: '230px',
           pt: 0,
@@ -42,16 +44,16 @@ export default function ProfilePicture() {
         }}
       >
         <CardContent sx={{ position: 'relative' }}>
-          <AvatarStyled src="https://randomuser.me/api/portraits/men/1.jpg" />
+          <AvatarStyled src={getProfileData.profileData?.image ? getProfileData.profileData?.image : defaultAvatar} />
           <Typography
             variant="h4"
             align="center"
             sx={{ marginY: 2, fontFamily: 'cairo' }}
           >
-            احمد رخا
+            {`${getProfileData.profileData?.firstName ? getProfileData.profileData?.firstName : 'user'} ${getProfileData.profileData?.lastName ? getProfileData.profileData?.lastName : 'user'} `}
           </Typography>
           <Typography variant="h5" align="center" sx={{ fontFamily: 'cairo' }}>
-            مشرف
+            {getProfileData.profileData?.role ? getProfileData.profileData?.role : 'Student'}
           </Typography>
           <Typography
             variant="h5"
@@ -62,7 +64,7 @@ export default function ProfilePicture() {
               fontSize: { sx: '1.5rem', sm: '1.5rem', md: '1.5rem' },
             }}
           >
-            ahmed@example.com
+            {getProfileData.profileData?.email ? getProfileData.profileData?.email : 'email'}
           </Typography>
           <Box
             sx={{
@@ -97,29 +99,6 @@ export default function ProfilePicture() {
           </Box>
         </CardContent>
       </ProfileCard>
-
-      {/* <Button
-        variant="contained"
-        sx={{
-          fontFamily: 'cairo',
-          fontSize: '1.8rem',
-          bgcolor: amber[500],
-          color: '#000',
-          fontWeight: 'bold',
-          mt: 0.8,
-          display: 'block',
-          width: { xs: '100%', sm: '40%', md: '100%' },
-          border: '1px solid #000',
-          mx: 'auto',
-          '&:hover': {
-            bgcolor: amber[600],
-            color: '#000',
-          },
-        }}
-        fullWidth
-      >
-        تغيير الصورة
-      </Button> */}
     </Grid2>
   );
 }

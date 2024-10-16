@@ -1,14 +1,58 @@
-import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "react-toastify";
+import { createCourse, fetchAllLevels } from "../dashboardAPI";
+import CircularSize from "../../../ui/CircularSize";
 
-const CreateCourseList = () => {
+const CreateCourseList = ({ initialData }) => {
+  const [levels, setLevels] = useState([]);
+  const {
+    mutate: createCourseMutate,
+    isLoading: isCreatingCourse,
+    isError: isErrorCourse,
+  } = useMutation({
+    mutationFn: createCourse,
+    onSuccess: () => {
+      toast.warn("تم إنشاء الكورس وسيتم مراجعته وموافاتك بالرد");
+    },
+    onError: (error) => {
+      if (error.response) {
+        const statusCode = error.response.status;
+
+        if (statusCode === 409) {
+          // Handle duplicate course error (conflict)
+          toast.error("هذا الكورس موجود بالفعل");
+        } else if (error.response.data) {
+          // Specific backend error message
+          const backendErrorMessage = error.response.data.error;
+          toast.error(backendErrorMessage);
+        } else {
+          // General error message
+          toast.error("حدث خطأ أثناء إنشاء الكورس");
+        }
+      } else {
+        toast.error("حدث خطأ غير متوقع");
+      }
+    },
+  });
+
   const {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      title: initialData?.title || "",
+      description: initialData?.description || "",
+      price: initialData?.price || "",
+      discountedPrice: initialData?.discountedPrice || "",
+      levelId: initialData?.levelId || "",
+      sections: initialData?.sections || [],
+    },
+  });
 
   // Field array for sections
   const {
@@ -19,45 +63,75 @@ const CreateCourseList = () => {
     control,
     name: "sections",
   });
-
-  // State to keep track of lessons for each section
-  const [lessons, setLessons] = useState({});
+  const [lessons, setLessons] = useState([[]]);
 
   const appendLesson = (sectionIndex) => {
-    const newLessons = {
-      ...lessons,
+    setLessons((prevLessons) => ({
+      ...prevLessons,
       [sectionIndex]: [
-        ...(lessons[sectionIndex] || []),
-        { lessonTitle: "", resources: [] },
+        ...(prevLessons[sectionIndex] || []),
+        { title: "", description: "", pdfUrl: "", videoUrl: "" },
       ],
-    };
-    setLessons(newLessons);
+    }));
   };
 
   const removeLesson = (sectionIndex, lessonIndex) => {
-    const newLessons = {
-      ...lessons,
-      [sectionIndex]: lessons[sectionIndex].filter(
+    setLessons((prevLessons) => ({
+      ...prevLessons,
+      [sectionIndex]: prevLessons[sectionIndex].filter(
         (_, index) => index !== lessonIndex
       ),
-    };
-    setLessons(newLessons);
+    }));
   };
 
+  useEffect(() => {
+    const getLevels = async () => {
+      try {
+        const fetchedLevels = await fetchAllLevels();
+        console.log("All level ya hossam:", fetchAllLevels);
+        // Check if fetchedLevels is an array, otherwise set it as an empty array
+        setLevels(Array.isArray(fetchedLevels.data) ? fetchedLevels.data : []);
+      } catch (error) {
+        console.error("Failed to fetch levels:", error);
+        setLevels([]); // Set to an empty array if there's an error
+      }
+    };
+
+    getLevels();
+  }, []);
+
   const onSubmit = (data) => {
-    console.log(data);
-    toast.success("تم إنشاء الدورة بنجاح!");
+    const courseData = {
+      title: data.title,
+      description: data.description,
+      price: +data.price,
+      discountedPrice: +data.discountedPrice,
+      levelId: data.levelId,
+      sections: data.sections.map((section) => ({
+        title: section.title,
+        lessons: section.lessons.map((lesson) => ({
+          title: lesson.title,
+          description: lesson.description,
+          pdfUrl: lesson.pdfUrl,
+          videoUrl: lesson.videoUrl,
+        })),
+      })),
+    };
+
+    console.log(courseData);
+    createCourseMutate(courseData);
+    reset();
   };
 
   return (
     <div className="max-w-6xl p-6 mx-auto">
-      <h2 className="mb-8 text-3xl font-bold text-right text-brand-500">
-        إنشاء كورس جديد
+      <h2 className="mb-8 text-[3rem] text-center font-bold  text-brand-500">
+        إنشاء كورس جديد 👨‍🏫
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Course Title */}
         <div>
-          <label className="block mb-2 text-[1.4rem] text-sm font-semibold text-right">
+          <label className="block mb-2 text-[1.9rem] text-sm font-semibold text-right">
             عنوان الكورس
           </label>
           <input
@@ -75,7 +149,7 @@ const CreateCourseList = () => {
 
         {/* Course Description */}
         <div>
-          <label className="block text-[1.5rem] mb-2 text-sm font-semibold text-right">
+          <label className="block text-[1.9rem] mb-2 text-sm font-semibold text-right">
             وصف الكورس
           </label>
           <textarea
@@ -90,26 +164,9 @@ const CreateCourseList = () => {
           )}
         </div>
 
-        {/* Course Preview Image */}
-        <div>
-          <label className="block text-[1.5rem] mb-2 text-sm font-semibold text-right">
-            صورة العرض
-          </label>
-          <input
-            {...register("previewImage", { required: "صورة العرض مطلوبة" })}
-            type="file"
-            className="w-full p-3 text-right border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-brand-200"
-          />
-          {errors.previewImage && (
-            <span className="text-[1rem] text-red-500">
-              {errors.previewImage.message}
-            </span>
-          )}
-        </div>
-
         {/* Course Price */}
         <div>
-          <label className="block text-[1.5rem] mb-2 text-sm font-semibold text-right">
+          <label className="block text-[1.9rem] mb-2 text-sm font-semibold text-right">
             سعر الكورس
           </label>
           <input
@@ -125,35 +182,45 @@ const CreateCourseList = () => {
           )}
         </div>
 
+        {/* Discounted Price */}
+        <div>
+          <label className="block text-[1.9rem] mb-2 text-sm font-semibold text-right">
+            السعر بعد الخصم
+          </label>
+          <input
+            {...register("discountedPrice")}
+            type="number"
+            className="w-full p-3 text-right border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-brand-200"
+            placeholder="أدخل السعر بعد الخصم"
+          />
+          {errors.discountedPrice && (
+            <span className="text-[1rem] text-red-500">
+              {errors.discountedPrice.message}
+            </span>
+          )}
+        </div>
+
         {/* Course Level */}
         <div>
-          <label className="block text-[1.5rem] mb-2 text-sm font-semibold text-right">
+          <label className="block text-[1.9rem] mb-2 text-sm font-semibold text-right">
             المستوى الدراسي
           </label>
           <select
-            {...register("level", { required: "يرجى اختيار المستوى" })}
+            {...register("levelId", { required: "يرجى اختيار المستوى" })}
             className="w-full p-3 text-right border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-brand-200"
           >
             <option value="">اختر المستوى</option>
-            <option value="الصف الاول الابتدائي">الصف الاول الابتدائي</option>
-            <option value="الصف الثاني الابتدائي">الصف الثاني الابتدائي</option>
-            <option value="الصف الثالث الابتدائي">الصف الثالث الابتدائي</option>
-            <option value="الصف الرابع الابتدائي">الصف الرابع الابتدائي</option>
-            <option value="الصف الخامس الابتدائي">الصف الخامس الابتدائي</option>
-            <option value="الصف السادس الابتدائي">الصف السادس الابتدائي</option>
-            <option value="المرحلة الاعدادية">المرحلة الاعدادية</option>
-            <option value="الصف الاول الإعدادي">الصف الاول الإعدادي</option>
-            <option value="الصف الثاني الإعدادي">الصف الثاني الإعدادي</option>
-            <option value="الصف الثالث الاعدادي">الصف الثالث الاعدادي</option>
-            <option value="المرحلة الثانوية">المرحلة الثانوية</option>
-            <option value="الصف الاول الثانوي">الصف الاول الثانوي</option>
-            <option value="الصف الثاني الثانوي">الصف الثاني الثانوي</option>
-            <option value="الصف الثالث الثانوي">الصف الثالث الثانوي</option>
-            {/* Add course levels here */}
+            {levels.map((level) =>
+              level.subLevels.map((subLevel) => (
+                <option key={subLevel.id} value={subLevel.id}>
+                  {subLevel.title}
+                </option>
+              ))
+            )}
           </select>
-          {errors.level && (
+          {errors.levelId && (
             <span className="text-[1rem] text-red-500">
-              {errors.level.message}
+              {errors.levelId.message}
             </span>
           )}
         </div>
@@ -163,169 +230,157 @@ const CreateCourseList = () => {
           <h3 className="mb-4 text-xl font-bold text-right">الوحدة</h3>
           <button
             type="button"
-            onClick={() => appendSection({ sectionTitle: "", lessons: [] })}
+            onClick={() => appendSection({ title: "", lessons: [] })}
             className="px-4 py-2 text-white rounded-md bg-brand-200 hover:bg-brand-500"
           >
             إضافة وحدة
           </button>
           {sectionFields.map((section, sectionIndex) => (
-            <div
-              key={section.id}
-              className="p-4 mt-4 border border-gray-300 rounded-md"
-            >
-              <div>
-                <label className="block mb-2 text-sm font-semibold text-right">
-                  عنوان الوحدة
-                </label>
-                <input
-                  {...register(`sections.${sectionIndex}.sectionTitle`, {
-                    required: "العنوان مطلوب",
-                  })}
-                  type="text"
-                  className="w-full p-3 text-right border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-brand-200"
-                  placeholder="أدخل عنوان الوحدة"
-                />
-                {errors.sections?.[sectionIndex]?.sectionTitle && (
-                  <span className="text-[1rem] text-red-500">
-                    {errors.sections[sectionIndex].sectionTitle.message}
-                  </span>
-                )}
-              </div>
-
-              {/* Lessons */}
-              <div className="mt-4">
-                <h4 className="mb-2 text-lg font-semibold text-right">
-                  الدروس
+            <div key={section.id} className="p-4 my-4 bg-gray-100 rounded-md">
+              <div className="flex justify-between">
+                <h4 className="text-lg font-bold text-right">
+                  الوحدة {sectionIndex + 1}
                 </h4>
                 <button
                   type="button"
+                  onClick={() => removeSection(sectionIndex)}
+                  className="px-2 py-1 text-white bg-red-500 rounded-md hover:bg-red-700"
+                >
+                  حذف الوحدة
+                </button>
+              </div>
+              <input
+                {...register(`sections.${sectionIndex}.title`, {
+                  required: "عنوان الوحدة مطلوب",
+                })}
+                type="text"
+                placeholder="عنوان الوحدة"
+                className="w-full p-3 my-2 text-right border border-gray-300 rounded-md focus:outline-none focus:border-brand-200"
+              />
+              {errors.sections?.[sectionIndex]?.title && (
+                <span className="text-[1rem] text-red-500">
+                  {errors.sections?.[sectionIndex]?.title.message}
+                </span>
+              )}
+
+              {/* Lessons */}
+              <div className="mt-4">
+                <h5 className="mb-2 text-right">الدروس</h5>
+                <button
+                  type="button"
                   onClick={() => appendLesson(sectionIndex)}
-                  className="px-2 py-1 text-white bg-green-500 rounded-md"
+                  className="px-3 py-1 text-white rounded-md bg-brand-200 hover:bg-brand-500"
                 >
                   إضافة درس
                 </button>
-                <div className="mt-2">
-                  {(lessons[sectionIndex] || []).map((lesson, lessonIndex) => (
-                    <div
-                      key={lessonIndex}
-                      className="p-2 mt-2 border border-gray-300 rounded-md"
-                    >
-                      <div>
-                        <label className="block mb-2 text-sm font-semibold text-right">
-                          عنوان الدرس
-                        </label>
-                        <input
-                          {...register(
-                            `sections.${sectionIndex}.lessons.${lessonIndex}.lessonTitle`,
-                            { required: "العنوان مطلوب" }
-                          )}
-                          type="text"
-                          className="w-full p-3 text-right border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-brand-200"
-                          placeholder="أدخل عنوان الدرس"
-                        />
-                        {errors.sections?.[sectionIndex]?.lessons?.[lessonIndex]
-                          ?.lessonTitle && (
-                          <span className="text-[1rem] text-red-500">
-                            {
-                              errors.sections[sectionIndex].lessons[lessonIndex]
-                                .lessonTitle.message
-                            }
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Resources */}
-                      <div className="mt-4">
-                        <h5 className="mb-2 font-semibold text-right text-md">
-                          المحتوى
-                        </h5>
-                        <div>
-                          <label className="block text-[1.5rem] mb-2 text-sm font-semibold text-right">
-                            تحميل ملف PDF
-                          </label>
-                          <input
-                            {...register(
-                              `sections.${sectionIndex}.lessons.${lessonIndex}.lessonPDF`,
-                              {
-                                required: "ملف PDF مطلوب",
-                              }
-                            )}
-                            type="file"
-                            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-brand-200"
-                          />
-                          {errors.sections?.[sectionIndex]?.lessons?.[
-                            lessonIndex
-                          ]?.lessonPDF && (
-                            <span className="text-[1rem] text-red-500">
-                              {
-                                errors.sections[sectionIndex].lessons[
-                                  lessonIndex
-                                ].lessonPDF.message
-                              }
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Lesson Videos */}
-                        <div>
-                          <label className="block text-[1.5rem] mb-2 text-sm font-semibold text-right">
-                            تحميل الفيديو
-                          </label>
-                          <input
-                            {...register(
-                              `sections.${sectionIndex}.lessons.${lessonIndex}.lessonVideo`,
-                              {
-                                required: "الفيديو مطلوب",
-                              }
-                            )}
-                            type="file"
-                            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-brand-200"
-                          />
-                          {errors.sections?.[sectionIndex]?.lessons?.[
-                            lessonIndex
-                          ]?.lessonVideo && (
-                            <span className="text-[1rem] text-red-500">
-                              {
-                                errors.sections[sectionIndex].lessons[
-                                  lessonIndex
-                                ].lessonVideo.message
-                              }
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Remove Lesson Button */}
+                {(lessons[sectionIndex] || []).map((lesson, lessonIndex) => (
+                  <div
+                    key={lessonIndex}
+                    className="p-3 my-2 bg-gray-200 rounded-md"
+                  >
+                    <div className="flex justify-between">
+                      <h6 className="text-right">الدرس {lessonIndex + 1}</h6>
                       <button
                         type="button"
                         onClick={() => removeLesson(sectionIndex, lessonIndex)}
-                        className="p-[0.45rem] text-[1.5rem] mt-4 mb-4 text-left text-white bg-red-500 hover:bg-red-400 rounded-md"
+                        className="px-2 py-1 text-white bg-red-500 rounded-md hover:bg-red-700"
                       >
                         حذف الدرس
                       </button>
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <input
+                      {...register(
+                        `sections.${sectionIndex}.lessons.${lessonIndex}.title`,
+                        { required: "عنوان الدرس مطلوب" }
+                      )}
+                      type="text"
+                      placeholder="عنوان الدرس"
+                      className="w-full p-2 my-2 text-right border border-gray-300 rounded-md focus:outline-none focus:border-brand-200"
+                    />
+                    {errors.sections?.[sectionIndex]?.lessons?.[lessonIndex]
+                      ?.title && (
+                      <span className="text-[1rem] text-red-500">
+                        {
+                          errors.sections?.[sectionIndex]?.lessons?.[
+                            lessonIndex
+                          ]?.title.message
+                        }
+                      </span>
+                    )}
+                    <textarea
+                      {...register(
+                        `sections.${sectionIndex}.lessons.${lessonIndex}.description`,
+                        { required: "وصف الدرس مطلوب" }
+                      )}
+                      placeholder="وصف الدرس"
+                      className="w-full p-2 my-2 text-right border border-gray-300 rounded-md focus:outline-none focus:border-brand-200"
+                    ></textarea>
+                    {errors.sections?.[sectionIndex]?.lessons?.[lessonIndex]
+                      ?.description && (
+                      <span className="text-[1rem] text-red-500">
+                        {
+                          errors.sections?.[sectionIndex]?.lessons?.[
+                            lessonIndex
+                          ]?.description.message
+                        }
+                      </span>
+                    )}
 
-              {/* Remove Section Button */}
-              <button
-                type="button"
-                onClick={() => removeSection(sectionIndex)}
-                className="p-[0.45rem] text-[1.5rem] mt-5 mb-5 text-left text-white bg-red-500 hover:bg-red-400 rounded-md ring-0"
-              >
-                حذف الوحدة
-              </button>
+                    <input
+                      {...register(
+                        `sections.${sectionIndex}.lessons.${lessonIndex}.pdfUrl`,
+                        { required: "ملف PDF مطلوب" }
+                      )}
+                      type="text"
+                      className="w-full p-2 my-2 text-right border border-gray-300 rounded-md focus:outline-none focus:border-brand-200"
+                    />
+                    {errors.sections?.[sectionIndex]?.lessons?.[lessonIndex]
+                      ?.pdfUrl && (
+                      <span className="text-[1rem] text-red-500">
+                        {
+                          errors.sections?.[sectionIndex]?.lessons?.[
+                            lessonIndex
+                          ]?.pdfUrl.message
+                        }
+                      </span>
+                    )}
+
+                    <input
+                      {...register(
+                        `sections.${sectionIndex}.lessons.${lessonIndex}.videoUrl`,
+                        { required: "رابط الفيديو مطلوب" }
+                      )}
+                      type="text"
+                      placeholder="رابط الفيديو"
+                      className="w-full p-2 my-2 text-right border border-gray-300 rounded-md focus:outline-none focus:border-brand-200"
+                    />
+                    {errors.sections?.[sectionIndex]?.lessons?.[lessonIndex]
+                      ?.videoUrl && (
+                      <span className="text-[1rem] text-red-500">
+                        {
+                          errors.sections?.[sectionIndex]?.lessons?.[
+                            lessonIndex
+                          ]?.videoUrl.message
+                        }
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
 
-        <button
-          type="submit"
-          className="w-full px-4 py-2 text-white rounded-md bg-brand-600 hover:bg-brand-500"
-        >
-          إنشاء الدورة
-        </button>
+        {/* Submit Button */}
+        <div className="flex justify-center">
+          <button
+            type="submit"
+            disabled={isCreatingCourse}
+            className="px-4 py-2 text-white rounded-md w-full  bg-brand-600 hover:bg-brand-500"
+          >
+            {isCreatingCourse ? <CircularSize /> : "إنشاء الكورس"}
+          </button>
+        </div>
       </form>
     </div>
   );

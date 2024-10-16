@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const InputForm = ({ label, type, placeholder, error, register, options }) => {
   const [showPassword, setShowPassword] = useState(false);
+  console.log('optionsssss', options);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -14,11 +15,12 @@ const InputForm = ({ label, type, placeholder, error, register, options }) => {
         {label}
       </label>
       <div className="relative w-full ">
-        {type === "select" ? (
+        {type === 'select' ? (
           <select
             {...register}
-            className={`shadow text-right appearance-none border rounded-xl w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error ? "border-red-500" : ""
-              }`}
+            className={`shadow text-right appearance-none border rounded-xl w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              error ? 'border-red-500' : ''
+            }`}
           >
             <option value="">{placeholder}</option>
             {options &&
@@ -31,13 +33,14 @@ const InputForm = ({ label, type, placeholder, error, register, options }) => {
         ) : (
           <>
             <input
-              type={type === "password" && showPassword ? "text" : type}
+              type={type === 'password' && showPassword ? 'text' : type}
               placeholder={placeholder}
               {...register}
-              className={`shadow text-right appearance-none border rounded-xl w-[100%] p-4   text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error ? "border-red-500" : ""
-                }`}
+              className={`shadow text-right appearance-none border rounded-xl w-[100%] p-4   text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                error ? 'border-red-500' : ''
+              }`}
             />
-            {type === "password" && (
+            {type === 'password' && (
               <span
                 onClick={togglePasswordVisibility}
                 className="absolute inset-y-0 left-3 flex items-center cursor-pointer"

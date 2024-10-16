@@ -6,23 +6,25 @@ import signup from "../../../assets/Online learning-amico.svg";
 import Logo from "../../../ui/Logo";
 import { Link } from "react-router-dom";
 import { useSignup } from "../apis/authAPI";
-import { useState } from "react"; 
-import {  ToastContainer } from "react-toastify";
-
+import { useContext, useEffect, useState } from "react"; 
+import {apiGetAllLevels} from '../../../services/apiGetAllLevels'
+import SignUpContext from "../../store/signup-context";
 export default function SignUp() {
+  const [levels, setLevel] = useState([]);
+  const { type } = useContext(SignUpContext);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(SignUpValidation),
+    resolver: yupResolver(SignUpValidation(type)),
   });
 
-  const { mutate: signupUser, isLoading } = useSignup();
+  const { mutate: signupUser, isLoading } = useSignup(type);
 
   const onSubmit = async (data) => {
     try {
-      await signupUser(data);
+      await signupUser({...data, type});
     } catch (err) {
       console.error("Signup error:", err);
     }
@@ -31,45 +33,54 @@ export default function SignUp() {
   const [selectedLevel, setSelectedLevel] = useState("");
   const [selectedSubLevel, setSelectedSubLevel] = useState("");
 
-  const levelsData = [
-    {
-      id: "17fcf78b-aeb1-48ac-8044-555c5a413fb9",
-      title: "المرحله الثانوية",
-      subLevels: [
-        {
-          id: "17fcf78b-aeb1-48ac-8044-555c5a413fb9",
-          title: "الصف الاول الثانوي",
-        },
-        {
-          id: "a8dea5b4-ca88-4884-be18-7748387f6cfb",
-          title: "الصف الثالث الثانوي",
-        },
-        {
-          id: "db311981-84e9-4877-96eb-8944ce59e2e1",
-          title: "الصف الثاني الثانوي",
-        },
-      ],
-    },
-    {
-      id: "5a073624-80c6-4570-8288-7e270bc87ff3",
-      title: "المرحله الاعدادية",
-      subLevels: [
-        {
-          id: "70c99a0a-d19a-4c1d-baff-581b01c83243",
-          title: "الصف الاول الأعدادي",
-        },
-        {
-          id: "7f494b20-9e6e-45f8-9b63-860602176628",
-          title: "الصف الثاني الأعدادي",
-        },
-        {
-          id: "f569d4ce-30da-4250-ae86-5bf7b0aa6dd8",
-          title: "الصف الثالث الأعدادي",
-        },
-      ],
-    },
-  ];
+  
+  //   {
+  //     id: "17fcf78b-aeb1-48ac-8044-555c5a413fb9",
+  //     title: "المرحله الثانوية",
+  //     subLevels: [
+  //       {
+  //         id: "17fcf78b-aeb1-48ac-8044-555c5a413fb9",
+  //         title: "الصف الاول الثانوي",
+  //       },
+  //       {
+  //         id: "a8dea5b4-ca88-4884-be18-7748387f6cfb",
+  //         title: "الصف الثالث الثانوي",
+  //       },
+  //       {
+  //         id: "db311981-84e9-4877-96eb-8944ce59e2e1",
+  //         title: "الصف الثاني الثانوي",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     id: "dc0d414b-4327-4a33-a3f4-85d88878aa44",
+  //     title: "المرحله الاعدادية",
+  //     subLevels: [
+  //       {
+  //         id: "70c99a0a-d19a-4c1d-baff-581b01c83243",
+  //         title: "الصف الاول الأعدادي",
+  //       },
+  //       {
+  //         id: "eb773da2-30c6-43be-a8de-7e676ee58eb4",
+  //         title: "الصف الثاني الأعدادي",
+  //       },
+  //       {
+  //         id: "f569d4ce-30da-4250-ae86-5bf7b0aa6dd8",
+  //         title: "الصف الثالث الأعدادي",
+  //       },
+  //     ],
+  //   },
+  // ];
 
+  useEffect(() => {
+    const getAllLevels = async () => {
+      const levelsData = await apiGetAllLevels();
+      console.log('levelsData:', levelsData);
+
+      setLevel(levelsData);
+    };
+    getAllLevels();
+  }, []);
   const handleLevelChange = (e) => {
     const selected = e.target.value;
     setSelectedLevel(selected);
@@ -125,6 +136,9 @@ export default function SignUp() {
             error={errors.nationalID}
             register={register("nationalID")}
           />
+          {type === 'student' ? (
+
+          <>
           <InputForm
             label="رقم الهاتف ولي الأمر"
             type="text"
@@ -140,7 +154,7 @@ export default function SignUp() {
             placeholder="اختر المرحلة"
             error={errors.levelId}
             register={register("levelId", { onChange: handleLevelChange })} // Handle level change
-            options={levelsData.map((level) => ({
+            options={levels.map((level) => ({
               label: level.title,
               value: level.id,
             }))}
@@ -154,7 +168,7 @@ export default function SignUp() {
               placeholder="اختر الصف"
               error={errors.subLevelId}
               register={register("subLevelId")}
-              options={levelsData
+              options={levels
                 .find((level) => level.id === selectedLevel)
                 ?.subLevels.map((sub) => ({
                   label: sub.title,
@@ -162,7 +176,32 @@ export default function SignUp() {
                 }))}
             />
           )}
-
+          </>
+          ) : (
+            <>
+              <InputForm
+                label="التخصص"
+                type="text"
+                placeholder="التخصص"
+                error={errors.specialization}
+                register={register('specialization')}
+              />
+              <InputForm
+                label="سنة التخرج"
+                type="text"
+                placeholder="سنة التخرج"
+                error={errors.graduationYear}
+                register={register('graduationYear')}
+              />
+              <InputForm
+                register={register('educationalQualification')}
+                label="المؤهل التعليمي"
+                type="text"
+                placeholder="المؤهل التعليمي"
+                error={errors.educationalQualification}
+              />
+            </>
+          )}
           <InputForm
             label="كلمة المرور"
             type="password"
@@ -198,7 +237,6 @@ export default function SignUp() {
         alt="signup"
         className="w-[30%] object-contain hidden lg:block"
       />
-      <ToastContainer />
     </div>
   );
 }
