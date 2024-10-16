@@ -65,17 +65,7 @@ function App() {
   };
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={true} // For right-to-left text alignment
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+     
       <SignUpContext.Provider value={{ type, handleTypeChange }}>
         <Router>
           <Routes>

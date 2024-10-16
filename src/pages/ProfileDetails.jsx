@@ -3,7 +3,7 @@ import ProfilePicture from '../features/ProfileDetails/components/ProfilePicture
 import ProfileDetails from '../features/ProfileDetails/components/ProfileDetails';
 import { useQuery } from '@tanstack/react-query';
 import { getProfileData } from '../services/apiGetProfileDetails';
-
+import ErrorBoundary from '../errors/ErrorBoundary';
 export default function ProfilePage() {
   const {
     isPending: isFetchingProfileData,
@@ -15,6 +15,7 @@ export default function ProfilePage() {
   }); 
   
   return (
+    <ErrorBoundary>
     <Box
       sx={{
         py: 6,
@@ -36,5 +37,6 @@ export default function ProfilePage() {
         }} />
       </Grid2>
     </Box>
+    </ErrorBoundary>
   );
 }
