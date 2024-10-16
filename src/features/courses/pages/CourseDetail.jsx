@@ -9,30 +9,35 @@ import { Rating, Skeleton, Stack, Typography } from "@mui/material";
 import { ContentPasteSearchOutlined, Description } from "@mui/icons-material";
 import { getCurrentUser } from "../../../services/currentUser";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const CourseDetail = () => {
+  const { courseId } = useParams();
   const [value, setValue] = useState(0);
   const [loadingBuying, setLoadingBuying] = useState(false);
-  const queryClient = useQueryClient();
-  const { courseId } = useParams();
   const [course, setCourse] = useState();
   const [isUserEnroled, setIsUserEnroled] = useState(false);
   const [showConfirmBuying, setShowConfirmBuying] = useState(false);
+  const queryClient = useQueryClient();
+  const allUserCourses = useSelector((state) => state.userCcourses)
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['courseDetaials'],
-    queryFn: () => getCourseDetails(courseId)
-  });
+  console.log(allUserCourses);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => getCurrentUser()
   });
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['courseDetaials'],
+    queryFn: () => getCourseDetails(courseId)
+  });
+
 
   const { data: userCourses } = useQuery({
     queryKey: ['userCourses'],
     queryFn: () => getCurrentUserCourses()
   });
+  console.log(data?.data);
 
   const { mutate, isLoading: buyLoading } = useMutation({
     mutationFn: () => buyACourse(courseId, user?.data.id),
@@ -63,11 +68,7 @@ const CourseDetail = () => {
     },
   });
   const handelRating = (e) => {
-    // console.log(data.data)
     setValue(e.target.value);
-    // console.log(e.target.value)
-    // console.log(courseId)
-    // console.log(user?.data.id)
     const data = {
       rate: e.target.value,
       comment: "comment",
@@ -77,7 +78,6 @@ const CourseDetail = () => {
     RatingCourse(data)
 
   }
-
   const { mutate: RatingCourse } = useMutation({
     mutationFn: (rate) => giveRate(rate),
     onSuccess: (data, variables, context) => {

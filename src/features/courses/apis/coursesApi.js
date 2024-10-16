@@ -56,12 +56,12 @@ export const GetSectionQuiz = async (sectionId) => {
 
 export const sendQuizAns = async (quizData) => {
   try {
-    const postQuiz = await axios.post(`${base_url}/student/quiz/take-quiz`, quizData, { withCredentials: true })
-    return postQuiz
+    const postQuiz = await axios.post(`${base_url}/student/quiz/take-quiz`, quizData, { withCredentials: true });
+    return postQuiz;
   } catch (error) {
-    throw new Error(error.response);
+    throw new Error(error.response?.data?.message || 'Something went wrong');
   }
-}
+};
 
 export const getCurrentUserCourses = async () => {
   try {

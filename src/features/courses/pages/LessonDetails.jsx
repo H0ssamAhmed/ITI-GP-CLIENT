@@ -58,7 +58,7 @@ function LessonDetails() {
         }
       })
     })
-  }, [data, lessonId])
+  }, [data, lessonId, userCourses, user])
 
 
   if (coursesLaoding || userLoading) {
@@ -154,46 +154,47 @@ function LessonDetails() {
         </>
       }
 
-      <div className='container mx-auto'>
-        <div className=" grid grid-cols-12 gap-4">
-          <section className="col-span-12 md:col-span-9 grid-cols-subgrid">
-            <VideoEmbed url={videoUrl} />
-            <div className="flex items-center justify-between mx-4">
-              <p className="my-8 ms-4 font-bold">{lessonTitle}</p>
-              <a download={pdfUrl} className="bg-brand-500  hover:bg-brand-400 text-white  cursor-pointer px-2 py-1 rounded-md">
-                تحميل الدرس PDF
-              </a>
-            </div>
-            <div className="flex justify-between mx-4">
-              <div
-                onClick={(e) => goToLesson(e, "next")}
-                className="w-fit text-[16px] flex items-center gap-4 bg-brand-500  hover:bg-brand-400 text-white  rounded-xl px-8  p-2">
-                <FaArrowRight />
-                <Button children="الدرس التالي" />
+      {isUserEnroled &&
+        <div className='container mx-auto'>
+          <div className=" grid grid-cols-12 gap-4">
+            <section className="col-span-12 md:col-span-9 grid-cols-subgrid">
+              <VideoEmbed url={videoUrl} />
+              <div className="flex items-center justify-between mx-4">
+                <p className="my-8 ms-4 font-bold">{lessonTitle}</p>
+                <a download={pdfUrl} className="bg-brand-500  hover:bg-brand-400 text-white  cursor-pointer px-2 py-1 rounded-md">
+                  تحميل الدرس PDF
+                </a>
               </div>
-              <div
-                onClick={(e) => goToLesson(e, "prev")}
+              <div className="flex justify-between mx-4">
+                <div
+                  onClick={(e) => goToLesson(e, "next")}
+                  className="w-fit text-[16px] flex items-center gap-4 bg-brand-500  hover:bg-brand-400 text-white  rounded-xl px-8  p-2">
+                  <FaArrowRight />
+                  <Button children="الدرس التالي" />
+                </div>
+                <div
+                  onClick={(e) => goToLesson(e, "prev")}
 
-                className="w-fit text-[16px] flex items-center gap-4 bg-brand-500  hover:bg-brand-400 text-white  rounded-xl px-8 p-2">
-                <Button children="الدرس السابق" />
-                <FaArrowLeft />
+                  className="w-fit text-[16px] flex items-center gap-4 bg-brand-500  hover:bg-brand-400 text-white  rounded-xl px-8 p-2">
+                  <Button children="الدرس السابق" />
+                  <FaArrowLeft />
+                </div>
               </div>
-            </div>
-          </section>
-          <nav className="taegetNav col-span-12 md:col-span-3 bg-brand-100 h-fit max-h-[300px] md:max-h-[550px] overflow-y-scroll py-2 align-middle  my-4 border border-brand-500 rounded-lg">
-            <div className="h-full ">
-              {courseData?.sections?.map((section, index) => (
-                <AccrdionModule
-                  key={index}
-                  index={index + 1}
-                  section={section}
-                />)
-              )}
-            </div>
-          </nav>
+            </section>
+            <nav className="taegetNav col-span-12 md:col-span-3 bg-brand-100 h-fit max-h-[300px] md:max-h-[550px] overflow-y-scroll py-2 align-middle  my-4 border border-brand-500 rounded-lg">
+              <div className="h-full ">
+                {courseData?.sections?.map((section, index) => (
+                  <AccrdionModule
+                    key={index}
+                    index={index + 1}
+                    section={section}
+                  />)
+                )}
+              </div>
+            </nav>
+          </div>
         </div>
-      </div>
-
+      }
     </main>
   )
 }
