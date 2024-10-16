@@ -1,22 +1,39 @@
 import { useState } from "react";
-import { RiDeleteBinLine } from "react-icons/ri"; // Importing the icon
+import { RiDeleteBinLine } from "react-icons/ri";
 import TeacherForm from "./forms/TeacherForm";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { deleteUser } from "../dashboardAPI";
 
-const FormModal = ({ table, type, data, id }) => {
-  const size = type === "create" ? "w-9 h-9" : "w-10 h-10";
+const FormModal = ({ table, type, id, queryKey }) => {
+  const queryClient = useQueryClient();
+  const { isLoading: isDeleting, mutate } = useMutation({
+    mutationFn: () => deleteUser(id),
+    onSuccess: () => {
+      toast.success(`تم حذف ${table} بنجاح`);
+      queryClient.invalidateQueries([`${queryKey}`]);
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const handleDelete = () => {
+    mutate();
+  };
+
+  const size = type === "create" ? "text-[1.6rem]" : "text-[1.6rem]";
   const bgColor =
     type === "create"
       ? "bg-yellow-200"
       : type === "update"
-      ? "bg-brand-200"
-      : "bg-red-400";
+      ? "bg-blue-200"
+      : "";
 
   const hoverColor =
     type === "create"
-      ? "hover:shadow-lg hover:bg-yellow-100"
+      ? "hover:bg-yellow-100"
       : type === "update"
-      ? "hover:bg-brand-100 hover:shadow-lg"
-      : "hover:bg-red-200 hover:shadow-lg";
+      ? "hover:bg-blue-100 "
+      : "hover:text-red-200 ";
 
   const typeToImage = {
     create: "create.png",
@@ -27,12 +44,22 @@ const FormModal = ({ table, type, data, id }) => {
 
   const Form = () => {
     return type === "delete" ? (
-      <form className="flex flex-col items-center gap-6 p-6 text-center">
-        <span className="text-lg font-semibold">
+      <form
+        className="flex flex-col items-center gap-6 p-8 text-center"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleDelete();
+          setOpen(false);
+        }}
+      >
+        <span className="text-lg font-semibold text-gray-800">
           سيتم حذف جميع البيانات، هل أنت متأكد أنك تريد حذف {table}؟
         </span>
-        <button className="px-6 py-3 text-white transition duration-300 bg-red-600 rounded-md shadow-md hover:bg-red-500">
-          حذف
+        <button
+          disabled={isDeleting}
+          className="px-6 py-3 text-white transition duration-300 bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-300"
+        >
+          {isDeleting ? "جار الحذف..." : "حذف"}
         </button>
       </form>
     ) : (
@@ -44,14 +71,16 @@ const FormModal = ({ table, type, data, id }) => {
     <>
       <button
         onClick={() => setOpen(true)}
-        className={` ${size} ${hoverColor} rounded-full flex items-center justify-center hover:shadow-lg transition-shadow duration-300 ease-in-out ${bgColor}`}
+        className={` ${size} flex items-center justify-center p-2 rounded-md  transition-shadow duration-300 ease-in-out ${bgColor}`}
       >
         {type === "delete" ? (
-          <RiDeleteBinLine className="w-5 h-5 text-black" />
+          <RiDeleteBinLine
+            className={`text-red-500 ${size} ${hoverColor} transition-all duration-300 ease-in-out`}
+          />
         ) : (
           <img
             className="w-7 h-7"
-            alt=""
+            alt="actionIcons"
             src={`/src/assets/dashboard/${typeToImage[type]}`}
           />
         )}
@@ -61,22 +90,36 @@ const FormModal = ({ table, type, data, id }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* Overlay */}
           <div
-            className="absolute inset-0 bg-black opacity-50"
+            className="absolute inset-0 bg-gray-800 opacity-70"
             onClick={() => setOpen(false)}
           ></div>
 
           {/* Modal */}
-          <div className="relative z-10 p-6 bg-white rounded-lg shadow-lg w-[90%] md:w-[70%] lg:w-[50%] space-y-4">
-            <Form />
-            <div
-              className="absolute cursor-pointer top-4 right-4"
-              onClick={() => setOpen(false)}
-            >
-              <img
-                src="/src/assets/dashboard/close.png"
-                alt="closeicon"
-                className="w-5 h-5"
-              />
+          <div className="relative z-20 flex items-center justify-center w-full p-6 md:w-1/2 lg:w-1/3 bg-white rounded-lg shadow-lg transition-all duration-300 ease-in-out">
+            <div className="relative p-6 space-y-6">
+              {/* Form */}
+              <Form />
+
+              {/* Close Icon */}
+              <div
+                className="absolute top-4 right-4 text-gray-400 transition-colors duration-200 cursor-pointer hover:text-gray-600"
+                onClick={() => setOpen(false)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
         </div>

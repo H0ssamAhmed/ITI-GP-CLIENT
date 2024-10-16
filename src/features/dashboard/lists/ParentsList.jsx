@@ -39,7 +39,7 @@ const columns = [
 ];
 
 const ParentsList = () => {
-  const rednderRow = (item) => (
+  const renderRow = (item) => (
     <tr
       className="text-[1rem] hover:bg-brand-50 cursor-default even:bg-gray-50 border-b border-gray-200"
       key={item.id}
@@ -58,7 +58,6 @@ const ParentsList = () => {
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal table="parent" type="update" data={item} />
               <FormModal table="parent" type="delete" id={item.id} />
             </>
           )}
@@ -100,7 +99,7 @@ const ParentsList = () => {
       <div>
         <DashboardTable
           columns={columns}
-          rednderRow={rednderRow}
+          renderRow={renderRow}
           data={parentsData}
         />
       </div>

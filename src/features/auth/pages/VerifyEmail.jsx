@@ -4,18 +4,25 @@ import LoginValidation from "../validations/LoginValidation"; // Import validati
 import InputForm from "../components/InputForm"; // Import input component
 import signup from "../../../assets/Online learning-amico.svg";
 import logo from "../../../assets/Group 3.svg";
+import { useVerifyEmailForgetPassword} from "../apis/authAPI";
+
 export default function VerifyEmail() {
   const {
-    register,
-    handleSubmit,
+    register: registerForgetPassword,
+    handleSubmit: handleSubmitForgetPassword,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(LoginValidation),
+    // resolver: yupResolver(LoginValidation),
   });
+
+  const { mutate: verifyEmailForgetPassword } = useVerifyEmailForgetPassword();
+
 
   const onSubmit = (data) => {
     console.log(data);
-  };
+    verifyEmailForgetPassword(data);
+
+ };
 
   return (
     <div className="flex flex-col lg:flex-row justify-around items-center h-screen bg-gradient-to-b from-brand-200  ">
@@ -29,18 +36,16 @@ export default function VerifyEmail() {
         </div>
 
         <form
-          onSubmit={handleSubmit(onSubmit)}
-          noValidate
+          onSubmit={handleSubmitForgetPassword(onSubmit)}
+          
           className="text-right w-[100%] "
         >
           <InputForm
             label="البريد الإلكتروني"
             type="email"
             placeholder="بريدك الإلكتروني"
-            error={errors.email}
-            register={register("email")}
+            register={registerForgetPassword("email")}
           />
-
           <button
             type="submit"
             className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold my-10 p-3  w-full rounded-lg"

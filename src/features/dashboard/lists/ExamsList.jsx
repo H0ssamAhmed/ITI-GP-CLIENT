@@ -1,11 +1,15 @@
-import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import React from "react";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createQuiz, FetchTeacherSections } from "../dashboardAPI";
+import { MdOutlineQuiz } from "react-icons/md";
+import { toast } from "react-toastify";
+import { CircularProgress } from "@mui/material";
 
-// Define Yup schema for validation
 const schema = yup.object().shape({
-  examTitle: yup.string().required("عنوان الإمتحان مطلوب"),
+  title: yup.string().required("عنوان الإمتحان مطلوب"),
   section: yup.string().required("يجب اختيار القسم"),
   duration: yup
     .number()
@@ -23,13 +27,16 @@ const schema = yup.object().shape({
           .required("الدرجة مطلوبة"),
         answers: yup
           .array()
-          .of(yup.string().required("الحقل يجب ان يحتوي على إجابة"))
+          .of(
+            yup.object().shape({
+              title: yup.string().required("الحقل يجب ان يحتوي على إجابة"),
+              isCorrect: yup
+                .boolean()
+                .required("يجب تحديد ما إذا كانت الإجابة صحيحة"),
+            })
+          )
           .min(4, "يجب على الأقل ان يتواجد اربع إجابات")
           .required("الإجابات مطلوبة"),
-        correctAnswer: yup
-          .number()
-          .integer()
-          .required("يجب إختبار اجابة صحيحة"),
       })
     )
     .min(1, "الأختبار يجب على الأقل ان يحتوي على سؤال واحد"),
@@ -40,85 +47,98 @@ const ExamsList = () => {
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors },
     setValue,
+    watch,
   } = useForm({
-    resolver: yupResolver(schema), // Use yupResolver with the schema
+    resolver: yupResolver(schema),
     defaultValues: {
-      examTitle: "",
-      section: "", // Default value for the section
-      duration: 1,
+      title: "",
+      section: "",
+      duration: 30,
       questions: [],
     },
   });
 
-  const [questions, setQuestions] = useState([]);
+  const { mutate: createQuizMutate, isLoading: isCreatingQuiz } = useMutation({
+    mutationFn: createQuiz,
+    onSuccess: () => {
+      toast.success("تم إنشاء الأمتحان بنجاح");
+      reset(); // Reset after successful creation
+    },
+    onError: () => {
+      toast.error("حدث خطأ أثناء إنشاء الأمتحان");
+    },
+  });
 
-  // Dummy data for sections coming from the backend
-  const sections = [
-    { id: "1", name: "Mathematics" },
-    { id: "2", name: "Science" },
-    { id: "3", name: "History" },
-  ];
+  const { data: teachersSections } = useQuery({
+    queryKey: ["teachersSections"],
+    queryFn: FetchTeacherSections,
+  });
 
   const addQuestion = () => {
-    setQuestions((prev) => [
-      ...prev,
-      {
-        questionTitle: "",
-        mark: 1,
-        answers: ["", "", "", ""],
-        correctAnswer: 0,
-      },
-    ]);
-  };
-
-  const handleAddQuestion = () => {
-    addQuestion();
-    setValue("questions", [...questions]);
+    const newQuestion = {
+      questionTitle: "",
+      mark: 1,
+      answers: Array(4).fill({ title: "", isCorrect: false }),
+    };
+    setValue("questions", [...watch("questions"), newQuestion]);
   };
 
   const removeQuestion = (index) => {
-    const updatedQuestions = questions.filter((_, i) => i !== index);
-    setQuestions(updatedQuestions);
-    setValue("questions", updatedQuestions); // Update form state with the new list
+    const updatedQuestions = watch("questions").filter((_, i) => i !== index);
+    setValue("questions", updatedQuestions);
   };
 
   const onSubmit = (data) => {
-    console.log("Submitted Exam:", data);
-    alert("Exam Submitted Successfully!");
+    const structuredData = {
+      title: data.title,
+      sectionId: data.section,
+      Duration: +data.duration,
+      questions: data.questions.map((q) => ({
+        questionTitle: q.questionTitle,
+        mark: q.mark,
+        answers: q.answers.map((answer) => ({
+          title: answer.title,
+          isCorrect: answer.isCorrect,
+        })),
+      })),
+    };
+
+    createQuizMutate(structuredData);
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">إنشاء امتحان</h2>
+    <div className="max-w-4xl p-6 mx-auto">
+      <h2 className="text-[2.5rem] flex items-center justify-center gap-6 font-bold mb-4">
+        إنشاء إمتحان <MdOutlineQuiz className="text-brand-500" />
+      </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* عنوان الامتحان */}
         <div className="flex flex-col">
-          <label className="font-semibold mb-2">عنوان الامتحان:</label>
+          <label className="mb-2 font-semibold">عنوان الامتحان:</label>
           <input
             type="text"
-            {...register("examTitle")}
+            {...register("title")}
             className="p-2 border border-gray-300 rounded-md"
             placeholder="أدخل عنوان الامتحان"
           />
-          {errors.examTitle && (
-            <p className="text-red-500">{errors.examTitle.message}</p>
+          {errors.title && (
+            <p className="text-red-500">{errors.title.message}</p>
           )}
         </div>
 
-        {/* اختيار القسم */}
         <div className="flex flex-col">
-          <label className="font-semibold mb-2">القسم:</label>
+          <label className="mb-2 font-semibold">الوحدة:</label>
           <select
             {...register("section")}
             className="p-2 border border-gray-300 rounded-md"
           >
-            <option value="">اختر القسم</option>
-            {sections.map((section) => (
-              <option key={section.id} value={section.name}>
-                {section.name}
+            <option value="">اختر الوحدة</option>
+            {teachersSections?.map((section) => (
+              <option key={section.id} value={section.id}>
+                {section.title}
               </option>
             ))}
           </select>
@@ -127,9 +147,8 @@ const ExamsList = () => {
           )}
         </div>
 
-        {/* مدة الامتحان */}
         <div className="flex flex-col">
-          <label className="font-semibold mb-2">المدة (بالدقائق):</label>
+          <label className="mb-2 font-semibold">المدة (بالدقائق):</label>
           <input
             type="number"
             {...register("duration")}
@@ -141,24 +160,22 @@ const ExamsList = () => {
           )}
         </div>
 
-        {/* الأسئلة */}
         <div className="space-y-6">
           <h3 className="text-xl font-semibold">الأسئلة</h3>
-          {questions.map((question, index) => (
-            <div key={index} className="bg-gray-100 p-4 rounded-md shadow-md">
+          {watch("questions")?.map((question, index) => (
+            <div key={index} className="p-4 bg-gray-100 rounded-md shadow-md">
               <QuestionComponent
                 index={index}
                 register={register}
-                control={control}
                 question={question}
                 errors={errors}
+                setValue={setValue}
+                watch={watch}
               />
-
-              {/* Delete Question Button */}
               <button
                 type="button"
                 onClick={() => removeQuestion(index)}
-                className="bg-red-500 text-white px-4 py-2 rounded-md mt-2"
+                className="px-4 py-2 mt-2 text-white bg-red-500 rounded-md"
               >
                 حذف السؤال
               </button>
@@ -166,22 +183,28 @@ const ExamsList = () => {
           ))}
         </div>
 
-        {/* زر إضافة سؤال */}
         <div className="flex gap-5">
           <button
             type="button"
-            onClick={handleAddQuestion}
-            className="bg-brand-600 text-white px-4 mr-3 py-2 rounded-md"
+            onClick={addQuestion}
+            className="px-4 py-2 mr-3 text-white rounded-md bg-brand-600"
           >
             إضافة سؤال
           </button>
 
-          {/* زر إرسال الامتحان */}
           <button
+            disabled={isCreatingQuiz}
             type="submit"
-            className="bg-green-500 text-white px-4 ml-4 py-2 rounded-md"
+            className="flex items-center justify-between gap-4 px-4 py-2 ml-4 text-white bg-green-500 rounded-md"
           >
-            إرسال الامتحان
+            {isCreatingQuiz ? (
+              <>
+                <CircularProgress size="15px" />
+                <span> جارِ الإرسال : إنشاء امتحان</span>
+              </>
+            ) : (
+              "إنشاء امتحان"
+            )}
           </button>
         </div>
       </form>
@@ -189,72 +212,77 @@ const ExamsList = () => {
   );
 };
 
-const QuestionComponent = ({ index, register, control, question, errors }) => (
-  <div>
-    {/* عنوان السؤال */}
-    <div className="flex flex-col mb-4">
-      <label className="font-semibold">عنوان السؤال:</label>
-      <input
-        type="text"
-        {...register(`questions[${index}].questionTitle`)}
-        className="p-2 border border-gray-300 rounded-md"
-        placeholder="أدخل السؤال"
-      />
-      {errors?.questions?.[index]?.questionTitle && (
-        <p className="text-red-500">
-          {errors.questions[index].questionTitle.message}
-        </p>
-      )}
-    </div>
+const QuestionComponent = ({
+  index,
+  register,
+  question,
+  errors,
+  setValue,
+  watch,
+}) => {
+  const answersField = `questions[${index}].answers`;
 
-    {/* الدرجة */}
-    <div className="flex flex-col mb-4">
-      <label className="font-semibold">الدرجة:</label>
-      <input
-        type="number"
-        {...register(`questions[${index}].mark`)}
-        className="p-2 border border-gray-300 rounded-md"
-      />
-      {errors?.questions?.[index]?.mark && (
-        <p className="text-red-500">{errors.questions[index].mark.message}</p>
-      )}
-    </div>
+  const handleCorrectAnswerChange = (answerIndex) => {
+    const updatedAnswers = watch(answersField).map((answer, i) => ({
+      ...answer,
+      isCorrect: i === answerIndex,
+    }));
+    setValue(answersField, updatedAnswers);
+  };
 
-    {/* الإجابات */}
-    <div className="mb-4">
-      <h4 className="font-semibold mb-2">الإجابات:</h4>
+  return (
+    <div>
+      <div className="flex flex-col mb-4">
+        <label className="font-semibold">عنوان السؤال:</label>
+        <input
+          type="text"
+          {...register(`questions[${index}].questionTitle`)}
+          className="p-2 border border-gray-300 rounded-md"
+          placeholder="أدخل السؤال"
+        />
+        {errors?.questions?.[index]?.questionTitle && (
+          <p className="text-red-500">
+            {errors.questions[index].questionTitle.message}
+          </p>
+        )}
+      </div>
 
-      <span className="text-[1.3rem] text-gray-400 -mt-6">
-        قم باختيار الإجابة الصحيحة عن طريق الضغط على مربع الاختيار
-      </span>
-      {question.answers.map((_, answerIndex) => (
-        <div
-          key={answerIndex}
-          className="flex justify-between  items-center mb-2"
-        >
-          <div>
+      <div className="flex flex-col mb-4">
+        <label className="font-semibold">الدرجة:</label>
+        <input
+          type="number"
+          {...register(`questions[${index}].mark`)}
+          className="p-2 border border-gray-300 rounded-md"
+        />
+        {errors?.questions?.[index]?.mark && (
+          <p className="text-red-500">{errors.questions[index].mark.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-4">
+        {watch(answersField)?.map((answer, answerIndex) => (
+          <div key={answerIndex} className="flex items-center gap-4">
             <input
               type="text"
-              {...register(`questions[${index}].answers[${answerIndex}]`)}
-              className="p-2 border border-gray-300 rounded-md w-full"
-              placeholder={`الإجابة ${answerIndex + 1}`}
+              {...register(`${answersField}.${answerIndex}.title`)}
+              className="flex-1 p-2 border border-gray-300 rounded-md"
+              placeholder={`إجابة ${answerIndex + 1}`}
             />
-            {errors?.questions?.[index]?.answers?.[answerIndex] && (
-              <p className="text-red-500 text-[1.3rem]">
-                {errors.questions[index].answers[answerIndex].message}
+            <input
+              type="radio"
+              checked={answer.isCorrect}
+              onChange={() => handleCorrectAnswerChange(answerIndex)}
+            />
+            {errors?.questions?.[index]?.answers?.[answerIndex]?.title && (
+              <p className="text-red-500">
+                {errors.questions[index].answers[answerIndex].title.message}
               </p>
             )}
           </div>
-          <input
-            type="radio"
-            {...register(`questions[${index}].correctAnswer`)}
-            value={answerIndex}
-            className="ml-4"
-          />
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default ExamsList;

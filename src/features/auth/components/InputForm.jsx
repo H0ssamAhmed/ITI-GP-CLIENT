@@ -23,8 +23,8 @@ const InputForm = ({ label, type, placeholder, error, register, options }) => {
           >
             <option value="">{placeholder}</option>
             {options &&
-              options.map((option) => (
-                <option key={option.value} value={option.value}>
+              options.map((option, index) => (
+                <option key={index} value={option.value}>
                   {option.label}
                 </option>
               ))}
