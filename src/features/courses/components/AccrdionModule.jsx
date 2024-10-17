@@ -32,7 +32,7 @@ const AccrdionModule = ({ section, index }) => {
           </Link>
         )}
 
-        <Link to={`/courses/quiz/${courseId}/${section?.id}`} target="_blank">
+        <Link to={`/courses/quiz/${courseId}/${section?.id}`}>
           <Typography
             padding={1}
             marginTop={2}

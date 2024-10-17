@@ -16,8 +16,7 @@ function CourseCard({ course, userCourses }) {
     const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
     return num.toString().split('').map(digit => arabicNumerals[digit]).join('');
   }
-  const { id, title, description, price, image, teacherId, teacherName, levelTitle } = { ...course }
-  // console.log(course);
+  const { id, title, averageRating, price, image, teacherId, teacherName, levelTitle, } = { ...course }
   const shortTitle = title?.split(" ").length > 2 ? title?.split(" ")[0] + " " + title?.split(" ")[1] : title
   return (
     <div className="relative rounded-lg mx-auto bg-white shadow-lg text-gray-900 w-[24rem] flex flex-col overflow-hidden">
@@ -44,9 +43,15 @@ function CourseCard({ course, userCourses }) {
         {/* Rating and Price */}
         <div className="flex justify-between items-center mb-4">
           {/* Rating */}
-          <div className="flex items-center text-yellow-500">
-            <FaStar className="text-[1.2rem]" />
-            <span className="ml-1 text-lg font-bold">5.0</span>
+
+          <div className="flex items-center text-yellow-600">
+            {course.averageRating.length <= 5 ?
+              <>
+                <FaStar className="text-[1.2rem]" />
+                <span className="ml-1 text-lg font-bold">{averageRating}</span>
+              </>
+              : null
+            }
           </div>
           {/* Price */}
           <p className={`font-bold text-lg ${isUserEnroled && 'opacity-0'}`}>

@@ -1,6 +1,6 @@
 import testImg from "../../../assets/HomePageImages/teacher.png";
 import { AnimatePresence, motion } from 'framer-motion';
-import { FaPlay } from 'react-icons/fa6';
+import { FaPlay, FaStairs, FaStar } from 'react-icons/fa6';
 import { buyACourse, getCourseDetails, getCurrentUserCourses, giveRate } from "../apis/coursesApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -10,19 +10,18 @@ import { ContentPasteSearchOutlined, Description } from "@mui/icons-material";
 import { getCurrentUser } from "../../../services/currentUser";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import RateCourse from "../components/RateCourse";
+import RatePopUp from "../components/RatePopUp";
 
 const CourseDetail = () => {
   const { courseId } = useParams();
-  const [value, setValue] = useState(0);
   const [loadingBuying, setLoadingBuying] = useState(false);
   const [course, setCourse] = useState();
   const [isUserEnroled, setIsUserEnroled] = useState(false);
   const [showConfirmBuying, setShowConfirmBuying] = useState(false);
+  const [tototalReivewRate, setTotalReivewsRate] = useState("")
+
   const queryClient = useQueryClient();
-  const allUserCourses = useSelector((state) => state.userCcourses)
-
-  console.log(allUserCourses);
-
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => getCurrentUser()
@@ -31,14 +30,10 @@ const CourseDetail = () => {
     queryKey: ['courseDetaials'],
     queryFn: () => getCourseDetails(courseId)
   });
-
-
   const { data: userCourses } = useQuery({
     queryKey: ['userCourses'],
     queryFn: () => getCurrentUserCourses()
   });
-  console.log(data?.data);
-
   const { mutate, isLoading: buyLoading } = useMutation({
     mutationFn: () => buyACourse(courseId, user?.data.id),
     onMutate: () => {
@@ -47,6 +42,7 @@ const CourseDetail = () => {
       setLoadingBuying(true);
       return { toastId }; // Return toastId to update or dismiss later
     },
+
     onSuccess: (data, variables, context) => {
       toast.update(context.toastId, {
         render: "تم شراء الدورة بنجاح",
@@ -67,16 +63,16 @@ const CourseDetail = () => {
       setLoadingBuying(false);
     },
   });
-  const handelRating = (e) => {
-    setValue(e.target.value);
-    const data = {
-      rate: e.target.value,
-      comment: "comment",
-      courseId: courseId,
-      studentId: user?.data.id,
-    }
-    RatingCourse(data)
+  const handelRating = (data) => {
+    RatingCourse(data);
 
+  }
+
+  function isStudentIdInRatings(data, studentId) {
+    // Check if any rating belongs to the given studentId
+    const studentExists = data?.some(item => item.student.id === studentId);
+    // Return false if the student ID exists; otherwise, return true
+    return !studentExists;
   }
   const { mutate: RatingCourse } = useMutation({
     mutationFn: (rate) => giveRate(rate),
@@ -103,13 +99,13 @@ const CourseDetail = () => {
       });
       setLoadingBuying(false);
     },
-
-
   })
+
 
   useEffect(() => {
     if (data) {
       setCourse(data.data);
+      calcReview(data?.data?.reviews)
     }
     userCourses?.data?.courses?.forEach((course) => {
       if (course.id == courseId) {
@@ -119,13 +115,36 @@ const CourseDetail = () => {
   }, [data, userCourses, courseId]);
 
   const handleBuyCourse = () => {
-    mutate();
-    setShowConfirmBuying(false);
+    if (!user) {
+      toast.error("برجاء تسجيل الدخول اولا", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    } else {
+      setShowConfirmBuying(true)
+    }
   };
+  const confimrBuyCourse = () => {
+    mutate();
+    setShowConfirmBuying(false)
+
+  }
 
   function convertToArabicNumerals(num) {
     const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
     return num?.toString().split('').map(digit => arabicNumerals[digit]).join('');
+  }
+  const calcReview = (reviews) => {
+    const ratings = reviews.map(item => item.rate);
+    const total = ratings.reduce((sum, rating) => sum + rating, 0);
+    const average = total / ratings.length;
+    setTotalReivewsRate(average.toFixed(2));
   }
 
   return (
@@ -158,43 +177,29 @@ const CourseDetail = () => {
                       transition={{ duration: 0.16 }}
                       initial={{ x: 500 }}
                       animate={{ x: 0 }}
-                      className='my-4 text-4xl font-semibold'>{course?.levelTitle}</motion.h1>
+                      className='my-4 text-4xl font-semibold'>{course?.levelTitle?.replace(/^\d+-\s*/, '')}</motion.h1>
                     <motion.div
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.3, delay: 0.2 }}
                       className="my-8 flex items-center gap-4">
                       <h2 className='font-bold'>{course?.title}</h2>
-                      {isUserEnroled ? (
-                        <>
-                          <Link
-                            to={`/courses/${course?.id}/${data?.data?.sections[0]?.lessons[0]?.id}`}
-                            // onClick={() => setShowConfirmBuying(true)}
-                            className='px-4 py-1 bg-green-500 text-white w-fit rounded-[14px]'>اكمل الدورة
-                          </Link>
-
-                          <Rating
-                            className="rotate-180 text-2xl"
-                            name="simple-controlled"
-                            value={value}
-                            readOnly={!isUserEnroled}
-                            onChange={(e) => handelRating(e)}
-                          />
-
-
-                        </>
-
-                      ) : (
+                      {isUserEnroled ?
+                        <Link
+                          to={`/courses/${course?.id}/${data?.data?.sections[0]?.lessons[0]?.id}`}
+                          // onClick={() => setShowConfirmBuying(true)}
+                          className='px-4 py-1 bg-green-500 text-white w-fit rounded-[14px]'>اكمل الدورة
+                        </Link>
+                        :
 
                         loadingBuying
                           ? <p className='px-8 py-2 bg-green-500 text-white cursor-pointer w-fit rounded-[14px]'>جاري الشراء...</p>
                           :
                           <>
-                            <p onClick={() => setShowConfirmBuying(true)} className='px-8 py-2 bg-brand-500 text-white cursor-pointer w-fit rounded-[14px]'> اشترك الآن</p>
+                            <p onClick={handleBuyCourse} className='px-8 py-2 bg-brand-500 text-white cursor-pointer w-fit rounded-[14px]'> اشترك الآن</p>
                             <p className="font-bold text-[2.5rem]">{convertToArabicNumerals(course?.price)} جنيه</p>
                           </>
-
-                      )}
+                      }
                       <AnimatePresence>
                         {showConfirmBuying && (
                           <motion.div
@@ -205,8 +210,10 @@ const CourseDetail = () => {
                             className="px-8 py-2 absolute flex items-center justify-around w-[34rem] h-[14rem]  gap-4 flex-col bg-gray-600 text-white  rounded-[14px]">
                             <p className="text-3xl">سوف يتم خصم <span className="font-bold">{convertToArabicNumerals(course?.price)}</span> جنيه من محفظتك</p>
                             <Stack width={"100%"} justifyContent={"space-between"} direction="row" alignItems="center" spacing={5}>
-                              <button onClick={handleBuyCourse} className="bg-green-400 px-8 py-2 rounded-md hover:bg-green-600 transition-all">تأكيد الشراء</button>
-                              <button onClick={() => setShowConfirmBuying(false)} className="bg-red-400 px-8 py-2 rounded-md hover:bg-red-600 transition-all">
+                              <button onClick={confimrBuyCourse} className="bg-green-400 px-8 py-2 rounded-md hover:bg-green-600 transition-all">تأكيد الشراء</button>
+                              <button
+                                onClick={() => setShowConfirmBuying(false)}
+                                className="bg-red-400 px-8 py-2 rounded-md hover:bg-red-600 transition-all">
                                 إلغاء
                               </button>
                             </Stack>
@@ -223,6 +230,7 @@ const CourseDetail = () => {
                         {course?.lessonsCount} دروس
                       </motion.p>
                     </div>
+                    {/* <div className="flex items-center justify-start gap-4"> <FaStar className="text-[2.2rem] text-yellow-800" /><p className="text-[2.2rem]">{tototalReivewRate}</p></div> */}
                   </div>
                 </div>
               </div>
@@ -231,38 +239,59 @@ const CourseDetail = () => {
               {isLoading && <Skeleton width={'100%'} sx={{ background: "var(--color-brand-500)" }} height={"100%"} />}
               {!isLoading && (
                 <motion.section>
-                  {course?.sections?.map((section, index) => (
-                    <Stack key={section?.id} className="container mx-auto h-full my-auto" direction="column">
-                      <Typography variant="h2" margin="1rem 2rem">
-                        {section?.title}
-                      </Typography>
-                      {section?.lessons?.map((lesson) => (
-                        <motion.div key={lesson?.id}
-                          initial={{ x: -2000, opacity: 0 }}
-                          animate={{ x: 0, opacity: 1 }}
-                          transition={{ duration: 0.3, delay: 0.1 * (index + 1) }}
-                          className='container mx-auto'>
-                          <div className='grid grid-cols-12 gap-8 border-gray-300 border my-4 p-4 rounded-lg'>
-                            <div className='col-span-6 flex items-center gap-8'>
-                              <p className='bg-brand-500 w-10 h-10 rounded-full text-white'><FaPlay className='w-full h-full p-2' /></p>
-                              <Link to={`/courses/${courseId}/${lesson?.id}`}>{lesson?.title}</Link>
+                  <div className="container mx-auto max-h-[600px] mb-32 overflow-y-scroll my-auto">
+                    {course?.sections?.map((section, index) => (
+                      <Stack key={section?.id} className="container mx-auto h-full my-auto" direction="column">
+                        <Typography variant="h2" margin="1rem 2rem">
+                          {section?.title}
+                        </Typography>
+                        {section?.lessons?.map((lesson) => (
+                          <motion.div key={lesson?.id}
+                            initial={{ x: -2000, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ duration: 0.3, delay: 0.1 * (index + 1) }}
+                            className='container mx-auto'>
+                            <div className='grid grid-cols-12 gap-8 border-gray-300 border my-4 p-4 rounded-lg'>
+                              <div className='col-span-6 flex items-center gap-8'>
+                                <p className='bg-brand-500 w-10 h-10 rounded-full text-white'><FaPlay className='w-full h-full p-2' /></p>
+                                <Link to={`/courses/${courseId}/${lesson?.id}`}>{lesson?.title}</Link>
+                              </div>
+                              <div className='col-span-6 flex items-center gap-8'>
+                                <Description />
+                                <p>{lesson?.description}</p>
+                              </div>
                             </div>
-                            <div className='col-span-6 flex items-center gap-8'>
-                              <Description />
-                              <p>{lesson?.description}</p>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </Stack>
-                  ))}
+                          </motion.div>
+                        ))}
+                      </Stack>
+                    ))}
+                  </div>
                 </motion.section>
               )}
             </div>
           </>
         )}
       </div>
-    </div>
+
+
+      <div className="flex container max-h-[400px] overflow-y-scroll mx-auto flex-col md:col-span-4 my-4 items-center justify-center gap-4">
+        {data?.data?.reviews.map((review, index) => (
+          <RateCourse key={review?.id} review={review} />
+        ))}
+
+        {isUserEnroled &&
+          <>
+            {isStudentIdInRatings(data?.data?.reviews, user?.data?.id) ?
+              <RatePopUp
+                handelRating={handelRating}
+                courseId={courseId}
+                studentId={user?.data.id}
+              />
+              : <p>لقد قيمت هذا الكورس بالفعل</p>
+            }</>
+        }
+      </div>
+    </div >
   );
 };
 
