@@ -14,7 +14,7 @@ import person_2 from '../assets/FeaturesPage/person_2.avif';
 import person_3 from '../assets/FeaturesPage/person_3.jpg';
 import person_4 from '../assets/FeaturesPage/person_4.jpg';
 import LessonsSection from '../features/features/components/LessonsSection';
-import SubscriptionsSection from '../features/features/components/subscriptionsSection';
+import SubscriptionsSection from '../features/features/components/SubscriptionsSection';
 import {useNavigate} from 'react-router-dom';
 const featureItems = [
   {
