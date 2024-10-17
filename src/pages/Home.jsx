@@ -1,30 +1,30 @@
-import { motion } from 'framer-motion';
-import heroImg from '../assets/HomePageImages/heroImg.png';
+import { motion } from "framer-motion";
+import heroImg from "../assets/HomePageImages/heroImg.png";
 import {
   PiArrowBendDownLeftBold,
   PiArrowBendDownRightBold,
-} from 'react-icons/pi';
-import Button from '../ui/Button';
-import HeroFeatureCard from '../ui/HeroFeatureCard';
-import { HiOutlineLightBulb } from 'react-icons/hi';
-import { GiOpenBook } from 'react-icons/gi';
-import { MdOutlineQuiz } from 'react-icons/md';
-import { GiTeacher } from 'react-icons/gi';
-import TeacherCard from '../ui/TeacherCard';
-import SubjectCard from '../ui/SubjectCard';
-import mathImg from '../assets/HomePageImages/math.png';
-import historyImg from '../assets/HomePageImages/history.png';
-import chemistryImg from '../assets/HomePageImages/chmestriy.png';
-import englishImg from '../assets/HomePageImages/english.png';
-import { TfiBlackboard } from 'react-icons/tfi';
-import { MdHistoryEdu } from 'react-icons/md';
-import { FaChalkboardTeacher, FaFlask } from 'react-icons/fa';
-import { FaLanguage } from 'react-icons/fa';
-import SeeMore from '../ui/SeeMore';
-import VideoEmbed from '../ui/VideoEmbed';
-import teacherImg from '../assets/HomePageImages/teacher.png';
-import studentsImg from '../assets/HomePageImages/students.png';
-import { FaArrowLeft } from 'react-icons/fa6';
+} from "react-icons/pi";
+import Button from "../ui/Button";
+import HeroFeatureCard from "../ui/HeroFeatureCard";
+import { HiOutlineLightBulb } from "react-icons/hi";
+import { GiOpenBook } from "react-icons/gi";
+import { MdOutlineQuiz } from "react-icons/md";
+import { GiTeacher } from "react-icons/gi";
+import TeacherCard from "../ui/TeacherCard";
+import SubjectCard from "../ui/SubjectCard";
+import mathImg from "../assets/HomePageImages/math.png";
+import historyImg from "../assets/HomePageImages/history.png";
+import chemistryImg from "../assets/HomePageImages/chmestriy.png";
+import englishImg from "../assets/HomePageImages/english.png";
+import { TfiBlackboard } from "react-icons/tfi";
+import { MdHistoryEdu } from "react-icons/md";
+import { FaChalkboardTeacher, FaFlask } from "react-icons/fa";
+import { FaLanguage } from "react-icons/fa";
+import SeeMore from "../ui/SeeMore";
+import VideoEmbed from "../ui/VideoEmbed";
+import teacherImg from "../assets/HomePageImages/teacher.png";
+import studentsImg from "../assets/HomePageImages/students.png";
+import { FaArrowLeft } from "react-icons/fa6";
 
 import ScrollToTopButton from '../ui/ScrollToTopButton';
 import { Link, useNavigate } from 'react-router-dom';
@@ -34,33 +34,6 @@ import SignUpContext from '../features/store/signup-context';
 import { useQuery } from '@tanstack/react-query';
 import { getAllCourses, getAllTeachers } from '../features/courses/apis/coursesApi';
 import { Skeleton } from '@mui/material';
-//  Temporary Data
-const subjects = [
-  {
-    img: mathImg,
-    subjectName: 'الرياضيات',
-    subjectIcon: TfiBlackboard,
-    grade: 'الصف الأول الثانوي',
-  },
-  {
-    img: historyImg,
-    subjectName: 'التاريخ',
-    subjectIcon: MdHistoryEdu,
-    grade: 'الصف الثالث الإعدادي',
-  },
-  {
-    img: chemistryImg,
-    subjectName: 'الكيمياء',
-    subjectIcon: FaFlask,
-    grade: 'الصف الثالث الثانوي',
-  },
-  {
-    img: englishImg,
-    subjectName: 'اللغة الإنجليزية',
-    subjectIcon: FaLanguage,
-    grade: 'الصف السادس الإبتدائي',
-  },
-];
 
 function Home() {
   const { handleTypeChange } = useContext(SignUpContext);
@@ -76,8 +49,8 @@ function Home() {
   console.log(teachers?.data?.teachers);
 
   const handleNavigate = () => {
-    navigate('/signup');
-    handleTypeChange('teacher');
+    navigate("/signup");
+    handleTypeChange("teacher");
   };
   console.log(teachers);
 
@@ -95,7 +68,7 @@ function Home() {
           className="relative min-h-screen"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1, ease: 'easeOut' }}
+          transition={{ duration: 1, ease: "easeOut" }}
         >
           <div className="relative bg-brand-700">
             <div className="flex items-center justify-center">
@@ -105,14 +78,14 @@ function Home() {
               className="flex z-[60] flex-col top-[5rem]  lg:grid lg:grid-cols-2 relative bg-gray-50 w-[35rem] lg:w-[128rem] h-[49.6rem] mx-auto rounded-[32px]"
               initial={{ x: -100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 1.2, ease: 'easeOut' }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
             >
               {/* Hero Image Container */}
               <motion.div
                 className="mx-auto mt-16 flex relative lg:w-[45rem] lg:h-[45rem] bg-brand-700 w-[21.8rem] h-[21.4rem] rounded-[50%]"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 1, ease: 'easeOut' }}
+                transition={{ duration: 1, ease: "easeOut" }}
               >
                 <img className="rounded-full" src={heroImg} />
                 {/* Animated text */}
@@ -147,7 +120,7 @@ function Home() {
                 className="flex flex-col items-center justify-center gap-6 mt-5"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: 'easeOut' }}
+                transition={{ duration: 1, ease: "easeOut" }}
               >
                 <div className="flex items-center justify-center gap-8">
                   <p className="font-bold lg:text-[2rem]">
@@ -165,7 +138,7 @@ function Home() {
                 <div className=" hidden mt-2 mb-5 lg:flex flex-col items-center w-[50rem] justify-between">
                   <StudentsAvatar />
                   <span className="text-[1.8rem] font-bold">
-                    معانا هتضمن نجاح ابنك في كل خطوة تعليمية{' '}
+                    معانا هتضمن نجاح ابنك في كل خطوة تعليمية{" "}
                   </span>
                 </div>
                 <Button className="px-6 py-3 font-bold bg-yellow-500 rounded-full hover:bg-yellow-300">
@@ -222,7 +195,7 @@ function Home() {
             className="relative  container mx-auto  mt-[30rem] px-6"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: 'easeOut', delay: 0.5 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
           >
             <h1 className="text-[2.5rem] mt-[40rem] lg:text-[3.5rem] mb-60 font-bold">
               إبدا رحلتك مع نخبة من أفضل المدرسين
@@ -241,7 +214,7 @@ function Home() {
             className="mt-[15rem]  container mx-auto   px-6"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: 'easeOut', delay: 0.5 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
           >
             <div className="relative">
               <h1 className="text-[2.5rem] mb-40 lg:text-[3.5rem] font-bold ">
@@ -264,14 +237,14 @@ function Home() {
             className="mt-[10rem] container mx-auto mb-40 lg:grid lg:grid-cols-2  px-6 relative"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: 'easeOut', delay: 0.5 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
           >
             <div className="relative">
               <h1 className="text-[2.5rem] mb-5 lg:text-[4rem]  font-bold ">
-                مين{' '}
+                مين{" "}
                 <span className="text-brand-700 text-[3rem] lg:text-[6rem]">
                   ذاكرلي
-                </span>{' '}
+                </span>{" "}
                 ؟
               </h1>
               <p className="font-bold">فيديو توضحي لطريقة عمل المنصة</p>
@@ -288,7 +261,7 @@ function Home() {
             className="flex flex-col items-center justify-center gap-12 px-4 mx-auto mb-20 sm:px-6 lg:px-8"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: 'easeOut', delay: 0.5 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
           >
             {/* Teachers */}
             <div className="relative  flex flex-col lg:flex-row items-center justify-around max-w-7xl bg-brand-700 h-auto lg:h-[30rem] rounded-lg p-4">
@@ -303,7 +276,7 @@ function Home() {
                 <p className="text-white text-[1.8rem] lg:text-[1.5rem]">
                   شارك بالتعليم من خلال منصة ذاكرلي مع نخبة كبيرة من معلمين
                   المراحل الابتدائية والاعدادية والثانوية للمناهج العربي
-                  والانجليزي والفرنساوي{' '}
+                  والانجليزي والفرنساوي{" "}
                 </p>
                 <Button
                   onClick={handleNavigate}
@@ -328,7 +301,7 @@ function Home() {
               {/* Text + Button on the left */}
               <div className="flex flex-col w-full gap-4 p-4 lg:w-1/2">
                 <h2 className="text-[2.5rem] lg:text-[3rem] font-bold text-black">
-                  ذاكر في اي وقت واي مكان <br /> مع منصة{' '}
+                  ذاكر في اي وقت واي مكان <br /> مع منصة{" "}
                   <span className="text-brand-700 lg:text-[4rem]">ذاكرلي</span>
                 </h2>
                 <p className="text-black text-[1.8rem] lg:text-[2rem]">

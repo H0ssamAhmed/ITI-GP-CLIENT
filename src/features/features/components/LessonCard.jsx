@@ -12,6 +12,7 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { v4 as uuidv4 } from 'uuid';
+import { Link } from 'react-router-dom';
 
 const priceStyle = {
   backgroundColor: '#e53935',
@@ -104,6 +105,7 @@ const LessonCard = ({ cardData }) => {
             <Grid2 item xs={12}>
               <Box sx={{ position: 'relative' }}>
                 <Typography sx={priceStyle}>{price}</Typography>
+                <Link to="/courses" >
                 <Button
                   variant="contained"
                   fullWidth
@@ -122,6 +124,7 @@ const LessonCard = ({ cardData }) => {
                   <ArrowBackIcon sx={{ ml: 1, fontSize: '2rem' }} />
                   {generalButton}
                 </Button>
+                </Link>
               </Box>
             </Grid2>
             <Grid2 item xs={12}>

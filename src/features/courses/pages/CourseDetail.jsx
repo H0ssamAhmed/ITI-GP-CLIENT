@@ -49,9 +49,12 @@ const CourseDetail = () => {
         type: "success",
         isLoading: false,
         autoClose: 3000,
+        onClose: () => {
+          queryClient.invalidateQueries(['userCourses']);
+          setLoadingBuying(false);
+        }
       });
-      queryClient.invalidateQueries(['userCourses']);
-      setLoadingBuying(false);
+     
     },
     onError: (error, variables, context) => {
       toast.update(context.toastId, {
@@ -59,8 +62,10 @@ const CourseDetail = () => {
         type: "error",
         isLoading: false,
         autoClose: 3000,
+        onClose: () => {
+          setLoadingBuying(false);
+        }
       });
-      setLoadingBuying(false);
     },
   });
   const handelRating = (data) => {
@@ -82,9 +87,10 @@ const CourseDetail = () => {
         type: "success",
         isLoading: false,
         autoClose: 3000,
+        onClose: () => {
+          queryClient.invalidateQueries(['courseDetaials']);
+        }
       });
-
-      queryClient.invalidateQueries(['courseDetaials']);
     },
     onMutate: () => {
       const toastId = toast.loading("جاري تقييم الدورة...");
@@ -96,8 +102,10 @@ const CourseDetail = () => {
         type: "error",
         isLoading: false,
         autoClose: 3000,
+        onClose: () => {
+          setLoadingBuying(false);
+        }
       });
-      setLoadingBuying(false);
     },
   })
 

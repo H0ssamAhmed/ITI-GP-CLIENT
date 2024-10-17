@@ -3,7 +3,6 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const InputForm = ({ label, type, placeholder, error, register, options }) => {
   const [showPassword, setShowPassword] = useState(false);
-  console.log('optionsssss', options);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
