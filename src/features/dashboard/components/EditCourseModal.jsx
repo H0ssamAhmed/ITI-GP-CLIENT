@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getCourseDetails, updateCourse } from "../dashboardAPI";
+import { deleteLesson, getCourseDetails, updateCourse } from "../dashboardAPI";
 import { toast } from "react-toastify";
 import Spinner from "../../../ui/Spinner";
 import Section from "./Section";
@@ -16,12 +16,23 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
   const mutation = useMutation({
     mutationFn: (updatedCourse) => updateCourse(courseId, updatedCourse),
     onSuccess: (response) => {
-      toast.success(response);
+      toast.success("تم تحديث الدورة بنجاح!");
       onClose();
       refetchCourses();
     },
-    onError: () => {
-      toast.error("حدث خطأ أثناء التحديث");
+    onError: (error) => {
+      toast.error(error.message || "خطأ في تحديث الدورة");
+    },
+  });
+
+  const deleteLessonMutation = useMutation({
+    mutationFn: (lessonId) => deleteLesson(lessonId),
+    onSuccess: () => {
+      toast.success("تم حذف الدرس بنجاح!");
+      refetchCourses(); // إعادة جلب أو تحديث تفاصيل الدورة لتعكس الحذف
+    },
+    onError: (error) => {
+      toast.error(error.message || "خطأ في حذف الدرس");
     },
   });
 
@@ -45,7 +56,8 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
         title: data.title,
         description: data.description,
         image: data.image,
-        teacherName: data.teacherId,
+        teacherName: data.teacherName,
+        levelTitle: data.levelTitle,
         price: data.price,
         discountedPrice: data.discountedPrice,
         sections: data.sections.map((section) => ({
@@ -66,8 +78,6 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
   });
 
   const onSubmit = (formData) => {
-
-   
     const structuredSections = formData.sections.map((section) => ({
       ...section,
       lessons: section.lessons || [],
@@ -81,15 +91,21 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
 
   const saveSectionChanges = (index) => {
     const sectionData = getValues(`sections.${index}`);
-    // Handle saving logic for the section
-    toast.success(`تم حفظ تغييرات القسم ${index + 1}`);
+    toast.success(`تم حفظ التغييرات لقسم ${index + 1}`);
   };
 
-  const deleteLesson = (sectionIndex, lessonIndex) => {
-    const sectionLessons = getValues(`sections.${sectionIndex}.lessons`);
-    sectionLessons.splice(lessonIndex, 1); // Remove the lesson from the array
-    setValue(`sections.${sectionIndex}.lessons`, sectionLessons); // Update the form state
-    toast.success(`تم حذف الدرس رقم ${lessonIndex + 1}`);
+  const handleDeleteLesson = (sectionIndex, lessonIndex) => {
+    const lessonId = getValues(
+      `sections.${sectionIndex}.lessons.${lessonIndex}.id`
+    );
+    if (lessonId) {
+      deleteLessonMutation.mutate(lessonId);
+    } else {
+      const sectionLessons = getValues(`sections.${sectionIndex}.lessons`);
+      sectionLessons.splice(lessonIndex, 1);
+      setValue(`sections.${sectionIndex}.lessons`, sectionLessons);
+      toast.success(`تم حذف الدرس ${lessonIndex + 1}`);
+    }
   };
 
   if (isLoading) return <Spinner />;
@@ -177,7 +193,6 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
               />
             </div>
           </div>
-          {/* Add Section Button */}
           <button
             type="button"
             onClick={() => addSection({ title: "", lessons: [] })}
@@ -185,7 +200,6 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
           >
             إضافة وحدة
           </button>
-          {/* Sections and Lessons */}
           <div className="space-y-6 max-h-[60vh] overflow-y-auto">
             {sectionFields.map((section, sectionIndex) => (
               <div key={section.id} className="p-4 border rounded shadow-md">
@@ -197,10 +211,10 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
                   sectionIndex={sectionIndex}
                   control={control}
                   register={register}
-                  removeSection={removeSection} // Pass removeSection function
+                  removeSection={removeSection}
                   deleteLesson={deleteLesson}
-                  getValues={getValues} // Pass getValues to Section
-                  setValue={setValue} // Pass setValue to Section
+                  getValues={getValues}
+                  setValue={setValue}
                 />
 
                 <div className="flex items-center justify-between">
@@ -215,8 +229,8 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
                   <button
                     type="button"
                     onClick={() => {
-                      removeSection(sectionIndex); // Call removeSection to delete the section
-                      toast.success(`تم حذف الوحدة رقم ${sectionIndex + 1}`); // Show success message
+                      removeSection(sectionIndex);
+                      toast.success(`تم حذف الوحدة رقم ${sectionIndex + 1}`);
                     }}
                     className="px-4 py-2 mt-4 text-white bg-red-600 rounded"
                   >

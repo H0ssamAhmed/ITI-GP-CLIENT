@@ -77,7 +77,7 @@ function Navigation() {
               dataDropdownToggle="multi-dropdown"
               onMouseOver={toggleIsOpen}
             >
-              الفصول الدراسية 
+              الفصول الدراسية
             </LinkWithUnderline>
 
             <MultiLevelDropdown onOpenDropdown={isOpen} />

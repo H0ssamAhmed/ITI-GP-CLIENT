@@ -13,28 +13,28 @@ import {
 const data = [
   {
     name: "Sun",
-    غائب: 65,
-    حاضر: 47,
+    غائب: 0,
+    كورس: 0,
   },
   {
     name: "Mon",
-    غائب: 45,
-    حاضر: 55,
+    غائب: 0,
+    كورس: 0,
   },
   {
     name: "Tue",
-    غائب: 52,
-    حاضر: 48,
+    غائب: 0,
+    كورس: 0,
   },
   {
     name: "Wed",
-    غائب: 35,
-    حاضر: 55,
+    غائب: 0,
+    كورس: 0,
   },
   {
     name: "Thr",
-    غائب: 78,
-    حاضر: 22,
+    غائب: 0,
+    كورس: 3,
   },
 ];
 
@@ -43,7 +43,7 @@ const AttendanceChart = () => {
     <div dir="rtl" className="w-full h-full p-4 mt-4 bg-white rounded-2xl">
       {/* TITLE */}
       <div className="flex items-center justify-between">
-        <h1 className="font-bold">الحضور</h1>
+        <h1 className="font-bold">كورسات المنصة</h1>
         <img
           src="/src/assets/dashboard/moreDark.png"
           className="w-8 h-8 cursor-pointer"
@@ -83,15 +83,9 @@ const AttendanceChart = () => {
             iconSize={20}
             itemStyle={{ marginRight: "20px" }}
           />
+
           <Bar
-            dataKey="غائب"
-            fill="#fef08a"
-            activeBar={<Rectangle fill="pink" stroke="blue" />}
-            legendType="circle"
-            radius={[10, 10, 0, 0]}
-          />
-          <Bar
-            dataKey="حاضر"
+            dataKey="كورس"
             fill="#7dd3fc"
             activeBar={<Rectangle fill="gold" stroke="purple" />}
             legendType="circle"

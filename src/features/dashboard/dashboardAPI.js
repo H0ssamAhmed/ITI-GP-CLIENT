@@ -1,14 +1,16 @@
 import axios from "axios";
 
+const API_URL = "https://e-learning-system-iti-production.up.railway.app/";
+
 export const fetchTeachers = async () => {
-  const { data } = await axios.get("http://localhost:3000/admin/teachers");
+  const { data } = await axios.get(`${API_URL}admin/teachers`);
   return data.data;
 };
 
 export const fetchTeacherLevel = async (teacherId) => {
   try {
     const { data } = await axios.get(
-      `http://localhost:3000/api/admin/get-teacher-levels/${teacherId}`
+      `${API_URL}api/admin/get-teacher-levels/${teacherId}`
     );
     return data.data;
   } catch (error) {
@@ -17,19 +19,16 @@ export const fetchTeacherLevel = async (teacherId) => {
 };
 
 export const fetchStudents = async () => {
-  const { data } = await axios.get(`http://localhost:3000/admin/students`);
+  const { data } = await axios.get(`${API_URL}admin/students`);
 
   return data.data;
 };
 
 export const deleteUser = async (userId) => {
   try {
-    const response = await axios.delete(
-      `http://localhost:3000/user/${userId}`,
-      {
-        withCredentials: true,
-      }
-    );
+    const response = await axios.delete(`${API_URL}user/${userId}`, {
+      withCredentials: true,
+    });
 
     return response.data;
   } catch (error) {
@@ -48,10 +47,9 @@ export const deleteUser = async (userId) => {
   }
 };
 
-// Fetch user by id
 export const fetchUserById = async (userId) => {
   try {
-    const { data } = await axios.get(`http://localhost:3000/user/${userId}`);
+    const { data } = await axios.get(`${API_URL}user/${userId}`);
     return data;
   } catch (error) {
     throw new Error("Failed to fetch teacher data.", error);
@@ -60,7 +58,7 @@ export const fetchUserById = async (userId) => {
 
 export const fetchAllLevels = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/user/levels");
+    const response = await axios.get(`${API_URL}user/levels`);
     return response.data || [];
   } catch (error) {
     console.error("Error fetching levels:", error);
@@ -71,7 +69,7 @@ export const fetchAllLevels = async () => {
 export const fetchCoursesInLevel = async (levelId) => {
   try {
     const response = await axios.get(
-      `http://localhost:3000/user/levels/courses/${levelId}`
+      `${API_URL}user/levels/courses/${levelId}`
     );
 
     return response.data || [];
@@ -83,16 +81,12 @@ export const fetchCoursesInLevel = async (levelId) => {
 
 export const createLevel = async (newLevelData) => {
   try {
-    const response = await axios.post(
-      `http://localhost:3000/admin/level`,
-      newLevelData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
+    const response = await axios.post(`${API_URL}admin/level`, newLevelData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
 
     return response.data;
   } catch (error) {
@@ -103,15 +97,12 @@ export const createLevel = async (newLevelData) => {
 
 export const deleteLevel = async (levelId) => {
   try {
-    const response = await axios.delete(
-      `http://localhost:3000/admin/level/${levelId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
+    const response = await axios.delete(`${API_URL}admin/level/${levelId}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
 
     return response;
   } catch (error) {
@@ -122,7 +113,7 @@ export const deleteLevel = async (levelId) => {
 
 export const fetchAllAnnouncements = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/user/events/");
+    const response = await axios.get(`${API_URL}user/events/`);
     return response.data;
   } catch (error) {
     console.error("Error fetching announcements:", error);
@@ -132,7 +123,7 @@ export const fetchAllAnnouncements = async () => {
 
 export const createAnnouncements = async (newData) => {
   try {
-    return axios.post("http://localhost:3000/admin/event/", newData, {
+    return axios.post(`${API_URL}admin/event/`, newData, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -148,7 +139,7 @@ export const createAnnouncements = async (newData) => {
 export const fetchAllPendingRequests = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/admin/pending-teachers-courses",
+      `${API_URL}admin/pending-teachers-courses`,
       {
         withCredentials: true,
       }
@@ -160,21 +151,16 @@ export const fetchAllPendingRequests = async () => {
   }
 };
 
-// Delete Pending Requests
-// DELETE Teacher Request
 export const deleteTeacherById = async (teacherId) => {
-  return axios.delete(
-    `http://localhost:3000/admin/pending-teacher/${teacherId}`,
-    {
-      withCredentials: true,
-    }
-  );
+  return axios.delete(`${API_URL}admin/pending-teacher/${teacherId}`, {
+    withCredentials: true,
+  });
 };
 
 export const deleteCourseById = async (courseId) => {
   try {
     const response = await axios.delete(
-      `http://localhost:3000/admin/pending-course/${courseId}`,
+      `${API_URL}admin/pending-course/${courseId}`,
       {
         withCredentials: true,
       }
@@ -194,7 +180,7 @@ export const deleteCourseById = async (courseId) => {
 
 export const verifyTeacherById = async (teacherId) => {
   return axios.patch(
-    `http://localhost:3000/admin/verify-teacher/${teacherId}`,
+    `${API_URL}admin/verify-teacher/${teacherId}`,
     {},
     {
       withCredentials: true,
@@ -205,7 +191,7 @@ export const verifyTeacherById = async (teacherId) => {
 // VERIFY Course Request
 export const verifyCourseById = async (courseId) => {
   return axios.patch(
-    `http://localhost:3000/admin/verify-course/${courseId}`,
+    `${API_URL}admin/verify-course/${courseId}`,
     {}, // The request body can be empty or contain data as needed
     {
       withCredentials: true,
@@ -215,16 +201,14 @@ export const verifyCourseById = async (courseId) => {
 
 // Get All Courses
 export const fetchAllCourses = async () => {
-  const response = await axios.get(
-    "http://localhost:3000/user/courses/all-courses"
-  );
+  const response = await axios.get(`${API_URL}user/courses/all-courses`);
 
   return response.data;
 };
 
 // Delete Course
 export const deleteCourseId = async (courseId) => {
-  return axios.delete(`http://localhost:3000/teacher/course/${courseId}`, {
+  return axios.delete(`${API_URL}teacher/course/${courseId}`, {
     withCredentials: true,
   });
 };
@@ -252,7 +236,7 @@ export const createCourse = async (courseData) => {
     });
 
     const response = await axios.post(
-      "http://localhost:3000/teacher/course/with-sections",
+      `${API_URL}teacher/course/with-sections`,
       formData,
       {
         withCredentials: true,
@@ -284,7 +268,7 @@ export const createLesson = async (lessonData, sectionId) => {
     }
 
     const response = await axios.post(
-      `http://localhost:3000/teacher/course/section/lesson/${sectionId}`,
+      `${API_URL}teacher/course/section/lesson/${sectionId}`,
       formData,
       {
         withCredentials: true,
@@ -304,9 +288,7 @@ export const createLesson = async (lessonData, sectionId) => {
 
 export const fetchAllTeacherCourses = async () => {
   try {
-    const response = await axios.get(
-      `http://localhost:3000/user/courses/teacher-courses`
-    );
+    const response = await axios.get(`${API_URL}user/courses/teacher-courses`);
 
     return response.data;
   } catch (error) {
@@ -318,7 +300,7 @@ export const fetchAllTeacherCourses = async () => {
 export const FetchTeacherSections = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:3000/user/courses/teacher-sections`,
+      `${API_URL}user/courses/teacher-sections`,
       { withCredentials: true }
     );
 
@@ -331,7 +313,7 @@ export const FetchTeacherSections = async () => {
 
 export const currentUser = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/user/current");
+    const response = await axios.get(`${API_URL}user/current`);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -341,13 +323,9 @@ export const currentUser = async () => {
 
 export const createQuiz = async (quizData) => {
   try {
-    const response = await axios.post(
-      "http://localhost:3000/teacher/quiz",
-      quizData,
-      {
-        withCredentials: true,
-      }
-    );
+    const response = await axios.post(`${API_URL}teacher/quiz`, quizData, {
+      withCredentials: true,
+    });
     return response;
   } catch (error) {
     console.error(error);
@@ -358,7 +336,7 @@ export const createQuiz = async (quizData) => {
 export const getTeacherCoursesById = async (teacherId) => {
   try {
     const response = await axios.get(
-      `http://localhost:3000/user/courses/teacher-courses/${teacherId}`
+      `${API_URL}user/courses/teacher-courses/${teacherId}`
     );
 
     return response;
@@ -370,10 +348,9 @@ export const getTeacherCoursesById = async (teacherId) => {
 
 export const getTeacherCourses = async () => {
   try {
-    const response = await axios.get(
-      `http://localhost:3000/user/courses/teacher-courses`,
-      { withCredentials: true }
-    );
+    const response = await axios.get(`${API_URL}user/courses/teacher-courses`, {
+      withCredentials: true,
+    });
 
     return response.data;
   } catch (error) {
@@ -385,7 +362,7 @@ export const getTeacherCourses = async () => {
 export const getCourseDetails = async (courseId) => {
   try {
     const response = await axios.get(
-      `http://localhost:3000/user/courses/details/${courseId}`
+      `${API_URL}user/courses/details/${courseId}`
     );
 
     return response.data;
@@ -395,52 +372,66 @@ export const getCourseDetails = async (courseId) => {
   }
 };
 
-// Update Course
+export const updateLesson = async (lessonId, updatedLesson) => {
+  try {
+    const response = await axios.patch(
+      `${API_URL}teacher/course/lesson/${lessonId}`,
+      updatedLesson,
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating lesson:", error);
+    throw new Error(error.response?.data?.message || "Error updating lesson");
+  }
+};
+
+export const deleteLesson = async (lessonId) => {
+  try {
+    const response = await axios.delete(
+      `${API_URL}teacher/course/lesson/${lessonId}`,
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting lesson:", error);
+    throw new Error(error.response?.data?.message || "Error deleting lesson");
+  }
+};
+
 export const updateCourse = async (courseId, updatedCourse) => {
   const formData = new FormData();
-  console.log(updatedCourse);
-  console.log(courseId);
 
-  // Append regular fields
   formData.append("title", updatedCourse.title);
   formData.append("description", updatedCourse.description);
   formData.append("price", +updatedCourse.price);
   formData.append("levelTitle", updatedCourse.levelTitle);
   formData.append("teacherName", updatedCourse.teacherName);
+
   updatedCourse.sections.forEach((section, sectionIndex) => {
     formData.append(`section[${sectionIndex}][title]`, section.title);
-
     if (section.id) {
       formData.append(`section[${sectionIndex}][id]`, section.id);
     }
-
-    if (section.lessons) {
-      section.lessons.forEach((lesson, lessonIndex) => {
-        formData.append(
-          `section[${sectionIndex}][lessons][${lessonIndex}][title]`,
-          lesson.title
-        );
-        formData.append(
-          `section[${sectionIndex}][lessons][${lessonIndex}][description]`,
-          lesson.description || ""
-        );
-      });
-    }
+    section.lessons.forEach((lesson, lessonIndex) => {
+      formData.append(
+        `section[${sectionIndex}][lessons][${lessonIndex}][title]`,
+        lesson.title
+      );
+      formData.append(
+        `section[${sectionIndex}][lessons][${lessonIndex}][description]`,
+        lesson.description || ""
+      );
+    });
   });
 
-  // Handle file attachments (image, pdf, video)
   if (updatedCourse.image) {
     formData.append("image", updatedCourse.image);
   }
 
-  // Log formData contents for debugging
-  for (let [key, value] of formData.entries()) {
-    console.log(key, value);
-  }
-
   try {
     const response = await axios.patch(
-      `http://localhost:3000/teacher/course/${courseId}`,
+      `${API_URL}teacher/course/${courseId}`,
       formData,
       {
         headers: {
@@ -452,14 +443,14 @@ export const updateCourse = async (courseId, updatedCourse) => {
     return response.data;
   } catch (error) {
     console.error("Error updating course:", error);
-    throw error;
+    throw new Error(error.response?.data?.message || "Error updating course");
   }
 };
 
 export const coursesErolledByStudents = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/student/course/enrolled/courses",
+      `${API_URL}student/course/enrolled/courses`,
       {
         withCredentials: true,
       }
@@ -475,7 +466,7 @@ export const coursesErolledByStudents = async () => {
 export const courseEnrolledByStudent = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/student/course/enrolled/courses",
+      `${API_URL}student/course/enrolled/courses`,
       {
         withCredentials: true,
       }
@@ -487,4 +478,25 @@ export const courseEnrolledByStudent = async () => {
       throw new Error("لايوجد كورسات");
     }
   }
+};
+
+export const getStudentQuizes = async () => {
+  try {
+    const response = await axios.get(`${API_URL}student/quiz/quizzes`, {
+      withCredentials: true,
+    });
+
+    return response.data || [];
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      throw new Error("لايوجد إمتحانات للعرض");
+    }
+  }
+};
+
+export const fetchParentData = async (parentId) => {
+  const response = await axios.get(
+    `${API_URL}student/students-for-parent/${parentId}`
+  );
+  return response.data;
 };

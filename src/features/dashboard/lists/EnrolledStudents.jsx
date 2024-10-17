@@ -1,16 +1,12 @@
-import { Link } from "react-router-dom";
 import DashbooardPagination from "../components/DashboardPagination";
 import DashboardTable from "../components/DashboardTable";
 import TableSearch from "../components/TableSearch";
-import { role } from "../../../lib/data";
-import { GrView } from "react-icons/gr";
-import FormModal from "../components/FormModal";
 import { getTeacherCourses } from "../dashboardAPI";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "../../../ui/Spinner";
 import studentDefault from "../../../assets/dashboard/profileDefualt.jpg";
 import { useDispatch, useSelector } from "react-redux";
-import { setSortConfig } from "../listSlice";
+import { setSearchTerm, setSortConfig } from "../listSlice";
 import ErrorMessage from "../components/ErrorMessage";
 import { formatDate } from "../../../utils/dateUtils";
 
@@ -42,7 +38,6 @@ const columns = [
 ];
 
 const EnrolledStudents = () => {
-  // Connecting UI State Management
   const dispatch = useDispatch();
   const { searchTerm, sortConfig, filter } = useSelector((state) => state.list);
 
@@ -62,7 +57,6 @@ const EnrolledStudents = () => {
 
   const courseData = enrolledStudents?.data || [];
 
-  // Extract all students from courses and include level information
   const extractedStudents = courseData.flatMap((course) =>
     course.students.map((student) => ({
       ...student,
@@ -72,16 +66,15 @@ const EnrolledStudents = () => {
   );
 
   let filteredStudents = extractedStudents?.filter((student) => {
-    const studentName = student.firstName?.normalize("NFC") || "";
-    const searchTermNormalized = searchTerm?.normalize("NFC") || "";
+    const studentName = student.firstName?.toLowerCase() || "";
+    const searchTermNormalized = searchTerm?.toLowerCase() || "";
 
     return studentName.includes(searchTermNormalized);
   });
 
-  // Apply filter if filter criteria is set
   if (filter) {
     filteredStudents = filteredStudents.filter((student) => {
-      return student.firstName?.includes(filter);
+      return student.someProperty === filter;
     });
   }
 
@@ -91,7 +84,6 @@ const EnrolledStudents = () => {
       const bValue = b[sortConfig.key]?.toString() || "";
       const compareResult = aValue.localeCompare(bValue);
 
-      // Fallback to secondary sort (e.g., last name) if values are equal
       if (compareResult === 0 && sortConfig.secondaryKey) {
         const aSecondary = a[sortConfig.secondaryKey]?.toString() || "";
         const bSecondary = b[sortConfig.secondaryKey]?.toString() || "";
@@ -158,7 +150,10 @@ const EnrolledStudents = () => {
         </h1>
         {/* Search Bar + Buttons */}
         <div className="flex flex-col items-center w-full gap-4 md:flex-row md:w-auto">
-          <TableSearch />
+          <TableSearch
+            value={searchTerm}
+            onChange={(e) => dispatch(setSearchTerm(e.target.value))}
+          />
           <div className="flex items-center self-start gap-4">
             <button
               onClick={handleSort}

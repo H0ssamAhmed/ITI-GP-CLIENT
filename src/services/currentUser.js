@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useSelector } from "react-redux";
 
+const API_URL = "https://e-learning-system-iti-production.up.railway.app/";
+
 export const getCurrentUser = async () => {
-  const response = await axios.get("http://localhost:3000/user/current", {
+  const response = await axios.get(`${API_URL}user/current`, {
     withCredentials: true,
   });
   return response.data;
@@ -11,7 +13,7 @@ export const getCurrentUser = async () => {
 export const logout = async () => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/user/auth/logout",
+      `${API_URL}user/auth/logout`,
       {},
       {
         withCredentials: true,
@@ -21,12 +23,12 @@ export const logout = async () => {
     if (response.status === 200) {
       return response.data.message;
     } else {
-      throw new Error("Failed to log out");
+      throw new Error(`Failed to log out`);
     }
   } catch (error) {
-    console.error("Logout error:", error);
+    console.error(`Logout error:`, error);
     throw new Error(
-      error.response?.data?.message || "An error occurred while logging out"
+      error.response?.data?.message || `An error occurred while logging out`
     );
   }
 };

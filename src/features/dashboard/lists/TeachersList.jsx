@@ -29,11 +29,11 @@ const columns = [
     className: "hidden md:table-cell",
   },
 
-  {
-    header: "الفصول",
-    accessor: "classes",
-    className: "hidden md:table-cell",
-  },
+  // {
+  //   header: "الفصول",
+  //   accessor: "classes",
+  //   className: "hidden md:table-cell",
+  // },
   {
     header: "رقم الهاتف",
     accessor: "phone",
@@ -65,10 +65,8 @@ const TeachersList = () => {
     queryFn: fetchTeachers,
   });
 
-  // Get teacher IDs
   const teacherIds = teachers ? teachers.map((teacher) => teacher.id) : [];
 
-  // Fetch teacher levels
   const teacherLevelQueries = useQueries({
     queries: teacherIds.map((id) => ({
       queryKey: ["teacherLevel", id],
@@ -79,10 +77,6 @@ const TeachersList = () => {
     })),
   });
 
-  // Debugging log to inspect the teacher level queries
-  console.log("teacherLevelQueries:", teacherLevelQueries);
-
-  // Map teacher levels
   const teacherLevels = teacherLevelQueries.map((query, index) => {
     if (query.isError) {
       console.log(`Error fetching level for teacher ${teacherIds[index]}`);
@@ -94,13 +88,12 @@ const TeachersList = () => {
     }
   });
 
-  console.log("teacherLevels:", teacherLevels);
+  console.log(teacherLevels);
 
   if (isTeachersLoading) return <Spinner />;
   if (isTeachersError)
     return <ErrorMessage message="فشل تحميل بيانات المعلمين" />;
 
-  // Filter Operation
   let filteredTeachers = teachers?.filter((teacher) => {
     const teacherName = teacher.firstName?.normalize("NFC") || "";
     const searchTermNormalized = searchTerm?.normalize("NFC") || "";
@@ -108,21 +101,18 @@ const TeachersList = () => {
     return teacherName.includes(searchTermNormalized);
   });
 
-  // Apply filter if filter criteria is set
   if (filter) {
     filteredTeachers = filteredTeachers.filter((teacher) => {
       return teacher.firstName?.includes(filter);
     });
   }
 
-  // Sort operation
   if (sortConfig) {
     filteredTeachers.sort((a, b) => {
       const aValue = a[sortConfig.key]?.toString() || "";
       const bValue = b[sortConfig.key]?.toString() || "";
       const compareResult = aValue.localeCompare(bValue);
 
-      // Fallback to secondary sort (e.g., last name) if values are equal
       if (compareResult === 0 && sortConfig.secondaryKey) {
         const aSecondary = a[sortConfig.secondaryKey]?.toString() || "";
         const bSecondary = b[sortConfig.secondaryKey]?.toString() || "";
@@ -134,7 +124,6 @@ const TeachersList = () => {
   }
 
   const handleSort = () => {
-    // Example: toggle sorting by name
     if (sortConfig?.key === "firstName" && sortConfig?.direction === "asc") {
       dispatch(setSortConfig({ key: "firstName", direction: "desc" }));
     } else {
@@ -170,9 +159,7 @@ const TeachersList = () => {
         {item.id.slice(0, 8).toUpperCase()}
       </td>
       <td className="hidden md:table-cell">{item.specialization}</td>
-      <td className="hidden md:table-cell">
-        {teacherLevels[index] || "لا يوجد"}
-      </td>
+
       <td className="hidden md:table-cell">{item.phoneNumber}</td>
       <td className="hidden md:table-cell">{item.educationalQualification}</td>
       <td>
