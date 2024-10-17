@@ -217,13 +217,7 @@ export default function ProfileDetails({ getProfileData }) {
           },
         },
       },
-      {
-        label: "الرقم القومي",
-        field: "nationalID",
-        value: getProfileData.profileData.nationalId,
-        icon: <BadgeRounded sx={{ fontSize: "1.9rem" }} />,
-        validation: {},
-      }
+     
     );
   }
   if (getProfileData.profileData.role === "student") {
@@ -255,6 +249,13 @@ export default function ProfileDetails({ getProfileData }) {
         field: "levelTitle",
         value: getProfileData.profileData.levelTitle,
         icon: <MenuBook sx={{ fontSize: "2rem" }} />,
+        validation: {},
+      },
+      {
+        label: "الرقم القومي",
+        field: "nationalID",
+        value: getProfileData.profileData.nationalId,
+        icon: <BadgeRounded sx={{ fontSize: "1.9rem" }} />,
         validation: {},
       }
     );

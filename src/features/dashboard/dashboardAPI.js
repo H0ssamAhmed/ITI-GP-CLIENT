@@ -387,6 +387,7 @@ export const getCourseDetails = async (courseId) => {
     const response = await axios.get(
       `http://localhost:3000/user/courses/details/${courseId}`
     );
+console.log('course details',response.data);
 
     return response.data;
   } catch (error) {
@@ -397,6 +398,8 @@ export const getCourseDetails = async (courseId) => {
 
 // Update Course
 export const updateCourse = async (courseId, updatedCourse) => {
+  console.log("Updated Course:", updatedCourse);
+  
   const formData = new FormData();
   console.log(updatedCourse);
   console.log(courseId);
@@ -407,6 +410,8 @@ export const updateCourse = async (courseId, updatedCourse) => {
   formData.append("price", +updatedCourse.price);
   formData.append("levelTitle", updatedCourse.levelTitle);
   formData.append("teacherName", updatedCourse.teacherName);
+  formData.append('levelId', updatedCourse.levelId);
+  formData.append("discountedPrice", +updatedCourse.discountedPrice);
   updatedCourse.sections.forEach((section, sectionIndex) => {
     formData.append(`section[${sectionIndex}][title]`, section.title);
 

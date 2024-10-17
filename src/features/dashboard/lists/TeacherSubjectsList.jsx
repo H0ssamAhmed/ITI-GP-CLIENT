@@ -1,7 +1,7 @@
 import { useState } from "react";
 import DashboardTable from "../components/DashboardTable";
 import { useQuery } from "@tanstack/react-query";
-import { deleteCourseId, getTeacherCourses } from "../dashboardAPI";
+import { deleteCourseId, getCourseDetails, getTeacherCourses } from "../dashboardAPI";
 import ErrorMessage from "../components/ErrorMessage";
 import Spinner from "../../../ui/Spinner";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -52,6 +52,7 @@ const TeacherSubjectsList = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
+  const [modalData, setModalData] = useState({});
 
   const {
     data: teacherCourses,
@@ -63,6 +64,7 @@ const TeacherSubjectsList = () => {
     queryFn: getTeacherCourses, // Ensure this function is defined correctly
   });
 
+ 
   if (isTeacherCoursesLoading) return <Spinner />;
   if (isTeacherCoursesError)
     return <ErrorMessage message="فشل تحميل بيانات الكورسات" />;
@@ -82,9 +84,10 @@ const TeacherSubjectsList = () => {
     }
   };
 
-  const handleEditCourse = (id) => {
-    setSelectedCourseId(id);
+  const handleEditCourse = (item) => {
+    setSelectedCourseId(item.id);
     setIsEditModalOpen(true);
+    setModalData (item)
   };
 
   const handleCloseModal = () => {
@@ -146,7 +149,7 @@ const TeacherSubjectsList = () => {
         <button
           className="flex items-center justify-center w-10 h-10"
           title="Edit"
-          onClick={() => handleEditCourse(item.id)}
+          onClick={() => handleEditCourse(item)}
         >
           <AiOutlineEdit className="text-[1.6rem] text-brand-500 hover:text-brand-300 transition-all duration-300" />
         </button>
@@ -219,11 +222,12 @@ const TeacherSubjectsList = () => {
       </div>
 
       {/* Edit Course Modal */}
-      {isEditModalOpen && (
+      {isEditModalOpen  && (
         <EditCourseModal
           courseId={selectedCourseId}
           onClose={handleCloseModal}
           refetchCourses={refetchRequests} // Pass the refetch function to the modal
+          modalData= {modalData}
         />
       )}
     </div>

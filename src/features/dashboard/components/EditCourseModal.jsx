@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import Spinner from "../../../ui/Spinner";
 import Section from "./Section";
 
-const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
+const EditCourseModal = ({ courseId, onClose, refetchCourses, modalData }) => {
   const { data, isLoading } = useQuery({
     queryKey: ["courseDetails", courseId],
     queryFn: () => getCourseDetails(courseId),
@@ -24,37 +24,42 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
       toast.error("حدث خطأ أثناء التحديث");
     },
   });
+console.log('modal dataaa rakha', modalData);
 
-  const { register, handleSubmit, reset, control, getValues, setValue } =
+  const { register, handleSubmit, reset, control, getValues, setValue, formState:{dirtyFields} } =
     useForm({
       defaultValues: {
-        title: "",
-        description: "",
-        image: "",
-        levelTitle: "",
-        teacherName: "",
-        price: 0,
-        discountedPrice: 0,
-        sections: [],
+        title: modalData.title,
+        description: modalData.description,
+        image: modalData.image,
+        levelTitle: modalData.level.title,
+        teacherName: modalData.teacher.firstName + " " + modalData.teacher.lastName,
+        price: modalData.price,
+        discountedPrice: modalData.discountedPrice,
+        sections: modalData.sections,
       },
     });
+console.log( 'my dataaa', data);
+console.log('dirtyFields', dirtyFields);
 
-  useEffect(() => {
-    if (data) {
-      reset({
-        title: data.title,
-        description: data.description,
-        image: data.image,
-        teacherName: data.teacherId,
-        price: data.price,
-        discountedPrice: data.discountedPrice,
-        sections: data.sections.map((section) => ({
-          ...section,
-          lessons: section.lessons || [],
-        })),
-      });
-    }
-  }, [data, reset]);
+
+  // useEffect(() => {
+  //   if (data) {
+  //     reset({
+  //       title: data.title,
+  //       description: data.description,
+  //       image: data.image,
+  //       levelTitle: data.levelTitle,
+  //       teacherName: data.teacherName,
+  //       price: data.price,
+  //       discountedPrice: data.discountedPrice,
+  //       sections: data.sections.map((section) => ({
+  //         ...section,
+  //         lessons: section.lessons || [],
+  //       })),
+  //     });
+  //   }
+  // }, [data, reset]);
 
   const {
     fields: sectionFields,
@@ -66,23 +71,29 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
   });
 
   const onSubmit = (formData) => {
-
+    
    
     const structuredSections = formData.sections.map((section) => ({
       ...section,
       lessons: section.lessons || [],
     }));
 
-    mutation.mutate({
-      ...formData,
-      sections: structuredSections,
-    });
+    // mutation.mutate({
+    //   ...formData,
+    //   sections: structuredSections,
+    // });
+    const data = {...getValues(), levelId: modalData.level.id}
+    mutation.mutate( data);
   };
 
   const saveSectionChanges = (index) => {
+    const section = []
     const sectionData = getValues(`sections.${index}`);
+    section.push(sectionData);
+    console.log("Section Data:", sectionData);
+    return section;
     // Handle saving logic for the section
-    toast.success(`تم حفظ تغييرات القسم ${index + 1}`);
+    // toast.success(`تم حفظ تغييرات القسم ${index + 1}`);
   };
 
   const deleteLesson = (sectionIndex, lessonIndex) => {
@@ -205,7 +216,7 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses }) => {
 
                 <div className="flex items-center justify-between">
                   <button
-                    type="button"
+                    type="submit"
                     onClick={() => saveSectionChanges(sectionIndex)}
                     className="px-4 py-2 mt-2 text-white bg-green-600 rounded"
                   >
