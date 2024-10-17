@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getCourseDetails, updateCourse } from "../dashboardAPI";
+import { deleteLesson, getCourseDetails, updateCourse } from "../dashboardAPI";
 import { toast } from "react-toastify";
 import Spinner from "../../../ui/Spinner";
 import Section from "./Section";
@@ -16,32 +16,51 @@ const EditCourseModal = ({ courseId, onClose, refetchCourses, modalData }) => {
   const mutation = useMutation({
     mutationFn: (updatedCourse) => updateCourse(courseId, updatedCourse),
     onSuccess: (response) => {
-      toast.success(response);
+      toast.success("تم تحديث الدورة بنجاح!");
       onClose();
       refetchCourses();
     },
-    onError: () => {
-      toast.error("حدث خطأ أثناء التحديث");
+    onError: (error) => {
+      toast.error(error.message || "خطأ في تحديث الدورة");
     },
   });
-console.log('modal dataaa rakha', modalData);
+  console.log("modal dataaa rakha", modalData);
 
-  const { register, handleSubmit, reset, control, getValues, setValue, formState:{dirtyFields} } =
-    useForm({
-      defaultValues: {
-        title: modalData.title,
-        description: modalData.description,
-        image: modalData.image,
-        levelTitle: modalData.level.title,
-        teacherName: modalData.teacher.firstName + " " + modalData.teacher.lastName,
-        price: modalData.price,
-        discountedPrice: modalData.discountedPrice,
-        sections: modalData.sections,
-      },
-    });
-console.log( 'my dataaa', data);
-console.log('dirtyFields', dirtyFields);
+  const deleteLessonMutation = useMutation({
+    mutationFn: (lessonId) => deleteLesson(lessonId),
+    onSuccess: () => {
+      toast.success("تم حذف الدرس بنجاح!");
+      refetchCourses(); // إعادة جلب أو تحديث تفاصيل الدورة لتعكس الحذف
+    },
+    onError: (error) => {
+      toast.error(error.message || "خطأ في حذف الدرس");
+    },
+  });
+  console.log("modal dataaa rakha", modalData);
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    getValues,
+    setValue,
+    formState: { dirtyFields },
+  } = useForm({
+    defaultValues: {
+      title: modalData.title,
+      description: modalData.description,
+      image: modalData.image,
+      levelTitle: modalData.level.title,
+      teacherName:
+        modalData.teacher.firstName + " " + modalData.teacher.lastName,
+      price: modalData.price,
+      discountedPrice: modalData.discountedPrice,
+      sections: modalData.sections,
+    },
+  });
+  console.log("my dataaa", data);
+  console.log("dirtyFields", dirtyFields);
 
   // useEffect(() => {
   //   if (data) {
@@ -71,8 +90,6 @@ console.log('dirtyFields', dirtyFields);
   });
 
   const onSubmit = (formData) => {
-    
-   
     const structuredSections = formData.sections.map((section) => ({
       ...section,
       lessons: section.lessons || [],
@@ -82,12 +99,12 @@ console.log('dirtyFields', dirtyFields);
     //   ...formData,
     //   sections: structuredSections,
     // });
-    const data = {...getValues(), levelId: modalData.level.id}
-    mutation.mutate( data);
+    const data = { ...getValues(), levelId: modalData.level.id };
+    mutation.mutate(data);
   };
 
   const saveSectionChanges = (index) => {
-    const section = []
+    const section = [];
     const sectionData = getValues(`sections.${index}`);
     section.push(sectionData);
     console.log("Section Data:", sectionData);
@@ -96,11 +113,18 @@ console.log('dirtyFields', dirtyFields);
     // toast.success(`تم حفظ تغييرات القسم ${index + 1}`);
   };
 
-  const deleteLesson = (sectionIndex, lessonIndex) => {
-    const sectionLessons = getValues(`sections.${sectionIndex}.lessons`);
-    sectionLessons.splice(lessonIndex, 1); // Remove the lesson from the array
-    setValue(`sections.${sectionIndex}.lessons`, sectionLessons); // Update the form state
-    toast.success(`تم حذف الدرس رقم ${lessonIndex + 1}`);
+  const handleDeleteLesson = (sectionIndex, lessonIndex) => {
+    const lessonId = getValues(
+      `sections.${sectionIndex}.lessons.${lessonIndex}.id`
+    );
+    if (lessonId) {
+      deleteLessonMutation.mutate(lessonId);
+    } else {
+      const sectionLessons = getValues(`sections.${sectionIndex}.lessons`);
+      sectionLessons.splice(lessonIndex, 1);
+      setValue(`sections.${sectionIndex}.lessons`, sectionLessons);
+      toast.success(`تم حذف الدرس ${lessonIndex + 1}`);
+    }
   };
 
   if (isLoading) return <Spinner />;
@@ -188,7 +212,6 @@ console.log('dirtyFields', dirtyFields);
               />
             </div>
           </div>
-          {/* Add Section Button */}
           <button
             type="button"
             onClick={() => addSection({ title: "", lessons: [] })}
@@ -196,7 +219,6 @@ console.log('dirtyFields', dirtyFields);
           >
             إضافة وحدة
           </button>
-          {/* Sections and Lessons */}
           <div className="space-y-6 max-h-[60vh] overflow-y-auto">
             {sectionFields.map((section, sectionIndex) => (
               <div key={section.id} className="p-4 border rounded shadow-md">
@@ -208,10 +230,10 @@ console.log('dirtyFields', dirtyFields);
                   sectionIndex={sectionIndex}
                   control={control}
                   register={register}
-                  removeSection={removeSection} // Pass removeSection function
+                  removeSection={removeSection}
                   deleteLesson={deleteLesson}
-                  getValues={getValues} // Pass getValues to Section
-                  setValue={setValue} // Pass setValue to Section
+                  getValues={getValues}
+                  setValue={setValue}
                 />
 
                 <div className="flex items-center justify-between">
@@ -226,8 +248,8 @@ console.log('dirtyFields', dirtyFields);
                   <button
                     type="button"
                     onClick={() => {
-                      removeSection(sectionIndex); // Call removeSection to delete the section
-                      toast.success(`تم حذف الوحدة رقم ${sectionIndex + 1}`); // Show success message
+                      removeSection(sectionIndex);
+                      toast.success(`تم حذف الوحدة رقم ${sectionIndex + 1}`);
                     }}
                     className="px-4 py-2 mt-4 text-white bg-red-600 rounded"
                   >

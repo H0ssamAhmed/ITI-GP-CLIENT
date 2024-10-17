@@ -2,24 +2,53 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "./Button";
 import LinkWithUnderline from "./LinkWithUnderline";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { FaWallet } from "react-icons/fa";
+import { clearUserRole } from "../features/auth/slices/authSlice";
+import { logout } from "../services/currentUser";
+import { clearUserRole as logoutAction } from "../features/auth/slices/authSlice.js";
+import { toast } from "react-toastify";
 
 function BurgerMenu() {
-  const [isOpen, setIsopen] = useState(false);
+  const user = useSelector((state) => state.auth.role);
+  const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await logout();
 
-  // Handling The Open/Close
+      dispatch(logoutAction());
+      dispatch(clearUserRole());
+
+      console.log("Before toast");
+      toast.success("تم تسجيل الخروج بنجاح", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      console.log("After toast");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    } catch (error) {
+      toast.error(error.message || "An error occurred during logout.");
+    }
+  };
+
   function toggleOverlay() {
-    setIsopen(!isOpen);
+    setIsOpen(!isOpen);
   }
 
-  // Disable scroll when the menu is open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
     return () => {
-      document.body.style.overflow = "auto"; // Clean up when component unmounts
+      document.body.style.overflow = "auto";
     };
   }, [isOpen]);
 
@@ -46,7 +75,6 @@ function BurgerMenu() {
         </button>
       </div>
 
-      {/* Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -78,25 +106,60 @@ function BurgerMenu() {
                 </svg>
               </button>
 
-              {/* Content */}
-              <div className="flex flex-col justify-between h-full text-center ">
-                <h2 className="mb-16 text-[3rem] font-bold ">
+              <div className="flex flex-col justify-between h-full text-center">
+                <h2 className="mb-16 text-[3rem] font-bold">
                   القائمة الرئيسية
                 </h2>
                 <div className="flex z-50 flex-col text-[2.5rem] items-center justify-center space-x-8 text-black gap-14">
-                  <LinkWithUnderline>خدمات المنصة</LinkWithUnderline>
-                  <LinkWithUnderline>الفصول الدراسية</LinkWithUnderline>
-                  <LinkWithUnderline>من نحن</LinkWithUnderline>
-                  <LinkWithUnderline>تواصل معنا</LinkWithUnderline>
+                  <Link to="/features">
+                    <LinkWithUnderline>خدمات المنصة</LinkWithUnderline>
+                  </Link>
+
+                  <Link to="/courses">
+                    <LinkWithUnderline>الفصول الدراسية</LinkWithUnderline>
+                  </Link>
+
+                  <Link to="/about-us">
+                    <LinkWithUnderline>من نحن</LinkWithUnderline>
+                  </Link>
+
+                  <Link to="/contact">
+                    <LinkWithUnderline>تواصل معنا</LinkWithUnderline>
+                  </Link>
                 </div>
-                <div className="flex flex-col z-50 text-[2.5rem] gap-4">
-                  <Button className="px-4 py-2 font-bold text-black transition-all duration-300 bg-yellow-500 rounded-full hover:bg-yellow-200 ">
-                    حساب جديد
-                  </Button>
-                  <Button className="px-4 py-2 font-bold text-white transition-all duration-300 border-2 rounded-full bg-brand-700 hover:bg-brand-500 ring-white">
-                    تسجيل الدخول
-                  </Button>
-                </div>
+
+                {!user ? (
+                  <div className="flex flex-col z-50 text-[2.5rem] gap-4">
+                    <Button className="px-4 py-2 font-bold text-black transition-all duration-300 bg-yellow-500 rounded-full hover:bg-yellow-200">
+                      حساب جديد
+                    </Button>
+                    <Button className="px-4 py-2 font-bold text-white transition-all duration-300 border-2 rounded-full bg-brand-700 hover:bg-brand-500 ring-white">
+                      تسجيل الدخول
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <Link
+                      className="flex justify-center w-full items-cente"
+                      to="/wallet"
+                    >
+                      <div className="flex flex-col text-[2rem] w-full text-center items-center gap-2 p-3 transition-all duration-300 bg-yellow-400 rounded-full cursor-pointer hover:bg-yellow-300 hover:shadow-lg hover:scale-105">
+                        <FaWallet />
+                        <span className="font-semibold font-cairo">
+                          {user?.walletBalance
+                            ? `${user.walletBalance} EGP`
+                            : "المحفظة"}
+                        </span>
+                      </div>
+                    </Link>
+                    <Button
+                      className="p-4 font-bold rounded-full text-[2rem] bg-brand-600"
+                      onClick={handleLogout}
+                    >
+                      تسجيل الخروج
+                    </Button>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>

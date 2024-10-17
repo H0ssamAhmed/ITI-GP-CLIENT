@@ -57,8 +57,7 @@ function Navigation() {
   };
 
   return (
-    <div className=" bg-brand-700 ">
-
+    <div className=" bg-brand-700">
       <motion.nav
         style={{ opacity: navOpacity, y: navY }}
         className="sticky top-0 left-0 z-[900] flex items-center  container mx-auto  justify-between w-full p-6 shadow-md text-[1.5rem] menu lg:justify-around"
@@ -82,7 +81,10 @@ function Navigation() {
                 الفصول الدراسية
               </LinkWithUnderline>
 
-              <MultiLevelDropdown setIsOpen={setIsOpen} onOpenDropdown={isOpen} />
+              <MultiLevelDropdown
+                setIsOpen={setIsOpen}
+                onOpenDropdown={isOpen}
+              />
             </div>
 
             <Link to={"/about-us"}>
@@ -133,7 +135,7 @@ function Navigation() {
                 onMouseEnter={handleMouseEnterLoginDropdown}
                 onMouseLeave={handleMouseLeaveLoginDropdown}
               >
-                <Button className="px-4 bg-red-600 py-2 font-bold text-white transition-all duration-300 bg-transparent border-2 rounded-full hover:bg-gray-400 ring-white">
+                <Button className="px-4 py-2 font-bold text-white transition-all duration-300 bg-transparent bg-red-600 border-2 rounded-full hover:bg-gray-400 ring-white">
                   تسجيل الدخول
                 </Button>
                 {loginDropdownOpen && (

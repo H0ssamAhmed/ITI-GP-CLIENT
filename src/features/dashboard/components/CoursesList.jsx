@@ -17,6 +17,8 @@ const CoursesList = () => {
   if (isenrolledCourses) return <Spinner />;
   if (enrolledCoursesError)
     return <ErrorMessage message="فشل تحميل بيانات الكورسات الخاصة " />;
+
+  console.log(enrolledCourses);
   return (
     <>
       {enrolledCourses?.courses && enrolledCourses.courses.length > 0 ? (
@@ -54,15 +56,6 @@ const CoursesList = () => {
                 </div>
                 <span className="text-[1.3rem] text-gray-500">
                   {course?.lessonName}
-                </span>
-                <div className="w-full h-2 bg-gray-200 rounded-full">
-                  <div
-                    className="h-full rounded-full bg-brand-500"
-                    style={{ width: `${course?.progress}%` }}
-                  ></div>
-                </div>
-                <span className="text-[1.3rem] text-gray-500">
-                  التقدم: {course?.progress}%
                 </span>
               </div>
             </div>

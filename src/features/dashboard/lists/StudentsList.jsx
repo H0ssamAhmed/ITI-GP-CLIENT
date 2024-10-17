@@ -52,12 +52,9 @@ const columns = [
 ];
 
 const StudentsList = () => {
-  // Connecting UI State Mangement
   const dispatch = useDispatch();
-
   const { searchTerm, sortConfig, filter } = useSelector((state) => state.list);
 
-  // Connecting The Server
   const {
     data: students,
     isLoading,
@@ -66,8 +63,6 @@ const StudentsList = () => {
     queryKey: ["students"],
     queryFn: fetchStudents,
   });
-
-  console.log(students);
 
   if (isLoading) return <Spinner />;
   if (error) return <ErrorMessage message="خطأ اثناء تحميل بيانات الطلاب" />;
@@ -79,7 +74,6 @@ const StudentsList = () => {
     return studentName.includes(searchTermNormalized);
   });
 
-  // Apply filter if filter criteria is set
   if (filter) {
     filteredStudents = filteredStudents.filter((student) => {
       return student.firstName?.includes(filter);
@@ -201,10 +195,6 @@ const StudentsList = () => {
           />
         </div>
       )}
-      {/* Pagiantion */}
-      <div>
-        <DashbooardPagination />
-      </div>
     </div>
   );
 };

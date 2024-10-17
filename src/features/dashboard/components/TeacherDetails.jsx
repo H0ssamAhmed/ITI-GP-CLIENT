@@ -3,7 +3,7 @@ import Announcement from "../components/Announcement";
 import FinanceChart from "../components/FinanceChart";
 import TeacherPerformanceChart from "../components/TeacherPerformanceChart";
 import { useQuery } from "@tanstack/react-query";
-import { fetchUserById } from "../dashboardAPI";
+import { fetchUserById, getTeacherCourses } from "../dashboardAPI";
 import Spinner from "../../../ui/Spinner";
 import ErrorMessage from "./ErrorMessage";
 import teacherDefault from "../../../assets/dashboard/profileDefualt.jpg";
@@ -24,7 +24,6 @@ const TeacherDetails = () => {
   if (isLoading) return <Spinner />;
   if (error) return <ErrorMessage message="فشل تحميل بيانات المعلم" />;
 
-  //NOTE - TEST
   console.log(teacher);
 
   return (

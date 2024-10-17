@@ -8,14 +8,13 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { CiLogout } from "react-icons/ci";
 import { toast, ToastContainer } from "react-toastify";
-import { useDispatch } from "react-redux"; // Import useDispatch
+import { useDispatch } from "react-redux";
 import {
   clearUserRole,
   logout as logoutAction,
-} from "../features/auth/slices/authSlice.js"; // Adjust the import path as necessary
-
+} from "../features/auth/slices/authSlice.js";
 const LoggedUser = ({ role }) => {
-  const dispatch = useDispatch(); // Create a dispatch function
+  const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { data: user, refetch } = useQuery({

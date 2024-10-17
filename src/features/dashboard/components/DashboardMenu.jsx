@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import {
   clearUserRole,
   logout as logoutAction,
-} from "../../auth/slices/authSlice.js"; // Adjust the import path as necessary
+} from "../../auth/slices/authSlice.js";
 
 const menuItems = [
   {
@@ -87,7 +87,7 @@ const menuItems = [
         icon: "/src/assets/dashboard/result.png",
         label: "نتائج الإختبارات",
         href: "list/results",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["teacher", "student"],
       },
 
       {
