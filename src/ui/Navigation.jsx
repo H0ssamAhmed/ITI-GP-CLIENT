@@ -57,110 +57,113 @@ function Navigation() {
   };
 
   return (
-    <motion.nav
-      style={{ opacity: navOpacity, y: navY }}
-      className="sticky top-0 left-0 z-[900] flex items-center justify-between w-full p-6 shadow-md text-[1.5rem] bg-brand-700 menu lg:justify-around"
-      initial={false}
-      animate={isOpen ? "open" : "close"}
-    >
-      <Logo />
-      <BurgerMenu />
-      <div className="items-center justify-between hidden lg:flex">
-        <div className="hidden gap-4 space-x-8 text-white md:hidden lg:items-end lg:justify-center lg:flex">
-          <Link to="/features">
-            <LinkWithUnderline>خدمات المنصة</LinkWithUnderline>
-          </Link>
+    <div className=" bg-brand-700 ">
 
-          <div className="relative inline-block">
-            <LinkWithUnderline
-              id="multiLevelDropdownButton"
-              dataDropdownToggle="multi-dropdown"
-              onMouseOver={toggleIsOpen}
-            >
-              الفصول الدراسية 
-            </LinkWithUnderline>
+      <motion.nav
+        style={{ opacity: navOpacity, y: navY }}
+        className="sticky top-0 left-0 z-[900] flex items-center  container mx-auto  justify-between w-full p-6 shadow-md text-[1.5rem] menu lg:justify-around"
+        initial={false}
+        animate={isOpen ? "open" : "close"}
+      >
+        <Logo />
+        <BurgerMenu />
+        <div className="items-center justify-between hidden lg:flex">
+          <div className="hidden gap-4 space-x-8 text-white md:hidden lg:items-end lg:justify-center lg:flex">
+            <Link to="/features">
+              <LinkWithUnderline>خدمات المنصة</LinkWithUnderline>
+            </Link>
 
-            <MultiLevelDropdown onOpenDropdown={isOpen} />
+            <div className="relative inline-block">
+              <LinkWithUnderline
+                id="multiLevelDropdownButton"
+                dataDropdownToggle="multi-dropdown"
+                onMouseOver={toggleIsOpen}
+              >
+                الفصول الدراسية
+              </LinkWithUnderline>
+
+              <MultiLevelDropdown setIsOpen={setIsOpen} onOpenDropdown={isOpen} />
+            </div>
+
+            <Link to={"/about-us"}>
+              <LinkWithUnderline>من نحن</LinkWithUnderline>
+            </Link>
+            <Link to={"/contact"}>
+              <LinkWithUnderline>تواصل معنا</LinkWithUnderline>
+            </Link>
           </div>
-
-          <Link to={"/about-us"}>
-            <LinkWithUnderline>من نحن</LinkWithUnderline>
-          </Link>
-          <Link to={"/contact"}>
-            <LinkWithUnderline>تواصل معنا</LinkWithUnderline>
-          </Link>
+          <SearchBar />
         </div>
-        <SearchBar />
-      </div>
-      <div className="relative items-center hidden gap-4 lg:flex">
-        {!userRole ? (
-          <>
-            <div
-              className="relative inline-block"
-              onMouseEnter={handleMouseEnterDropdown}
-              onMouseLeave={handleMouseLeaveDropdown}
-            >
-              <Button className="px-4 py-2 font-bold text-black transition-all duration-300 bg-yellow-500 rounded-full hover:bg-yellow-300">
-                حساب جديد
-              </Button>
-              {dropdownOpen && (
-                <div className="absolute right-0 z-10 w-48 mt-1 bg-white rounded-md shadow-lg">
-                  <Link
-                    to={"/signup"}
-                    onClick={() => handleAccountTypeChange("student")}
-                  >
-                    <Button className="block w-full px-4 py-2 text-center text-gray-800 hover:bg-gray-100">
-                      طالب
-                    </Button>
-                  </Link>
-                  <Link
-                    to={"/signup"}
-                    onClick={() => handleAccountTypeChange("teacher")}
-                  >
-                    <Button className="block w-full px-4 py-2 text-center text-gray-800 hover:bg-gray-100">
-                      معلم
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            {/* Login Dropdown */}
-            <div
-              className="relative inline-block"
-              onMouseEnter={handleMouseEnterLoginDropdown}
-              onMouseLeave={handleMouseLeaveLoginDropdown}
-            >
-              <Button className="px-4 py-2 font-bold text-white transition-all duration-300 bg-transparent border-2 rounded-full hover:bg-gray-400 ring-white">
-                تسجيل الدخول
-              </Button>
-              {loginDropdownOpen && (
-                <div className="absolute right-0 z-10 w-48 mt-1 bg-white rounded-md shadow-lg">
-                  <Link to={"/login"}>
-                    <Button
+        <div className="relative items-center hidden gap-4 lg:flex">
+          {!userRole ? (
+            <>
+              <div
+                className="relative inline-block"
+                onMouseEnter={handleMouseEnterDropdown}
+                onMouseLeave={handleMouseLeaveDropdown}
+              >
+                <Button className="px-4 py-2 font-bold text-black transition-all duration-300 bg-yellow-500 rounded-full hover:bg-yellow-300">
+                  حساب جديد
+                </Button>
+                {dropdownOpen && (
+                  <div className="absolute right-0 z-10 w-48 mt-1 bg-white rounded-md shadow-lg">
+                    <Link
+                      to={"/signup"}
                       onClick={() => handleAccountTypeChange("student")}
-                      className="block w-full px-4 py-2 text-center text-gray-800 hover:bg-gray-100"
                     >
-                      طالب / معلم
-                    </Button>
-                  </Link>
-                  <Link to={"/parentLogin"}>
-                    <Button
-                      onClick={() => handleAccountTypeChange("parent")}
-                      className="block w-full px-4 py-2 text-center text-gray-800 hover:bg-gray-100"
+                      <Button className="block w-full px-4 py-2 text-center text-gray-800 hover:bg-gray-100">
+                        طالب
+                      </Button>
+                    </Link>
+                    <Link
+                      to={"/signup"}
+                      onClick={() => handleAccountTypeChange("teacher")}
                     >
-                      ولي أمر
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <LoggedUser role={userRole} />
-        )}
-      </div>
-    </motion.nav>
+                      <Button className="block w-full px-4 py-2 text-center text-gray-800 hover:bg-gray-100">
+                        معلم
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Login Dropdown */}
+              <div
+                className="relative inline-block"
+                onMouseEnter={handleMouseEnterLoginDropdown}
+                onMouseLeave={handleMouseLeaveLoginDropdown}
+              >
+                <Button className="px-4 bg-red-600 py-2 font-bold text-white transition-all duration-300 bg-transparent border-2 rounded-full hover:bg-gray-400 ring-white">
+                  تسجيل الدخول
+                </Button>
+                {loginDropdownOpen && (
+                  <div className="absolute right-0 z-10 w-48 mt-1 bg-white rounded-md shadow-lg">
+                    <Link to={"/login"}>
+                      <Button
+                        onClick={() => handleAccountTypeChange("student")}
+                        className="block w-full px-4 py-2 text-center text-gray-800 hover:bg-gray-100"
+                      >
+                        طالب / معلم
+                      </Button>
+                    </Link>
+                    <Link to={"/parentLogin"}>
+                      <Button
+                        onClick={() => handleAccountTypeChange("parent")}
+                        className="block w-full px-4 py-2 text-center text-gray-800 hover:bg-gray-100"
+                      >
+                        ولي أمر
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <LoggedUser role={userRole} />
+          )}
+        </div>
+      </motion.nav>
+    </div>
   );
 }
 

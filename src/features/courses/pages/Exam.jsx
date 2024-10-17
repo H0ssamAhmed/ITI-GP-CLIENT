@@ -9,6 +9,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { GetSectionQuiz, sendQuizAns } from '../apis/coursesApi.js';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
+import { getCurrentUser } from '../../../services/currentUser.js';
 
 
 // const SubmitQuiz = async (payload) => {
@@ -32,19 +34,27 @@ const Exam = () => {
   const [isStarted, setIsStarted] = useState(false)
   const [ShowAlertSubmit, setShowAlertSubmit] = useState(false)
   const [isQuizEnd, setIsQuizEnd] = useState(false)
+  const [isSubmitedBefore, setIsSubmitedBefore] = useState(false)
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['getSectinQuiz', quizId],
+    queryKey: ['getSectionQuiz', quizId],
     queryFn: () => GetSectionQuiz(quizId),
-    retry: false,  // Optionally disable retries if an error occurs
+    retry: false,
     onError: (err) => {
-      console.log('Error fetching quiz:', err.message);
+      if (err.message) {
+        console.log('Error fetching quiz:', err.message);
+        toast.error(err.message);
+      } else {
+        console.log('An unexpected error occurred.');
+        toast.error('An unexpected error occurred.');
+      }
     },
     onSuccess: (data) => {
-      console.log(data);
+      console.log('Quiz data:', data);
     },
-  })
-  // console.log(data);
+  });
+
+  console.log(data);
 
 
   const { mutate, isLoading: LoadingMutation } = useMutation({
@@ -61,6 +71,7 @@ const Exam = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
+    // console.log(currentUser);
     if (data) {
       setQuizTime(data.data.Duration);
       setQuizTitle(data.data.title);

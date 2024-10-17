@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { Button, Skeleton, Stack } from '@mui/material';
 import { FaX } from 'react-icons/fa6';
@@ -10,6 +10,7 @@ import { LevelsAndCourses, SmallLevelsAndCourses } from '../components/Levels';
 import { setCourses, setLevels, setUserCourses, setCurrentUser, setError, setLoading } from '../coursesSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUser } from '../../../services/currentUser';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 const CourseCatalog = () => {
   const [showFiltreDiv, setShowFiltreDiv] = useState(false);
@@ -18,8 +19,10 @@ const CourseCatalog = () => {
   const [fetchLevel, setFetchLevels] = useState([]);
   const [subject, setSubject] = useState("");
   const dispatch = useDispatch();
-
-  // Fetch current user
+  const navigate = useNavigate();
+  const [queryFilterId, setQueryFilterId] = useState("")
+  const params = useParams();
+  const [searchParams] = useSearchParams();
   const { data: currentUser, isLoading: isLoadingUser, error: errorUser } = useQuery(
     {
       queryKey: ['currentUser'],
@@ -72,18 +75,25 @@ const CourseCatalog = () => {
       }
     });
   useEffect(() => {
-    dispatch(setLoading(isLoadingUser || isLoadingUserCourses || isLoadingCourses || isLoadingLevels));
-    setTimeout(() => {
-      setCurrentDisplayed(courses?.data?.data);
-    }, 100);
-    console.log(courses?.data?.data);
-    console.log(levels?.data?.data);
-    console.log(JSON.stringify(userCourses?.data?.courses));
-    console.log(currentUser?.data);
-    // console.log(userCourses?.data);
-    // console.log(currentUser?.data);
-    // console.log(alldata);
-  }, [isLoadingUser, isLoadingUserCourses, isLoadingCourses, isLoadingLevels]);
+    const level = searchParams.get('level');
+    setQueryFilterId(level);
+
+    // Ensure both courses and level are available before filtering
+    if (level && courses?.data?.data) {
+      setCurrentDisplayed(courses.data.data.filter((course) => course.levelId === level));
+    }
+  }, [queryFilterId, courses, params, searchParams]);
+
+  // Fetch current user
+
+  useEffect(() => {
+    if (!queryFilterId) {
+      dispatch(setLoading(isLoadingUser || isLoadingUserCourses || isLoadingCourses || isLoadingLevels));
+      setTimeout(() => {
+        setCurrentDisplayed(courses?.data?.data);
+      }, 100);
+    }
+  }, [isLoadingUser, isLoadingUserCourses, isLoadingCourses, isLoadingLevels, params, searchParams]);
 
   const { data: AllLevel, isLoading: isLoadingLevel, } = useQuery({ queryKey: ['levels'], queryFn: () => getAllLevels() })
 
@@ -92,10 +102,9 @@ const CourseCatalog = () => {
     if (AllLevel) setFetchLevels(AllLevel.data.data);
   }, [AllLevel]);
 
-  const handleFiltrationbyLevel = (e) => {
+  const handleFiltrationbyLevel = (e, id) => {
     if (e?.target.tagName == "P") {
-      const filterBy = e.target?.innerText;
-      const filteredCourses = courses?.data?.data?.filter(course => course.levelTitle === filterBy);
+      const filteredCourses = courses?.data?.data?.filter(course => course.levelId === id);
       setCurrentDisplayed(filteredCourses);
       setLevel(filteredCourses);
       activateLevel(e.target);
@@ -130,6 +139,7 @@ const CourseCatalog = () => {
     const allLevels = document.querySelectorAll(".levels p");
     allLevels.forEach(level => level.classList.remove("bg-brand-500", "text-white"));
     setLevel('');
+    navigate('/courses');
   };
 
   const resetAllSubjects = () => {
@@ -142,6 +152,25 @@ const CourseCatalog = () => {
     resetAllLevels();
     resetAllSubjects();
   };
+
+
+
+  const popupRef = useRef(); // Reference to the popup
+
+  // Function to handle clicks outside the popup
+  const handleClickOutside = (event) => {
+    if (popupRef.current && !popupRef.current.contains(event.target)) {
+      setShowFiltreDiv(false)// Close the popup
+    }
+  };
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  // if (!showFiltreDiv) return null
+
 
   return (
     <div className='relative bg-brand-600/10 min-h-[80vh]' style={{ backgroundImage: 'url("../../../assets/backgroundcover.png")' }}>
@@ -169,7 +198,9 @@ const CourseCatalog = () => {
         <AnimatePresence>
           {showFiltreDiv && (
             <SmallLevelsAndCourses
+              queryFilterId={queryFilterId}
               subject={subject}
+              popupRef={popupRef}
               fetchLevel={fetchLevel}
               resetAllLevels={resetAllLevels}
               handleRemoveFiltration={handleRemoveFiltration}
@@ -210,7 +241,13 @@ const CourseCatalog = () => {
                   <Skeleton animation="wave" width={400} height={400} />
                 </div>
               }
-              {!isLoadingCourses &&
+              {!isLoadingCourses && !queryFilterId &&
+                currentDisplayed?.map((course, index) => (
+                  <motion.div key={index} className='p-4 cursor-pointer' initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3 }}>
+                    <CourseCard course={course} userCourses={userCourses?.data?.courses} />
+                  </motion.div>))
+              }
+              {queryFilterId && !isLoadingCourses &&
                 currentDisplayed?.map((course, index) => (
                   <motion.div key={index} className='p-4 cursor-pointer' initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3 }}>
                     <CourseCard course={course} userCourses={userCourses?.data?.courses} />

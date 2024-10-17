@@ -26,65 +26,34 @@ import teacherImg from "../assets/HomePageImages/teacher.png";
 import studentsImg from "../assets/HomePageImages/students.png";
 import { FaArrowLeft } from "react-icons/fa6";
 
-import ScrollToTopButton from "../ui/ScrollToTopButton";
-import { Link, useNavigate } from "react-router-dom";
-import StudentsAvatar from "../ui/StudentsAvatar";
-import { useContext, useState } from "react";
-import SignUpContext from "../features/store/signup-context";
-import { getTeachers } from "../services/getTeachersApi";
-import { useQuery } from "@tanstack/react-query";
-import TeacherCardSkeleton from "../ui/TeacherCardSkeleton";
-//  Temporary Data
-const subjects = [
-  {
-    img: mathImg,
-    subjectName: "الرياضيات",
-    subjectIcon: TfiBlackboard,
-    grade: "الصف الأول الثانوي",
-  },
-  {
-    img: historyImg,
-    subjectName: "التاريخ",
-    subjectIcon: MdHistoryEdu,
-    grade: "الصف الثالث الإعدادي",
-  },
-  {
-    img: chemistryImg,
-    subjectName: "الكيمياء",
-    subjectIcon: FaFlask,
-    grade: "الصف الثالث الثانوي",
-  },
-  {
-    img: englishImg,
-    subjectName: "اللغة الإنجليزية",
-    subjectIcon: FaLanguage,
-    grade: "الصف السادس الإبتدائي",
-  },
-];
+import ScrollToTopButton from '../ui/ScrollToTopButton';
+import { Link, useNavigate } from 'react-router-dom';
+import StudentsAvatar from '../ui/StudentsAvatar';
+import { useContext, useState } from 'react';
+import SignUpContext from '../features/store/signup-context';
+import { useQuery } from '@tanstack/react-query';
+import { getAllCourses, getAllTeachers } from '../features/courses/apis/coursesApi';
+import { Skeleton } from '@mui/material';
 
 function Home() {
   const { handleTypeChange } = useContext(SignUpContext);
   const navigate = useNavigate();
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 4,});
-    const fetchTeachers = async () => {
-      const response = await getTeachers(pagination);
-      return response;
-    };
+  const { data: courses, isLoading: isLoadingCourses, error: errorCourses } = useQuery({
+    queryKey: ['courses'],
+    queryFn: () => getAllCourses('all-courses'),
+  });
+  const { data: teachers, isLoading: isLoadingTeachers, error: errorTeaqhers } = useQuery({
+    queryKey: ['teachers'],
+    queryFn: () => getAllTeachers(2, 4),
+  });
+  console.log(teachers?.data?.teachers);
+
   const handleNavigate = () => {
     navigate("/signup");
     handleTypeChange("teacher");
   };
-  const {
-    data: fetchedTeachersData,
-    isPending: isFetchingTeachers,
-    isError: isTeachersError,
-  } = useQuery({
-    queryKey: ["teachers", pagination],
-    queryFn: fetchTeachers
-  });
- 
+  console.log(teachers);
+
   return (
     <>
       <motion.div
@@ -223,7 +192,7 @@ function Home() {
 
           {/* Section One */}
           <motion.section
-            className="relative mt-[30rem] px-6"
+            className="relative  container mx-auto  mt-[30rem] px-6"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
@@ -231,38 +200,32 @@ function Home() {
             <h1 className="text-[2.5rem] mt-[40rem] lg:text-[3.5rem] mb-60 font-bold">
               إبدا رحلتك مع نخبة من أفضل المدرسين
             </h1>
-            <div className="grid items-center justify-center grid-cols-1 gap-8 mb-16 md:grid-cols-2 lg:grid-cols-4 gap-y-60">
-              {isFetchingTeachers ? (
-                <TeacherCardSkeleton />
-              ) : (
-                fetchedTeachersData?.teachers.map((teacher, index) => (
-                  <TeacherCard key={teacher.id} teacherData={teacher} />
-                ))
-              )}
+            <div className="grid container mx-auto  items-center justify-center grid-cols-1 gap-8 mb-16 md:grid-cols-2 lg:grid-cols-4 gap-y-60">
+              {teachers?.data?.teachers.map((teacher) => (
+                <TeacherCard key={teacher.id} teacher={teacher} />
+              ))}
             </div>
-            <SeeMore  />
+            <SeeMore />
           </motion.section>
 
           {/* Further sections continue... */}
 
           <motion.section
-            className="mt-[15rem]  px-6"
+            className="mt-[15rem]  container mx-auto   px-6"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
           >
-            <div className="relative ">
+            <div className="relative">
               <h1 className="text-[2.5rem] mb-40 lg:text-[3.5rem] font-bold ">
                 إستكشف موادنا التعليمية
               </h1>
-              <div className="grid items-center justify-center grid-cols-1 gap-5 mb-16 md:grid-cols-2 lg:grid-cols-4 gap-y-36">
-                {subjects.map((subject, index) => (
+              {isLoadingCourses && <Skeleton sx={{ height: 300 }} animation="wave" width={"100%"} />}
+              <div className="grid  container mx-auto items-center justify-center grid-cols-1 gap-5 mb-16 md:grid-cols-2 xl:grid-cols-4 gap-y-36">
+                {!isLoadingCourses && Array.from({ length: 4 }).map((_, index) => (
                   <SubjectCard
+                    subject={courses?.data?.data[index]}
                     key={index}
-                    img={subject.img}
-                    subjectName={subject.subjectName}
-                    subjectIcon={subject.subjectIcon}
-                    grade={subject.grade}
                   />
                 ))}
               </div>
@@ -271,12 +234,12 @@ function Home() {
           </motion.section>
 
           <motion.section
-            className="mt-[10rem] mb-40 lg:grid lg:grid-cols-2  px-6 relative"
+            className="mt-[10rem] container mx-auto mb-40 lg:grid lg:grid-cols-2  px-6 relative"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
           >
-            <div className="relative ">
+            <div className="relative">
               <h1 className="text-[2.5rem] mb-5 lg:text-[4rem]  font-bold ">
                 مين{" "}
                 <span className="text-brand-700 text-[3rem] lg:text-[6rem]">

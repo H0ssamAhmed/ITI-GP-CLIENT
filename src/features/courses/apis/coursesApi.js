@@ -9,9 +9,19 @@ export const getAllCourses = async (requiredPath) => {
     if (error.response?.status === 404) {
       throw new Error(error);  // Specific handling for 404
     }
-    throw new Error(error || "Failed to fetch quiz data");  // Handle other errors
+    throw new Error(error || "Failed to fetch courses");  // Handle other errors
   }
-
+};
+export const getAllTeachers = async (page, limit) => {
+  try {
+    const response = await axios.get(`${base_url}/user/teachers?page=${page}&limit=${limit}`);
+    return response// return only the data par
+  } catch (error) {
+    if (error.response?.status === 404) {
+      throw new Error(error);  // Specific handling for 404
+    }
+    throw new Error(error || "Failed to fetch courses");  // Handle other errors
+  }
 };
 
 export const getCourseDetails = async (courseId) => {
@@ -22,7 +32,7 @@ export const getCourseDetails = async (courseId) => {
     if (error.response?.status === 404) {
       throw new Error(error.response);  // Specific handling for 404
     }
-    throw new Error(error.response || "Failed to fetch quiz data");  // Handle other errors
+    throw new Error(error.response || "Failed to fetch course details");  // Handle other errors
   }
 }
 
@@ -34,7 +44,7 @@ export const getAllLevels = async () => {
     if (error.response?.status === 404) {
       throw new Error(error.response);  // Specific handling for 404
     }
-    throw new Error(error.response || "Failed to fetch quiz data");  // Handle other errors
+    throw new Error(error.response || "Failed to fetch levels");  // Handle other errors
 
   }
 }
@@ -42,15 +52,18 @@ export const getAllLevels = async () => {
 
 export const GetSectionQuiz = async (sectionId) => {
   try {
-    const quiz = await axios.get(`${base_url}/student/quiz/questions/section/${sectionId}`, { withCredentials: true })
-    return quiz
+    const quiz = await axios.get(`${base_url}/student/quiz/questions/section/${sectionId}`, { withCredentials: true });
+    return quiz;
   } catch (error) {
-    if (error.response?.status === 404) {
-      throw new Error(error.response.data.message);
+    // Check if error has a response object and return the error message from it
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);  // Throw an error with the message
+    } else {
+      throw new Error('An unexpected error occurred');  // Handle unexpected errors
     }
-    throw new Error(error.response || "Failed to fetch quiz data");  // Other errors
   }
 }
+
 
 
 

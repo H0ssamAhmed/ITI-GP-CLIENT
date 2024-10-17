@@ -9,6 +9,7 @@ import { getCourseDetails, getCurrentUserCourses } from "../apis/coursesApi";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../../../services/currentUser";
+import { toast } from "react-toastify";
 
 
 
@@ -45,6 +46,7 @@ function LessonDetails() {
     })
 
   }, [user, userCourses])
+
   useEffect(() => {
     if (data) {
       setCourseData(data?.data)
@@ -55,6 +57,7 @@ function LessonDetails() {
           setLessonTitle(lesson?.title);
           setVideoUrl(lesson?.videoUrl);
           setPdfUrl(lesson?.pdfUrl);
+
         }
       })
     })
@@ -110,7 +113,7 @@ function LessonDetails() {
           const nextLesson = currentUnit.lessons[currentLessonIndex + 1];
           navigate(`/courses/${courseId}/${nextLesson.id}`);
         } else {
-          console.log("You're at the last lesson.");
+          toast.warning("لقد وصلت لاخر درس في الوحدة");
         }
       }
 
@@ -119,11 +122,12 @@ function LessonDetails() {
           const prevLesson = currentUnit.lessons[currentLessonIndex - 1];
           navigate(`/courses/${courseId}/${prevLesson.id}`);
         } else {
-          console.log("You're at the first lesson.");
+          toast.warning("لقد وصلت لاول درس في الوحدة");
         }
       }
     } else {
-      console.log("Current lesson not found.");
+      toast.error("حدث خطأ إثناء الوصول للدرس");
+
     }
   };
 
@@ -161,7 +165,7 @@ function LessonDetails() {
               <VideoEmbed url={videoUrl} />
               <div className="flex items-center justify-between mx-4">
                 <p className="my-8 ms-4 font-bold">{lessonTitle}</p>
-                <a download={pdfUrl} className="bg-brand-500  hover:bg-brand-400 text-white  cursor-pointer px-2 py-1 rounded-md">
+                <a download={pdfUrl} href={pdfUrl} className="bg-brand-500  hover:bg-brand-400 text-white  cursor-pointer px-2 py-1 rounded-md">
                   تحميل الدرس PDF
                 </a>
               </div>
