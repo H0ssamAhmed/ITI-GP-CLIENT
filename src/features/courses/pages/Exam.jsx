@@ -40,7 +40,6 @@ const Exam = () => {
     queryKey: ['getSectionQuiz', quizId],
     queryFn: () => GetSectionQuiz(quizId),
     retry: false,
-    retry: false,
     onError: (err) => {
       if (err.message) {
         console.log('Error fetching quiz:', err.message);
