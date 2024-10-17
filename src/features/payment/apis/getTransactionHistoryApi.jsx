@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://e-learning-system-iti-production.up.railway.app';
 
 export const getTransactionHistoryApi = async () => {
   try {

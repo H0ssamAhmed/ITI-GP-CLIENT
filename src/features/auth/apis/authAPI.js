@@ -14,7 +14,7 @@ import {
 import { useContext } from "react";
 import SignUpContext from "../../store/signup-context";
 import { set } from "react-hook-form";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://e-learning-system-iti-production.up.railway.app";
 const verifyEmailForgetPassword = async (userData) => {
   try {
     const response = await fetch(`${BASE_URL}/user/forget-password`, {

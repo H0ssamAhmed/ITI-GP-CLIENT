@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "https://e-learning-system-iti-production.up.railway.app";
 import axios from "axios";
 export const updateUserPicture = async (file) => {
   const formData = new FormData();

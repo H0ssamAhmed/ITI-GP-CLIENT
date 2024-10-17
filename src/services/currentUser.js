@@ -2,7 +2,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 export const getCurrentUser = async () => {
-  const response = await axios.get("http://localhost:3000/user/current", {
+  const response = await axios.get("https://e-learning-system-iti-production.up.railway.app", {
     withCredentials: true,
   });
   return response.data;
